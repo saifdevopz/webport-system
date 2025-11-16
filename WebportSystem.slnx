@@ -1,0 +1,28 @@
+<Solution>
+  <Folder Name="/docs/">
+    <File Path="docs/migrations.txt" />
+    <File Path="project-setup.txt" />
+  </Folder>
+  <Folder Name="/solution-items/">
+    <File Path=".editorconfig" />
+    <File Path="Directory.Build.props" />
+  </Folder>
+  <Folder Name="/src/" />
+  <Folder Name="/src/api/">
+    <Project Path="src/api/WebportSystem.Api/WebportSystem.Api.csproj" Id="dd8ae131-8144-4e7e-b5cf-f8e0d1e8f4e2" />
+  </Folder>
+  <Folder Name="/src/apps/" />
+  <Folder Name="/src/common/">
+    <Project Path="src/common/WebportSystem.Common.Application/WebportSystem.Common.Application.csproj" Id="d4c7a10d-cc83-4d17-8c6c-6b6ebf5c861f" />
+    <Project Path="src/common/WebportSystem.Common.Domain/WebportSystem.Common.Domain.csproj" Id="e3e1599a-a90f-4b4b-8ac9-0350ff8c5b84" />
+    <Project Path="src/common/WebportSystem.Common.Infrastructure/WebportSystem.Common.Infrastructure.csproj" Id="cfe2d74d-93af-4954-9984-b77e39291d2c" />
+    <Project Path="src/common/WebportSystem.Common.Presentation/WebportSystem.Common.Presentation.csproj" Id="757f9b94-ea23-48db-91e0-36b62f3550fb" />
+  </Folder>
+  <Folder Name="/src/modules/" />
+  <Folder Name="/src/modules/identity/">
+    <Project Path="src/modules/identity/WebportSystem.Identity.Application/WebportSystem.Identity.Application.csproj" Id="0e5b132b-8040-48ee-a24d-c6ecadd02801" />
+    <Project Path="src/modules/identity/WebportSystem.Identity.Domain/WebportSystem.Identity.Domain.csproj" Id="fcb7fca5-4a72-48ff-a461-5bffb155cbe0" />
+    <Project Path="src/modules/identity/WebportSystem.Identity.Infrastructure/WebportSystem.Identity.Infrastructure.csproj" Id="820936fe-2b48-46e7-a549-7dbbeeafa2d7" />
+    <Project Path="src/modules/identity/WebportSystem.Identity.Presentation/WebportSystem.Identity.Presentation.csproj" Id="87e28f42-4227-467a-8c11-61b29291fb52" />
+  </Folder>
+</Solution>

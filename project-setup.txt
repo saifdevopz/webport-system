@@ -1,0 +1,10 @@
+Project Reference
+
+API => Module.Infrastructure
+
+Module.Domain => Common.Domain
+Module.Infrastructure => Common.Infrastructure, Module.Application, Module.Presentation
+Module.Application => Common.Application, Module.Domain, IntegrationEvents
+Module.Presentation => Common.Presentation, Module.Application
+
+* Add Assembly Reference Class => Module.Application, Module.Presentation

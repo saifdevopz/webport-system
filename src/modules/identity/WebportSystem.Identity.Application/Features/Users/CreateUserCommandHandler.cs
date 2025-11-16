@@ -1,0 +1,45 @@
+﻿using FluentValidation;
+using Microsoft.AspNetCore.Identity;
+using WebportSystem.Common.Application.Abstractions;
+using WebportSystem.Common.Domain.Results;
+using WebportSystem.Identity.Domain.Users;
+
+namespace WebportSystem.Identity.Application.Features.Users;
+
+public class CreateUserCommandHandler(UserManager<User> userManager)
+    : ICommandHandler<CreateUserCommand>
+{
+    public async Task<Result> Handle(
+        CreateUserCommand command,
+        CancellationToken cancellationToken)
+    {
+        var model = new User
+        {
+            Id = Guid.NewGuid().ToString(),
+            Email = command.Email,
+            UserName = command.FullName
+        };
+
+        await userManager.CreateAsync(model, command.Password);
+
+        return Result.Success();
+    }
+}
+
+public sealed record CreateUserCommand(
+    string FullName,
+    string Email,
+    string Password,
+    int TenantId,
+    int RoleId) : ICommand;
+
+public class CreateUserCommandValidator : AbstractValidator<CreateUserCommand>
+{
+    public CreateUserCommandValidator()
+    {
+        RuleFor(_ => _.FullName).NotEmpty();
+        RuleFor(_ => _.Email).NotEmpty().EmailAddress();
+        RuleFor(_ => _.Password).NotEmpty();
+        RuleFor(_ => _.TenantId).NotEmpty();
+    }
+}

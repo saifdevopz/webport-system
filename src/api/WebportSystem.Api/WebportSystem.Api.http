@@ -1,0 +1,6 @@
+@WebportSystem.Api_HostAddress = http://localhost:5142
+
+GET {{WebportSystem.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
