@@ -25,18 +25,6 @@ public sealed record CustomUserClaim
     string DatabaseName
 );
 
-public sealed record TokenClaimsResponse2
-(
-    int? UserId = null,
-    int? TenantId = null,
-    string? Email = null,
-    HashSet<string>? RoleName = null,
-    string? TenantTypeCode = null,
-    string? TenantName = null,
-    string? DatabaseName = null,
-    string? Expiry = null
-);
-
 public sealed class UserTokenClaims
 {
     public int UserId { get; set; }

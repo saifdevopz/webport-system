@@ -1,0 +1,40 @@
+Adobe Photoshop
+Adobe Illustrator
+
+AIDA64 Extreme
+AMD Chipset Software
+AMD Ryzen Master SDK
+MSI Center
+MSI Center SDK
+CPUID
+
+
+Another Desktp Redis Manager
+AnyDesk
+DbBeaver
+Docker Desktop
+FileZilla
+GitHub Desktop
+Git
+Google Chrome
+Google Drive
+HP Smart
+Image Glass
+MS Office
+Notepad++
+VS Code
+VirtualBox
+Visual Studio 2026
+VLC
+Postman
+Putty
+PostGreSQL
+
+Ralink RT2870 Wireless LAN Card
+ShareX
+Vagrant
+WinSCP
+WhatsApp
+WinRar
+VMware Workstation Pro
+QuestPDF
