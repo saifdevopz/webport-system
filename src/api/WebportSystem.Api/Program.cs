@@ -1,31 +1,23 @@
 using Scalar.AspNetCore;
 using System.Reflection;
+using WebportSystem.Api.Extensions;
 using WebportSystem.Common.Application;
 using WebportSystem.Common.Infrastructure;
+using WebportSystem.Common.Presentation.Endpoints;
 using WebportSystem.Identity.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// --- Database Configuration (Dynamic, Multi-Cloud Support) ---
+// --- Database Configuration ---
 var config = builder.Configuration;
 
-string provider = config["Database:ActiveProvider"]
+string activeProvider = config["Database:ActiveProvider"]
     ?? throw new ArgumentException("Missing Database:ActiveProvider in configuration.");
 
-string basePath = $"Database:Providers:{provider}";
+string basePath = $"Database:Providers:{activeProvider}";
 
 // Fetch connection strings dynamically
 string? identityDbString = config[$"{basePath}:IdentityConnection"];
-
-// Optional fallback for Aspire local development
-if (string.IsNullOrWhiteSpace(identityDbString))
-{
-    var localDevConnection = config.GetConnectionString("demo-db");
-    if (!string.IsNullOrWhiteSpace(localDevConnection))
-    {
-        identityDbString ??= localDevConnection;
-    }
-}
 
 ArgumentException.ThrowIfNullOrWhiteSpace(identityDbString);
 
@@ -33,6 +25,10 @@ ArgumentException.ThrowIfNullOrWhiteSpace(identityDbString);
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddOpenApi();
+
+// --- Exception Handling ---
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+builder.Services.AddProblemDetails();
 
 // --- Application Modules ---
 Assembly[] moduleApplicationAssemblies =
@@ -74,8 +70,14 @@ if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
 
 app.UseHttpsRedirection();
 
+app.UseExceptionHandler();
+
+app.UseAuthentication();
+
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.MapEndpoints();
 
 await app.RunAsync();

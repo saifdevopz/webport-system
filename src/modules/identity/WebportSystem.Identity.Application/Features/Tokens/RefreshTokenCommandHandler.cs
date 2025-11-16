@@ -15,8 +15,11 @@ public class RefreshTokenCommandHandler(ITokenService tokenService)
         RefreshTokenCommand command,
         CancellationToken cancellationToken)
     {
-        var tokenResult = await tokenService.RefreshToken(new RefreshTokenRequest { Token = command.Token, 
-           RefreshToken =  command.RefreshToken });
+        var tokenResult = await tokenService.RefreshToken(new RefreshTokenRequest
+        {
+            Token = command.Token,
+            RefreshToken = command.RefreshToken
+        });
 
         if (tokenResult.IsFailure)
         {

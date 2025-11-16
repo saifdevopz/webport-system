@@ -26,4 +26,7 @@
     <Project Path="src/modules/identity/WebportSystem.Identity.Infrastructure/WebportSystem.Identity.Infrastructure.csproj" Id="820936fe-2b48-46e7-a549-7dbbeeafa2d7" />
     <Project Path="src/modules/identity/WebportSystem.Identity.Presentation/WebportSystem.Identity.Presentation.csproj" Id="87e28f42-4227-467a-8c11-61b29291fb52" />
   </Folder>
+  <Project Path="docker-compose.dcproj">
+    <Build />
+  </Project>
 </Solution>

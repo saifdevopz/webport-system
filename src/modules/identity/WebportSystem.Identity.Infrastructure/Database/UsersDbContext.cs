@@ -1,13 +1,15 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using WebportSystem.Identity.Application.Data;
+using WebportSystem.Identity.Domain.Tenants;
 using WebportSystem.Identity.Domain.Users;
 
 namespace WebportSystem.Identity.Infrastructure.Database;
 
 public sealed class UsersDbContext(DbContextOptions<UsersDbContext> options)
-    : IdentityDbContext<User, Role, string, UserClaim, UserRole, UserLogin, RoleClaim, UserToken>(options), IUsersDbContext
+    : IdentityDbContext<User>(options), IUsersDbContext
 {
+    public DbSet<Tenant> Tenants => Set<Tenant>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {

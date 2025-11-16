@@ -1,12 +1,10 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using WebportSystem.Common.Application.Abstractions;
-using WebportSystem.Common.Infrastructure.Interceptors;
 using WebportSystem.Common.Presentation.Endpoints;
 using WebportSystem.Identity.Application.Data;
 using WebportSystem.Identity.Application.Interfaces;
@@ -42,11 +40,11 @@ public static class IdentityModule
 
         services.AddIdentity<User, Role>(options =>
         {
-            options.Password.RequireDigit = true;
-            options.Password.RequireLowercase = true;
-            options.Password.RequireUppercase = true;
-            options.Password.RequireNonAlphanumeric = true;
-            options.Password.RequiredLength = 8;
+            options.Password.RequireDigit = false;
+            options.Password.RequireLowercase = false;
+            options.Password.RequireUppercase = false;
+            options.Password.RequireNonAlphanumeric = false;
+            options.Password.RequiredLength = 6;
         })
             .AddEntityFrameworkStores<UsersDbContext>()
             .AddSignInManager()

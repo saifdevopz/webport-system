@@ -1,6 +1,7 @@
 ﻿using FluentValidation;
 using Microsoft.AspNetCore.Identity;
 using WebportSystem.Common.Application.Abstractions;
+using WebportSystem.Common.Domain.Errors;
 using WebportSystem.Common.Domain.Results;
 using WebportSystem.Identity.Domain.Users;
 
@@ -20,7 +21,13 @@ public class CreateUserCommandHandler(UserManager<User> userManager)
             UserName = command.FullName
         };
 
-        await userManager.CreateAsync(model, command.Password);
+        var result = await userManager.CreateAsync(model, command.Password);
+
+        if (!result.Succeeded)
+        {
+            var errors = string.Join("; ", result.Errors.Select(e => e.Description));
+            return Result.Failure(CustomError.Problem("Bad Request", errors));
+        }
 
         return Result.Success();
     }

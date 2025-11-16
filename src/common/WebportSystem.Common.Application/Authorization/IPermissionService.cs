@@ -1,6 +1,4 @@
-﻿using WebportSystem.Common.Domain.Results;
-
-namespace WebportSystem.Identity.Application.Authorization;
+﻿namespace WebportSystem.Identity.Application.Authorization;
 
 public interface IPermissionService
 {

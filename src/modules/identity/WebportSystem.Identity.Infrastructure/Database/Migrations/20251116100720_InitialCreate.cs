@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore.Migrations;
+﻿using Microsoft.EntityFrameworkCore.Migrations;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
@@ -65,7 +64,6 @@ namespace WebportSystem.Identity.Infrastructure.Database.Migrations
                 {
                     id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    role_id1 = table.Column<string>(type: "text", nullable: false),
                     role_id = table.Column<string>(type: "text", nullable: false),
                     claim_type = table.Column<string>(type: "text", nullable: true),
                     claim_value = table.Column<string>(type: "text", nullable: true)
@@ -80,13 +78,6 @@ namespace WebportSystem.Identity.Infrastructure.Database.Migrations
                         principalTable: "AspNetRoles",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "fk_asp_net_role_claims_asp_net_roles_role_id1",
-                        column: x => x.role_id1,
-                        principalSchema: "identity",
-                        principalTable: "AspNetRoles",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -96,7 +87,6 @@ namespace WebportSystem.Identity.Infrastructure.Database.Migrations
                 {
                     id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    user_id1 = table.Column<string>(type: "text", nullable: false),
                     user_id = table.Column<string>(type: "text", nullable: false),
                     claim_type = table.Column<string>(type: "text", nullable: true),
                     claim_value = table.Column<string>(type: "text", nullable: true)
@@ -111,13 +101,6 @@ namespace WebportSystem.Identity.Infrastructure.Database.Migrations
                         principalTable: "AspNetUsers",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "fk_asp_net_user_claims_asp_net_users_user_id1",
-                        column: x => x.user_id1,
-                        principalSchema: "identity",
-                        principalTable: "AspNetUsers",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -127,7 +110,6 @@ namespace WebportSystem.Identity.Infrastructure.Database.Migrations
                 {
                     login_provider = table.Column<string>(type: "text", nullable: false),
                     provider_key = table.Column<string>(type: "text", nullable: false),
-                    user_id1 = table.Column<string>(type: "text", nullable: false),
                     provider_display_name = table.Column<string>(type: "text", nullable: true),
                     user_id = table.Column<string>(type: "text", nullable: false)
                 },
@@ -141,13 +123,6 @@ namespace WebportSystem.Identity.Infrastructure.Database.Migrations
                         principalTable: "AspNetUsers",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "fk_asp_net_user_logins_asp_net_users_user_id1",
-                        column: x => x.user_id1,
-                        principalSchema: "identity",
-                        principalTable: "AspNetUsers",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -156,9 +131,7 @@ namespace WebportSystem.Identity.Infrastructure.Database.Migrations
                 columns: table => new
                 {
                     user_id = table.Column<string>(type: "text", nullable: false),
-                    role_id = table.Column<string>(type: "text", nullable: false),
-                    user_id1 = table.Column<string>(type: "text", nullable: false),
-                    role_id1 = table.Column<string>(type: "text", nullable: false)
+                    role_id = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -171,22 +144,8 @@ namespace WebportSystem.Identity.Infrastructure.Database.Migrations
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "fk_asp_net_user_roles_asp_net_roles_role_id1",
-                        column: x => x.role_id1,
-                        principalSchema: "identity",
-                        principalTable: "AspNetRoles",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
                         name: "fk_asp_net_user_roles_asp_net_users_user_id",
                         column: x => x.user_id,
-                        principalSchema: "identity",
-                        principalTable: "AspNetUsers",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "fk_asp_net_user_roles_asp_net_users_user_id1",
-                        column: x => x.user_id1,
                         principalSchema: "identity",
                         principalTable: "AspNetUsers",
                         principalColumn: "id",
@@ -201,7 +160,6 @@ namespace WebportSystem.Identity.Infrastructure.Database.Migrations
                     user_id = table.Column<string>(type: "text", nullable: false),
                     login_provider = table.Column<string>(type: "text", nullable: false),
                     name = table.Column<string>(type: "text", nullable: false),
-                    user_id1 = table.Column<string>(type: "text", nullable: false),
                     value = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
@@ -214,13 +172,6 @@ namespace WebportSystem.Identity.Infrastructure.Database.Migrations
                         principalTable: "AspNetUsers",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "fk_asp_net_user_tokens_asp_net_users_user_id1",
-                        column: x => x.user_id1,
-                        principalSchema: "identity",
-                        principalTable: "AspNetUsers",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
@@ -228,12 +179,6 @@ namespace WebportSystem.Identity.Infrastructure.Database.Migrations
                 schema: "identity",
                 table: "AspNetRoleClaims",
                 column: "role_id");
-
-            migrationBuilder.CreateIndex(
-                name: "ix_asp_net_role_claims_role_id1",
-                schema: "identity",
-                table: "AspNetRoleClaims",
-                column: "role_id1");
 
             migrationBuilder.CreateIndex(
                 name: "RoleNameIndex",
@@ -249,40 +194,16 @@ namespace WebportSystem.Identity.Infrastructure.Database.Migrations
                 column: "user_id");
 
             migrationBuilder.CreateIndex(
-                name: "ix_asp_net_user_claims_user_id1",
-                schema: "identity",
-                table: "AspNetUserClaims",
-                column: "user_id1");
-
-            migrationBuilder.CreateIndex(
                 name: "ix_asp_net_user_logins_user_id",
                 schema: "identity",
                 table: "AspNetUserLogins",
                 column: "user_id");
 
             migrationBuilder.CreateIndex(
-                name: "ix_asp_net_user_logins_user_id1",
-                schema: "identity",
-                table: "AspNetUserLogins",
-                column: "user_id1");
-
-            migrationBuilder.CreateIndex(
                 name: "ix_asp_net_user_roles_role_id",
                 schema: "identity",
                 table: "AspNetUserRoles",
                 column: "role_id");
-
-            migrationBuilder.CreateIndex(
-                name: "ix_asp_net_user_roles_role_id1",
-                schema: "identity",
-                table: "AspNetUserRoles",
-                column: "role_id1");
-
-            migrationBuilder.CreateIndex(
-                name: "ix_asp_net_user_roles_user_id1",
-                schema: "identity",
-                table: "AspNetUserRoles",
-                column: "user_id1");
 
             migrationBuilder.CreateIndex(
                 name: "EmailIndex",
@@ -296,12 +217,6 @@ namespace WebportSystem.Identity.Infrastructure.Database.Migrations
                 table: "AspNetUsers",
                 column: "normalized_user_name",
                 unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "ix_asp_net_user_tokens_user_id1",
-                schema: "identity",
-                table: "AspNetUserTokens",
-                column: "user_id1");
         }
 
         /// <inheritdoc />

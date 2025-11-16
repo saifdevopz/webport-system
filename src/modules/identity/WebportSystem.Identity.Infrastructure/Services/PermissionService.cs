@@ -1,10 +1,10 @@
 ﻿#pragma warning disable S125 // Sections of code should not be commented out
-                            //using Webport.ERP.Common.Application.Authorization;
+//using Webport.ERP.Common.Application.Authorization;
 #pragma warning restore S125 // Sections of code should not be commented out
-                            //using Webport.ERP.Common.Application.Messaging;
-                            //using Webport.ERP.Common.Domain.Results;
-                            //using Webport.ERP.Identity.Application.Features.Permissions;
-                            //using WebportSystem.Common.Application.Abstractions;
+//using Webport.ERP.Common.Application.Messaging;
+//using Webport.ERP.Common.Domain.Results;
+//using Webport.ERP.Identity.Application.Features.Permissions;
+//using WebportSystem.Common.Application.Abstractions;
 
 //namespace WebportSystem.Identity.Infrastructure.Services;
 

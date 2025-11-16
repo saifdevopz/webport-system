@@ -4,5 +4,5 @@ namespace WebportSystem.Identity.Domain.Users;
 
 public class UserLogin : IdentityUserLogin<string>
 {
-    public User User { get; set; } = new User();
+    public User? User { get; set; }
 }

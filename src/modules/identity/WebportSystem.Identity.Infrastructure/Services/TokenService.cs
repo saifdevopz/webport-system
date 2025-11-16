@@ -101,18 +101,18 @@ public class TokenService(
     //private ClaimsPrincipal GetPrincipalFromExpiredToken(string token)
 
 #pragma warning disable S125 // Sections of code should not be commented out
-                            //{
-                            //    TokenValidationParameters tokenValidationParameters = new()
-                            //    {
-                            //        ValidateIssuerSigningKey = true,
-                            //        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(JwtOptions.Value.Key)),
-                            //        ValidateIssuer = true,
-                            //        ValidateAudience = true,
-                            //        ValidAudience = JwtOptions.Value.Audience,
-                            //        ValidIssuer = JwtOptions.Value.Issuer,
-                            //        RoleClaimType = ClaimTypes.Role,
-                            //        ClockSkew = TimeSpan.Zero,
-                            //    };
+    //{
+    //    TokenValidationParameters tokenValidationParameters = new()
+    //    {
+    //        ValidateIssuerSigningKey = true,
+    //        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(JwtOptions.Value.Key)),
+    //        ValidateIssuer = true,
+    //        ValidateAudience = true,
+    //        ValidAudience = JwtOptions.Value.Audience,
+    //        ValidIssuer = JwtOptions.Value.Issuer,
+    //        RoleClaimType = ClaimTypes.Role,
+    //        ClockSkew = TimeSpan.Zero,
+    //    };
 
     //    JwtSecurityTokenHandler tokenHandler = new();
     //    ClaimsPrincipal principal = tokenHandler.ValidateToken(token, tokenValidationParameters, out SecurityToken? securityToken);

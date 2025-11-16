@@ -4,5 +4,5 @@ namespace WebportSystem.Identity.Domain.Users;
 
 public class RoleClaim : IdentityRoleClaim<string>
 {
-    public Role Role { get; set; } = new Role();
+    public Role? Role { get; set; }
 }

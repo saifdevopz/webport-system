@@ -1,0 +1,9 @@
+﻿global using Microsoft.AspNetCore.Builder;
+global using Microsoft.AspNetCore.Http;
+global using Microsoft.AspNetCore.Routing;
+global using Webport.ERP.Identity.Presentation.Common;
+global using WebportSystem.Common.Application.Abstractions;
+global using WebportSystem.Common.Presentation.Endpoints;
+global using WebportSystem.Common.Presentation.Responses;
+global using WebportSystem.Identity.Application.Features.Tokens;
+global using WebportSystem.Identity.Application.Features.Users;
