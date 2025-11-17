@@ -8,6 +8,7 @@ using WebportSystem.Identity.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Work TEst
 // --- Database Configuration ---
 var config = builder.Configuration;
 
