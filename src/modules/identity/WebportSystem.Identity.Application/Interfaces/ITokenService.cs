@@ -1,5 +1,4 @@
-﻿using WebportSystem.Common.Domain.Results;
-using WebportSystem.Identity.Application.Dtos;
+﻿using WebportSystem.Identity.Application.Dtos;
 
 namespace WebportSystem.Identity.Application.Interfaces;
 

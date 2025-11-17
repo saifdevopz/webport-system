@@ -1,6 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using WebportSystem.Common.Application.Abstractions;
-using WebportSystem.Common.Domain.Results;
 using WebportSystem.Identity.Application.Data;
 using WebportSystem.Identity.Domain.Users;
 

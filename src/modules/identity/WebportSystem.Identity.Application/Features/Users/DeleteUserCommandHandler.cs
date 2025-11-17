@@ -1,7 +1,4 @@
-﻿using WebportSystem.Common.Application.Abstractions;
-using WebportSystem.Common.Domain.Errors;
-using WebportSystem.Common.Domain.Results;
-using WebportSystem.Identity.Application.Data;
+﻿using WebportSystem.Identity.Application.Data;
 
 namespace WebportSystem.Identity.Application.Features.Users;
 

@@ -1,8 +1,6 @@
 ﻿
 
 using FluentValidation;
-using WebportSystem.Common.Application.Abstractions;
-using WebportSystem.Common.Domain.Results;
 using WebportSystem.Identity.Application.Dtos;
 using WebportSystem.Identity.Application.Interfaces;
 

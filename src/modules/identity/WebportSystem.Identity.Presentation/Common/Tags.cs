@@ -1,4 +1,4 @@
-﻿namespace Webport.ERP.Identity.Presentation.Common;
+﻿namespace WebportSystem.Identity.Presentation.Common;
 
 internal static class Tags
 {

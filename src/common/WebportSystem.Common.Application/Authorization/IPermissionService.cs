@@ -1,4 +1,4 @@
-﻿namespace WebportSystem.Identity.Application.Authorization;
+﻿namespace WebportSystem.Common.Application.Authorization;
 
 public interface IPermissionService
 {

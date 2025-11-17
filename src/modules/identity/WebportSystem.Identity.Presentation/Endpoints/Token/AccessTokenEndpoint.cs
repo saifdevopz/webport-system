@@ -1,4 +1,6 @@
-﻿namespace WebportSystem.Identity.Presentation.Endpoints.Token;
+﻿using WebportSystem.Identity.Presentation.Common;
+
+namespace WebportSystem.Identity.Presentation.Endpoints.Token;
 
 internal sealed class AccessTokenEndpoint : IEndpoint
 {

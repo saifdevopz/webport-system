@@ -21,8 +21,4 @@
     <ProjectReference Include="..\WebportSystem.Identity.Presentation\WebportSystem.Identity.Presentation.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Services\" />
-  </ItemGroup>
-
 </Project>
