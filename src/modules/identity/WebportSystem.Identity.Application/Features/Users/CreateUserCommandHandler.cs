@@ -1,6 +1,7 @@
-﻿using FluentValidation;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
+using FluentValidation;
 using WebportSystem.Identity.Domain.Users;
+
 
 namespace WebportSystem.Identity.Application.Features.Users;
 

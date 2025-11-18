@@ -21,13 +21,13 @@ public class TokenService(
     IOptions<JwtOptions> JwtOptions,
     UserManager<User> userManager,
     SignInManager<User> signInManager,
-    UsersDbContext usersDbContext,
+    UsersDbContext usersDbContext,  
     IDateTimeProvider dateTimeProvider) : ITokenService
 {
     public async Task<Result<TokenResponse>> AccessToken(AccessTokenRequest request)
     {
         var userObj = await userManager.FindByEmailAsync(request.Email);
-
+        
         if (userObj is null)
         {
             return Result.Failure<TokenResponse>(CustomError.NotFound("TokenService", "User not found."));
