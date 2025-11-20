@@ -12,7 +12,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
-// Custom Start
+// @CUSTOM-START
 
 // Mudblazor UI
 builder.Services.AddMudServices();
@@ -42,7 +42,7 @@ builder.Services.AddScoped<ITenantContext, TenantContext>();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthenticationStateProvider>();
 
-// Custom End
+// @CUSTOM-END
 
 var app = builder.Build();
 
@@ -61,6 +61,6 @@ app.UseAntiforgery();
 app.MapStaticAssets();
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode()
-    .AllowAnonymous(); // Custom
+    .AllowAnonymous(); // @CUSTOM
 
 await app.RunAsync();
