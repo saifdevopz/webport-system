@@ -1,0 +1,138 @@
+﻿@layout AuthLayout
+@page "/account/login"
+@using WebportSystem.Dashboard.Components.Layout.Shared
+@attribute [AllowAnonymous]
+
+<div class="login-wrapper">
+    <header class="header-layout">
+        <img src="images/webport-designs-72.png"
+             alt="Company Logo" 
+             style="width:250px"/>
+    </header>
+    <div class="body-layout">
+        <!-- Left side -->
+        <div class="left-panel">
+            <h1>Welcome OBITOOOOOOO</h1>
+            <p>Access your account and continue where you left off.</p>
+            <p>Manage your ERP, track your businessvvv, and more.</p>
+
+            <div class="support">
+                <p>
+                    For any queries, contact us at
+                    <a href="mailto:support@yourbusiness.com">support@webport.co.za</a>
+                </p>
+                <p>📞 +27 123 456 789</p>
+                <MudIcon Icon="@Icons.Custom.Brands.WhatsApp" Title="Favorite" />
+            </div>
+        </div>
+
+        <!-- Right side -->
+        <div class="right-panel">
+            <div class="login-box">
+                <EditForm Model="@model" OnValidSubmit="HandleLogin">
+                    <DataAnnotationsValidator />
+                    <MudCardContent>
+                        <MudTextField @bind-Value="model.Email" Variant="Variant.Outlined" For="@(() => model.Email)" Label="Email" />
+                        <MudTextField @bind-Value="model.Password" Variant="Variant.Outlined" For="@(() => model.Password)" Label="Password" />
+                    </MudCardContent>
+
+                    <div class="forgot">
+                        <section>
+                            <a href="#" class="forgot-link">Forgot password?</a>
+                        </section>
+                    </div>
+                    <div class="input-box">
+
+                        @if (isLoading)
+                        {
+                            <MudProgressCircular Color="Color.Default" Indeterminate="true" />
+                        }
+                        else
+                        {
+                            <button type="submit" class="input-submit" disabled="@isLoading">Sign In</button>
+                        }
+
+
+                    </div>
+                    <div class="middle-text">
+                        <hr />
+                        @if (!string.IsNullOrWhiteSpace(ErrorMessage))
+                        {
+                            <div style="color:red; margin-top: 15px;">
+                                <strong>@ErrorMessage</strong>
+                            </div>
+                        }
+                    </div>
+                </EditForm>
+            </div>
+        </div>
+    </div>
+    <Footer />
+</div>
+
+
+
+@code {
+    [CascadingParameter]
+    public Task<AuthenticationState>? AuthenticationState { get; set; }
+
+    public string? ErrorMessage { get; set; }
+    internal LoginDto model { get; set; } = new();
+
+    private bool isLoading = false;
+    private bool _navigated;
+
+    protected override void OnInitialized()
+    {
+        #if DEBUG
+    model.Email = "customer1@gmail.com";
+    model.Password = "12345678";
+        #endif
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender && !_navigated)
+        {
+            await CheckUserAuthentication();
+            _navigated = true;
+
+            await Task.Delay(200); // wait for browser autofill
+            StateHasChanged(); // force MudBlazor to re-evaluate labels
+        }
+    }
+
+    private async Task CheckUserAuthentication()
+    {
+        var user = (await AuthenticationState!).User;
+
+        if (user?.Identity?.IsAuthenticated == true)
+        {
+            _NavigationManager.NavigateTo("/home");
+        }
+    }
+
+    public async Task HandleLogin()
+    {
+        isLoading = true;
+
+        try
+        {
+            var response = await _ITokenService.AccessToken(model);
+
+            if (response.IsSuccess)
+            {
+                _NavigationManager.NavigateTo($"/account/postlogin?Token={response.Data.Token}", forceLoad: true);
+            }
+            else
+            {
+                ErrorMessage = response.Error!.Description;
+            }
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+}

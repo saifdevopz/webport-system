@@ -1,11 +1,39 @@
 ﻿@using System.Net.Http
 @using System.Net.Http.Json
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.Authorization
 @using Microsoft.AspNetCore.Components.Forms
 @using Microsoft.AspNetCore.Components.Routing
 @using Microsoft.AspNetCore.Components.Web
 @using static Microsoft.AspNetCore.Components.Web.RenderMode
 @using Microsoft.AspNetCore.Components.Web.Virtualization
 @using Microsoft.JSInterop
+
+@* Blazor *@
 @using WebportSystem.Dashboard
+@using WebportSystem.Dashboard.Common.Services.Implementations
+@using WebportSystem.Dashboard.Common.Services.Interfaces
 @using WebportSystem.Dashboard.Components
 @using WebportSystem.Dashboard.Components.Layout
+
+@* Mudblazor *@
+@using MudBlazor
+@inject IDialogService DialogService
+
+@* Shared Library *@
+@using WebportSystem.Common.Domain.Results
+@using WebportSystem.Common.Domain.Errors;
+@using WebportSystem.Common.Domain.Contracts.Identity;
+@using WebportSystem.Common.Domain.Contracts.Inventory;
+
+@* Injection *@
+@attribute [Authorize]
+@inject NavigationManager _NavigationManager
+@inject IJSRuntime _IJSRuntime
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject IHttpContextAccessor _HttpContextAccessor
+
+@* Services *@
+@inject ITokenService _ITokenService
+@inject DataService _DataService
+@inject ITenantContext _TenantContext

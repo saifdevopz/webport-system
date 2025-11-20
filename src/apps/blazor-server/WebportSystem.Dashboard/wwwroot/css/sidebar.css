@@ -1,0 +1,168 @@
+﻿
+
+/* ============= SIDEBAR =============== */
+
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: var(--sidebar-width);
+    overflow-y: visible; /* Enable vertical scrolling */
+    overflow-x: hidden; /* Prevent horizontal scroll */
+    z-index: 1000;
+    background-color: var(--sidebar-color);
+    transition: var(--tran-slow); /* Smooth expand/collapse animation */
+    will-change: width; /* Performance optimization */
+}
+
+    .sidebar.close {
+        width: 80px;
+    }
+
+    /* sidebar visible */
+    .sidebar.active {
+        left: 0;
+    }
+
+    .sidebar:hover {
+        width: var(--sidebar-width);
+    }
+
+/* ============= SIDEBAR HEADER =============== */
+
+.sidebar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px;
+}
+
+.company-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+    .company-container img {
+        width: 40px;
+    }
+
+/* ============= SIDEBAR NAVBAR =============== */
+
+.menu-li {
+    line-height: 40px;
+}
+
+.menu-a {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    color: var(--text-color);
+    font-size: 12px;
+    padding: 0 20px;
+    transition: var(--tran-slow);
+    cursor: pointer;
+}
+
+    .menu-a:hover {
+        background: linear-gradient(to right, #e0e0e0, #ffffff);
+    }
+
+    .menu-a i {
+        font-size: 12px;
+        color: var(--text-color);
+        margin-right: 10px;
+    }
+
+.menu-name-div {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.sub-menu {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-in-out;
+}
+
+    .sub-menu.show {
+        max-height: 500px;
+    }
+
+.menu-title-li {
+    display: flex;
+    align-items: center;
+    background-color: whitesmoke;
+    height: 36px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-size: 11px;
+    color: #8d8d8d;
+    padding-left: 20px;
+    font-weight: 500;
+}
+
+/* Submenu indentation */
+.sub-menu .menu-a {
+    padding-left: 40px; /* children shifted right */
+    font-size: 11px; /* slightly smaller text for children */
+}
+
+.sub-menu .sub-menu .menu-a {
+    padding-left: 60px; /* grandchildren further right */
+    font-size: 10.5px;
+}
+
+.sub-menu .sub-menu .sub-menu .menu-a {
+    padding-left: 80px; /* great-grandchildren */
+    font-size: 10px;
+}
+
+
+/* ============= BUTTONS =============== */
+.menu-toggle {
+    visibility: hidden;
+    cursor: pointer;    
+    padding: 0.75rem; 
+}
+
+
+.toggle-arrow {
+    cursor: pointer;
+}
+
+/* ============= REUSABLE STYLES =============== */
+
+.hide {
+    display: none;
+}
+
+/* ============= RESPONSIVE =============== */
+
+@media (max-width: 1024px) {
+    .toggle-arrow {
+        visibility: hidden;
+    }
+
+    .menu-toggle {
+        visibility: visible;
+    }
+    .sidebar {
+        left: -250px;
+    }
+}
+
+/* ============= ANIMATION =============== */  
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}

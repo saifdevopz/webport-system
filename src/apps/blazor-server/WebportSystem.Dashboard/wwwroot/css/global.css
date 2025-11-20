@@ -1,0 +1,119 @@
+﻿/* ============= GLOBAL CSS =============== */
+
+/* Google Font */
+
+@import url("https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap");
+
+/* ============= APP VARIABLES =============== */
+
+:root {
+    /* Colors */
+    --body-color: #f8f8fa;
+    --sidebar-color: #ffffff;
+    --primary-color: #2196F3;
+    --primary-color-light: #f6f5ff;
+    --toggle-color: #ddd;
+    --text-color: #1b2124;
+    /* ===== Sizes ===== */
+    --sidebar-width: 250px;
+    --sidebar-width-collapsed: 70px;
+    --header-height: 50px;
+    --content-padding: 20px;
+    --border-radius: 12px;
+    --footer-height: 30px;
+    /* Font */
+    --font-family: "Roboto", sans-serif;
+    --font-family-2: "Plus Jakarta Sans", sans-serif;
+    /* Transitions */
+    --tran-fast: all 0.2s ease;
+    --tran-medium: all 0.3s ease;
+    --tran-slow: all 0.5s ease;
+    --tran-slowest: all 3s ease;
+}
+
+/* ============= APP WRAPPER =============== */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: var(--font-family);
+}
+
+body {
+    background-color: var(--body-color);
+    transition: var(--tran-fast); /* Transition for background color changes */
+}
+
+.app {
+    display: flex;
+    flex-direction: column;
+    padding-left: var(--sidebar-width);
+    min-height: 100vh;
+}
+
+h1{
+    color: var(--primary-color);
+}
+
+/* ============= APP HEADER =============== */
+
+.app-header {
+    height: var(--header-height);
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-inline: 20px;
+    background-color: var(--primary-color);
+}
+
+/* ============= APP BODY =============== */
+
+.app-body {
+    flex: 1;
+    padding: var(--content-padding);
+}
+
+/* ============= APP FOOTER =============== */
+
+.app-footer {
+    width: 100%;
+    height: var(--footer-height);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: whitesmoke;
+    color: black;
+    font-size: 0.7rem;
+}
+
+/* ============= OVERLAY =============== */
+
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5); /* semi-transparent black */
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease-in-out;
+    z-index: 999;
+}
+
+    .overlay.active {
+        opacity: 1;
+        visibility: visible;
+    }
+
+
+/* ============= RESPONSIVE =============== */
+
+@media (max-width: 1024px) {
+    .app {
+        padding-left: 0;
+    }    
+}
+

@@ -1,0 +1,29 @@
+﻿@page "/account/postlogin"
+@using WebportSystem.Dashboard.Common
+
+@attribute [AllowAnonymous]
+
+@code {
+    [SupplyParameterFromQuery]
+    private string? Token { get; set; }
+
+    protected override void OnInitialized()
+    {
+        if (string.IsNullOrEmpty(Token))
+        {
+            _NavigationManager.NavigateTo("/account/login");
+        }
+        else
+        {
+            _HttpContextAccessor.HttpContext!.Response.Cookies
+            .Append(BlazorConstants.AuthCookieName, Token, new CookieOptions
+            {
+                HttpOnly = true,
+                Expires = DateTimeOffset.Now.AddMinutes(30),
+            });
+
+            _NavigationManager.NavigateTo("/home");
+        }
+    }
+}
+

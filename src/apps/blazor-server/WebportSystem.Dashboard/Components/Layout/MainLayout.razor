@@ -1,23 +1,109 @@
-﻿@inherits LayoutComponentBase
+﻿@using MudBlazor
+@using WebportSystem.Dashboard.Components.Layout.Shared
+@using WebportSystem.Dashboard.Components.Layout.Sidebar
+@using WebportSystem.Dashboard.Components.Layout.Theme
+@inherits LayoutComponentBase
 
-<div class="page">
-    <div class="sidebar">
-        <NavMenu />
-    </div>
+@* Required Mudblazor Tags *@
+<MudThemeProvider Theme="ThemeConfig.CurrentTheme"
+    IsDarkMode="ThemeConfig.IsDarkMode" />
+<MudPopoverProvider />
+<MudDialogProvider FullWidth="true"
+                   MaxWidth="MaxWidth.ExtraSmall"
+                   CloseButton="true"
+                   BackdropClick="false"
+                   Position="DialogPosition.Center"
+                   CloseOnEscapeKey="true" />
 
-    <main>
-        <div class="top-row px-4">
-            <a href="https://learn.microsoft.com/aspnet/core/" target="_blank">About</a>
-        </div>
+<ErrorBoundary @ref="errorBoundary">
+    <ChildContent>
+        <AuthorizeView>
+            <Authorized>               
+                <SidebarComponent IsActive="@isSidebarActive" />
+                <div class="app">
+                    <header class="app-header">
+                        <i @onclick="ToggleSidebar" class="fa-solid fa-bars menu-toggle" id="menu-toggle"></i>
+                        <div class="div"><h1>Dashboard</h1></div>       
+                        <MudMenu Label="Open menu">                            
+                            <MudMenuItem Label="Toggle" @onclick="Test" />
+                            <MudMenuItem Label="Settings" @onclick="NavigateToSettings" />
+                            <MudMenuItem Label="Logout" @onclick="LogoutClicked" />
+                        </MudMenu>
+                    </header>
+                    <main class="app-body">
+                        @Body
+                    </main>
+                    <Footer />
+                    <div @onclick="ToggleSidebar" class="overlay @(isSidebarActive ? "active" : "")"></div>
+                </div>       
+            </Authorized>
+            <NotAuthorized>@Body</NotAuthorized>
+        </AuthorizeView>
+    </ChildContent>
 
-        <article class="content px-4">
-            @Body
-        </article>
-    </main>
-</div>
+    <ErrorContent Context="exception">
+        <p>Error Occurred!!! -  From Main</p>
+        <p>@exception.GetType()</p>
+        <p>@exception.Message</p>
+        <p>@exception.StackTrace</p>
+        <button onclick ="() => errorBoundary?.Recover()">Try Again</button>
+    </ErrorContent>
+</ErrorBoundary>
 
-<div id="blazor-error-ui" data-nosnippet>
-    An unhandled error has occurred.
-    <a href="." class="reload">Reload</a>
-    <span class="dismiss">🗙</span>
-</div>
+<style>
+    .theme-picker {
+        display: flex;
+        gap: 0.75rem;
+        align-items: center;
+    }
+
+    .color-option {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        cursor: pointer;
+        transition: transform 0.2s, box-shadow 0.2s;
+        box-shadow: 0 0 0 2px #ccc;
+    }
+
+        .color-option:hover {
+            transform: scale(1.1);
+        }
+
+        .color-option.active {
+            box-shadow: 0 0 0 3px var(--mud-palette-primary, #000);
+            transform: scale(1.15);
+        }
+</style>
+
+@code {
+    private ErrorBoundary? errorBoundary;
+
+    private static void Test()
+    {
+        ThemeConfig.IsDarkMode = !ThemeConfig.IsDarkMode;
+    }
+
+    private void LogoutClicked()
+    {
+        _NavigationManager.NavigateTo("/logout", forceLoad: true);
+    }
+
+    private void NavigateToSettings()
+    {
+        _NavigationManager.NavigateTo("/settings", forceLoad: false);
+    }
+
+    protected override void OnParametersSet()
+    {
+        errorBoundary?.Recover();
+    }
+
+    private bool isSidebarActive = false;
+
+    private void ToggleSidebar()
+    {
+        isSidebarActive = !isSidebarActive;
+        
+    }
+}

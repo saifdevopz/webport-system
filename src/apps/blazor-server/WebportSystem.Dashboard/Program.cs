@@ -1,3 +1,9 @@
+using Microsoft.AspNetCore.Components.Authorization;
+using MudBlazor.Services;
+using WebportSystem.Dashboard.Common.Authentication;
+using WebportSystem.Dashboard.Common.HttpClients;
+using WebportSystem.Dashboard.Common.Services.Implementations;
+using WebportSystem.Dashboard.Common.Services.Interfaces;
 using WebportSystem.Dashboard.Components;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -5,6 +11,38 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
+
+// Custom Start
+
+// Mudblazor UI
+builder.Services.AddMudServices();
+
+// Http Client
+builder.Services.AddHttpClient<BaseHttpClient>((sp, client) =>
+{
+    IConfiguration configuration = sp.GetRequiredService<IConfiguration>();
+    client.BaseAddress = new Uri(configuration["BaseUrls:Production"]!);
+});
+
+builder.Services.AddHttpClient<TenantHttpClient>((sp, client) =>
+{
+    IConfiguration configuration = sp.GetRequiredService<IConfiguration>();
+    client.BaseAddress = new Uri(configuration["Tenant:BaseUrl"]!);
+});
+
+builder.Services.AddScoped<BaseHttpClient>();
+builder.Services.AddScoped<TenantHttpClient>();
+
+// Services
+builder.Services.AddScoped<DataService>();
+builder.Services.AddScoped<ITokenService, TokenService>();
+builder.Services.AddScoped<ITenantContext, TenantContext>();
+
+// Authentication
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthenticationStateProvider>();
+
+// Custom End
 
 var app = builder.Build();
 
@@ -22,6 +60,7 @@ app.UseAntiforgery();
 
 app.MapStaticAssets();
 app.MapRazorComponents<App>()
-    .AddInteractiveServerRenderMode();
+    .AddInteractiveServerRenderMode()
+    .AllowAnonymous(); // Custom
 
 await app.RunAsync();

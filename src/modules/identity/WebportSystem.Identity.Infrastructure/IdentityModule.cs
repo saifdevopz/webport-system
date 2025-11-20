@@ -51,7 +51,7 @@ public static class IdentityModule
             .AddDefaultTokenProviders();
 
         services.AddScoped<ITokenService, TokenService>();
-        
+
         services.AddDbContext<IUsersDbContext, UsersDbContext>((sp, options) =>
         {
             options.UseNpgsql(systemDatabaseString, npgsqlOptionsAction =>

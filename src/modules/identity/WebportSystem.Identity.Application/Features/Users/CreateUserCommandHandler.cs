@@ -1,5 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
-using FluentValidation;
+﻿using FluentValidation;
+using Microsoft.AspNetCore.Identity;
 using WebportSystem.Identity.Domain.Users;
 
 
@@ -18,7 +18,7 @@ public class CreateUserCommandHandler(UserManager<User> userManager)
             TenantId = command.TenantId,
             Email = command.Email,
             UserName = command.FullName
-        };        
+        };
 
         var result = await userManager.CreateAsync(model, command.Password);
 
@@ -34,7 +34,7 @@ public class CreateUserCommandHandler(UserManager<User> userManager)
         {
             var errors = string.Join("; ", result.Errors.Select(e => e.Description));
             return Result.Failure(CustomError.Problem("Bad Request", errors));
-        }        
+        }
 
         return Result.Success();
     }

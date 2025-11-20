@@ -1,0 +1,106 @@
+﻿@using WebportSystem.Dashboard.Components.Layout.Sidebar
+@using static WebportSystem.Dashboard.Components.Layout.Sidebar.SidebarData
+
+<aside class="sidebar @(IsActive ? "active" : "")" id="sidebar">
+    <div class="sidebar-header">
+        <div class="company-container">
+            <img src="images/logo.jpg" alt="logo" />                           
+            <span class="company-name">@_TenantContext.TenantName</span>
+        </div>
+
+        <i class="fa-regular fa-square-caret-left toggle-arrow"></i>
+    </div>
+    <nav class="sidebar-navbar">
+        <ul>
+            @if (activeMenuGroups != null)
+            {
+                @foreach (var group in activeMenuGroups)
+                {
+                    <li class="menu-title-li">@group.Title</li>
+
+                    @foreach (var item in group.Items)
+                    {
+                        <MenuItemComponent MenuItem="@item"
+                                            MenuItemClickCallback="MenuItemClick" />
+                    }
+                }
+            }            
+        </ul>
+    </nav>
+</aside>
+
+@code {
+    [Inject] private IJSRuntime JS { get; set; } = default!;
+    [Parameter] public bool IsActive { get; set; }
+
+    private List<MenuGroup> activeMenuGroups = [];
+    private readonly List<MenuGroup> adminMenuGroups = SidebarData.GetAdminMenuGroups();
+	private readonly List<MenuGroup> tenantMenuGroups = SidebarData.GetTenantMenuGroups();    
+
+    protected override void OnInitialized()
+    {
+        activeMenuGroups = _TenantContext.Role switch
+        {
+            "Admin" => adminMenuGroups,
+            "Customer" => tenantMenuGroups,
+            _ => tenantMenuGroups
+        };
+    }
+
+
+
+    private async Task MenuItemClick(MenuItem clickedItem)
+    {
+        await JS.InvokeVoidAsync("console.log", $"Clicked: {clickedItem.Title}");
+
+        if (!string.IsNullOrWhiteSpace(clickedItem.Href))
+        {
+            // Navigate to the link
+            _NavigationManager.NavigateTo(clickedItem.Href);
+            return;
+        }
+
+        // Case 1: top-level item
+        var groupWithClickedItem = activeMenuGroups.FirstOrDefault(group => group.Items.Contains(clickedItem));
+        if (groupWithClickedItem != null)
+        {
+            // Collapse ALL groups, not just the current one
+            foreach (var item in activeMenuGroups.SelectMany(g => g.Items).Where(item => item != clickedItem))
+            {
+                item.IsOpened = false;
+            }
+
+            clickedItem.IsOpened = !clickedItem.IsOpened;
+            return;
+        }
+
+        // Case 2: child or grandchild → search across all groups
+        foreach (var group in activeMenuGroups)
+        {
+            var parent = FindParent(clickedItem, group.Items);
+            if (parent != null && parent.ChildMenuItems != null)
+            {
+                foreach (var sibling in parent.ChildMenuItems.Where(sibling => sibling != clickedItem))
+                {
+                    sibling.IsOpened = false;
+                }
+
+                clickedItem.IsOpened = !clickedItem.IsOpened;
+                return;
+            }
+        }
+    }
+
+    private MenuItem? FindParent(MenuItem target, IEnumerable<MenuItem> items)
+    {
+        foreach (var item in items)
+        {
+            if (item.ChildMenuItems?.Contains(target) == true) return item;
+
+            var parent = FindParent(target, item.ChildMenuItems ?? []);
+            if (parent != null) return parent;
+        }
+
+        return null;
+    }
+ }

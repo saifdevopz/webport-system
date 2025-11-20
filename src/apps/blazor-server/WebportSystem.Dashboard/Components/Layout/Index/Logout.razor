@@ -1,0 +1,12 @@
+﻿@page "/logout"
+@using WebportSystem.Dashboard.Common
+@attribute [AllowAnonymous]
+
+@code {
+    protected override void OnInitialized()
+    {
+        _HttpContextAccessor.HttpContext!.Response.Cookies.Delete(BlazorConstants.AuthCookieName);
+
+        _NavigationManager.NavigateTo("/");
+    }
+}
