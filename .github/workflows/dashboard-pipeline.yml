@@ -20,3 +20,19 @@ jobs:
           TAG=$(echo $GITHUB_SHA | cut -c1-7)
           docker compose -f docker-compose-production.yml build webportsystem.dashboard
           docker compose -f docker-compose-production.yml push webportsystem.dashboard
+
+  deploy:
+    name: Trigger Dokploy Deployment
+    runs-on: ubuntu-latest
+    needs: build_images  
+    steps:
+      - name: Trigger Deployment via API
+        run: |
+          curl -X 'POST' \
+          'https://dokploy.webport.co.za/api/compose.redeploy' \
+          -H 'accept: application/json' \
+          -H 'x-api-key: sBWJSGdHDKkfDWdPKDhocaLbRjuhcQTioABDOEkEOmGIRcRixLZRhFxSKzHIIicL' \
+          -H 'Content-Type: application/json' \
+          -d '{           
+                "composeId": "3BoWSpoCx-POULFJHybjv"              
+          }'            
