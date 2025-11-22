@@ -1,0 +1,55 @@
+name: WebportSystem.API CI/CD
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build_images:
+    name: Package Software
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+      
+      - name: Log in to GitHub Container Registry
+        run: echo "${{ secrets.GH_PAT }}" | docker login ghcr.io -u $GITHUB_ACTOR --password-stdin
+      
+      - name: Build and Push Docker Image using Docker Compose
+        run: |
+          IMAGE_NAME=ghcr.io/${{ github.repository_owner }}/webport-erp-api
+          TAG=$(echo $GITHUB_SHA | cut -c1-7)
+          docker compose -f docker-compose.yml build webport.erp.api
+          docker compose -f docker-compose.yml push webport.erp.api          
+
+  copy_files:
+    name: Copy files to server
+    runs-on: ubuntu-latest
+    needs: build_images
+    steps:
+      - uses: actions/checkout@v4
+      - name: Copy file via SSH
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USERNAME }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          source: docker-compose.yml
+          target: /root/webport-system
+
+  update_server:
+    name: Deploy to Server
+    runs-on: ubuntu-latest
+    needs: copy_files
+    steps:
+      - name: Replacing container
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USERNAME }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          script: |
+            cd /root/webport-system
+            docker-compose -f docker-compose.yml stop webport.erp.api || true
+            docker-compose -f docker-compose.yml rm -s -f webport.erp.api || true
+            docker-compose -f docker-compose.yml pull webport.erp.api      
+            docker-compose -f docker-compose.yml up -d webport.erp.api    
