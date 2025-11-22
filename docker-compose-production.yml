@@ -14,3 +14,17 @@ services:
       - "5060:8080"   
     restart: always
 
+  webportsystem.dashboard:
+    image: ghcr.io/saifdevopz/webportsystem-dashboard:latest
+    build:
+      context: .
+      dockerfile: src/apps/blazor-server/WebportSystem.Dashboard/Dockerfile
+    pull_policy: never
+    container_name: webportsystem-dashboard
+    environment: 
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://+:8080
+    ports:
+      - "5065:8080"   
+    restart: always
+
