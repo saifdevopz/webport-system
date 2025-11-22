@@ -1,0 +1,22 @@
+name: WebportSystem.Dashboard CI/CD
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build_images:
+    name: Package Software
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+      
+      - name: Log in to GitHub Container Registry
+        run: echo "${{ secrets.GH_PAT }}" | docker login ghcr.io -u $GITHUB_ACTOR --password-stdin
+      
+      - name: Build and Push Docker Image using Docker Compose
+        run: |
+          IMAGE_NAME=ghcr.io/${{ github.repository_owner }}/webportsystem-dashboard
+          TAG=$(echo $GITHUB_SHA | cut -c1-7)
+          docker compose -f docker-compose-production.yml build webportsystem.dashboard
+          docker compose -f docker-compose-production.yml push webportsystem.dashboard
