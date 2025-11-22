@@ -16,40 +16,23 @@ jobs:
       
       - name: Build and Push Docker Image using Docker Compose
         run: |
-          IMAGE_NAME=ghcr.io/${{ github.repository_owner }}/webport-erp-api
+          IMAGE_NAME=ghcr.io/${{ github.repository_owner }}/webportsystem-api
           TAG=$(echo $GITHUB_SHA | cut -c1-7)
-          docker compose -f docker-compose.yml build webport.erp.api
-          docker compose -f docker-compose.yml push webport.erp.api          
+          docker compose -f docker-compose.yml build webport.erp.dashboard
+          docker compose -f docker-compose.yml push webport.erp.dashboard
 
-  copy_files:
-    name: Copy files to server
+  deploy:
+    name: Trigger Dokploy Deployment
     runs-on: ubuntu-latest
-    needs: build_images
+    needs: build_images  
     steps:
-      - uses: actions/checkout@v4
-      - name: Copy file via SSH
-        uses: appleboy/scp-action@master
-        with:
-          host: ${{ secrets.SERVER_HOST }}
-          username: ${{ secrets.SERVER_USERNAME }}
-          key: ${{ secrets.SERVER_SSH_KEY }}
-          source: docker-compose.yml
-          target: /root/webport-system
-
-  update_server:
-    name: Deploy to Server
-    runs-on: ubuntu-latest
-    needs: copy_files
-    steps:
-      - name: Replacing container
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.SERVER_HOST }}
-          username: ${{ secrets.SERVER_USERNAME }}
-          key: ${{ secrets.SERVER_SSH_KEY }}
-          script: |
-            cd /root/webport-system
-            docker-compose -f docker-compose.yml stop webport.erp.api || true
-            docker-compose -f docker-compose.yml rm -s -f webport.erp.api || true
-            docker-compose -f docker-compose.yml pull webport.erp.api      
-            docker-compose -f docker-compose.yml up -d webport.erp.api    
+      - name: Trigger Deployment via API
+        run: |
+          curl -X 'POST' \
+          'https://dokploy.webport.co.za/api/compose.redeploy' \
+          -H 'accept: application/json' \
+          -H 'x-api-key: sBWJSGdHDKkfDWdPKDhocaLbRjuhcQTioABDOEkEOmGIRcRixLZRhFxSKzHIIicL' \
+          -H 'Content-Type: application/json' \
+          -d '{           
+                "composeId": "p28tzzsULHjVwxY-eBIKd"              
+          }'  
