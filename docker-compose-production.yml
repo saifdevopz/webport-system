@@ -1,0 +1,13 @@
+services:
+
+  webportsystem.api:
+    image: ghcr.io/saifdevopz/webportsystem-api:latest
+    pull_policy: always
+    container_name: webportsystem-api
+    environment: 
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://+:8080
+    ports:
+      - "5060:8080"   
+    restart: always
+
