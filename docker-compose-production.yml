@@ -2,7 +2,10 @@ services:
 
   webportsystem.api:
     image: ghcr.io/saifdevopz/webportsystem-api:latest
-    pull_policy: always
+    build:
+      context: .
+      dockerfile: src/api/WebportSystem.Api/Dockerfile
+    pull_policy: never
     container_name: webportsystem-api
     environment: 
       - ASPNETCORE_ENVIRONMENT=Production
