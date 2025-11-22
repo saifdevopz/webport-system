@@ -18,8 +18,8 @@ jobs:
         run: |
           IMAGE_NAME=ghcr.io/${{ github.repository_owner }}/webportsystem-api
           TAG=$(echo $GITHUB_SHA | cut -c1-7)
-          docker compose -f docker-compose.yml build webport.erp.dashboard
-          docker compose -f docker-compose.yml push webport.erp.dashboard
+          docker compose -f docker-compose-production.yml build webportsystem.api
+          docker compose -f docker-compose-production.yml push webportsystem.api
 
   deploy:
     name: Trigger Dokploy Deployment
