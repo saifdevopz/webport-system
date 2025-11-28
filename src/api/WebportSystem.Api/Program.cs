@@ -7,7 +7,7 @@ using WebportSystem.Common.Presentation.Endpoints;
 using WebportSystem.Identity.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
-
+//from work
 // --- Database Configuration ---
 var config = builder.Configuration;
 
