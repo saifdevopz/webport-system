@@ -18,7 +18,7 @@ string basePath = $"Database:Providers:{activeProvider}";
 
 // Fetch connection strings dynamically
 string? identityDbString = config[$"{basePath}:IdentityConnection"];
-
+//narutoooooooooooo
 ArgumentException.ThrowIfNullOrWhiteSpace(identityDbString);
 
 // --- MVC & API ---
