@@ -14,6 +14,12 @@ public class RefreshTokenRequest
     public required string RefreshToken { get; set; }
 }
 
+public class RefreshTokenRequest2
+{
+    public required string Token { get; set; }
+    public required string RefreshToken { get; set; }
+}
+
 public sealed record CustomUserClaim
 (
     int UserId,

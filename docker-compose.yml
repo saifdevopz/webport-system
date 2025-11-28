@@ -27,7 +27,14 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
+  webportsystem.dashboard:
+    image: ${DOCKER_REGISTRY-}webportsystemdashboard
+    build:
+      context: .
+      dockerfile: src/apps/blazor-server/WebportSystem.Dashboard/Dockerfile
+
 volumes:
   postgres_data:
  
+
 
