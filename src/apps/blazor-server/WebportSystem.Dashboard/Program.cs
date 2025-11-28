@@ -14,10 +14,10 @@ builder.Services.AddRazorComponents()
 
 // @CUSTOM-START
 
-// Mudblazor UI
+// Mudblazor 
 builder.Services.AddMudServices();
 
-// Http Client
+// Http Clients
 builder.Services.AddHttpClient<BaseHttpClient>((sp, client) =>
 {
     IConfiguration configuration = sp.GetRequiredService<IConfiguration>();

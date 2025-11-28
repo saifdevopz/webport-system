@@ -11,8 +11,4 @@
     <ProjectReference Include="..\WebportSystem.Identity.Domain\WebportSystem.Identity.Domain.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Interfaces\" />
-  </ItemGroup>
-
 </Project>

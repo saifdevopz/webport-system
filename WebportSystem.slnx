@@ -1,8 +1,10 @@
 <Solution>
   <Folder Name="/docs/">
+    <File Path="blazor.txt" />
     <File Path="docs/applications.txt" />
     <File Path="docs/migrations.txt" />
     <File Path="docs/project-setup.txt" />
+    <File Path="identity-module.txt" />
   </Folder>
   <Folder Name="/solution-items/">
     <File Path=".editorconfig" />
