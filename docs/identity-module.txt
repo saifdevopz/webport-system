@@ -1,0 +1,52 @@
+Webport System Architecture
+
+----------------------------------------------------------------------------------
+
+.NET Web API
+
+Data Access & Database
+
+- Entity Framework Core
+- Dapper 
+- FluentValidation
+
+Logging & Monitoring
+
+- Serilog
+- Health Checks
+- OpenTelemetry
+
+Background Jobs
+
+- Hangfire
+- Quartz.Net
+
+JSON Serialization
+
+- Newtonsoft.Json
+
+CI / CD
+
+- GitHub Actions
+
+Deployment
+
+- Docker
+
+-------------------------------------------------------------------------------
+
+Blazor 
+
+UI
+
+- Mudblazor
+
+-------------------------------------------------------------------------------
+
+Inventory Management System
+Ecommerce Integration
+Invoice Management System
+
+Multi Tenant (Tenant Id)
+
+

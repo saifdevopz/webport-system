@@ -7,7 +7,7 @@ using WebportSystem.Common.Presentation.Endpoints;
 using WebportSystem.Identity.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
-
+//from work
 // --- Database Configuration ---
 var config = builder.Configuration;
 
@@ -18,7 +18,7 @@ string basePath = $"Database:Providers:{activeProvider}";
 
 // Fetch connection strings dynamically
 string? identityDbString = config[$"{basePath}:IdentityConnection"];
-
+//narutoooooooooooo
 ArgumentException.ThrowIfNullOrWhiteSpace(identityDbString);
 
 // --- MVC & API ---

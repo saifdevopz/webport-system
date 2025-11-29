@@ -1,6 +1,8 @@
 <Solution>
   <Folder Name="/docs/">
     <File Path="docs/applications.txt" />
+    <File Path="docs/blazor.txt" />
+    <File Path="docs/identity-module.txt" />
     <File Path="docs/migrations.txt" />
     <File Path="docs/project-setup.txt" />
   </Folder>
