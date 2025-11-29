@@ -63,4 +63,6 @@ app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode()
     .AllowAnonymous(); // @CUSTOM
 
+app.UseAuthorization();
+
 await app.RunAsync();

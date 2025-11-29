@@ -9,4 +9,6 @@ public interface IDbConnectionFactory
     ValueTask<DbConnection> OpenIdentityConnection();
 
     Task<List<T>> QueryAsync<T>(string sql, object parameters = null!, bool systemDb = false);
+
+    Task<T> QuerySingle<T>(string sql, object parameters = null!);
 }

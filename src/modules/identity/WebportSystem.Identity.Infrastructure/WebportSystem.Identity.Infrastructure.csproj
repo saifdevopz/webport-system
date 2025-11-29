@@ -7,15 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Database\Configurations\RoleClaimEntityConfiguration.cs" />
-    <Compile Remove="Database\Configurations\RoleEntityConfiguration.cs" />
-    <Compile Remove="Database\Configurations\UserClaimEntityConfiguration.cs" />
-    <Compile Remove="Database\Configurations\UserLoginEntityConfiguration.cs" />
-    <Compile Remove="Database\Configurations\UserRoleConfigurationMapping.cs" />
-    <Compile Remove="Database\Configurations\UserTokenEntityConfiguration.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\..\..\common\WebportSystem.Common.Infrastructure\WebportSystem.Common.Infrastructure.csproj" />
     <ProjectReference Include="..\WebportSystem.Identity.Application\WebportSystem.Identity.Application.csproj" />
     <ProjectReference Include="..\WebportSystem.Identity.Presentation\WebportSystem.Identity.Presentation.csproj" />

@@ -17,7 +17,7 @@ public class CreateUserCommandHandler(UserManager<User> userManager)
             Id = Guid.NewGuid().ToString(),
             TenantId = command.TenantId,
             Email = command.Email,
-            UserName = command.FullName
+            UserName = command.Name
         };
 
         var result = await userManager.CreateAsync(model, command.Password);
@@ -28,12 +28,15 @@ public class CreateUserCommandHandler(UserManager<User> userManager)
             return Result.Failure(CustomError.Problem("Bad Request", errors));
         }
 
-        var roleResult = await userManager.AddToRoleAsync(model, "Admin");
-
-        if (!roleResult.Succeeded)
+        if (!string.IsNullOrWhiteSpace(command.Role))
         {
-            var errors = string.Join("; ", result.Errors.Select(e => e.Description));
-            return Result.Failure(CustomError.Problem("Bad Request", errors));
+            var roleResult = await userManager.AddToRoleAsync(model, "Admin");
+
+            if (!roleResult.Succeeded)
+            {
+                var errors = string.Join("; ", result.Errors.Select(e => e.Description));
+                return Result.Failure(CustomError.Problem("Bad Request", errors));
+            }
         }
 
         return Result.Success();
@@ -41,19 +44,19 @@ public class CreateUserCommandHandler(UserManager<User> userManager)
 }
 
 public sealed record CreateUserCommand(
-    string FullName,
+    int TenantId,
+    string Name,
     string Email,
     string Password,
-    int TenantId,
-    int RoleId) : ICommand;
+    string? Role) : ICommand;
 
 public class CreateUserCommandValidator : AbstractValidator<CreateUserCommand>
 {
     public CreateUserCommandValidator()
     {
-        RuleFor(_ => _.FullName).NotEmpty();
-        RuleFor(_ => _.Email).NotEmpty().EmailAddress();
-        RuleFor(_ => _.Password).NotEmpty();
         RuleFor(_ => _.TenantId).NotEmpty();
+        RuleFor(_ => _.Name).NotEmpty();
+        RuleFor(_ => _.Email).NotEmpty().EmailAddress();
+        RuleFor(_ => _.Password).NotEmpty().MinimumLength(6);
     }
 }

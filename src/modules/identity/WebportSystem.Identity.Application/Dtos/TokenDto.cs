@@ -33,10 +33,9 @@ public sealed record CustomUserClaim
 
 public sealed class UserTokenClaims
 {
-    public int UserId { get; set; }
+    public required string UserId { get; set; }
     public int TenantId { get; set; }
-    public required string Role { get; set; }
+    public List<string> Roles { get; set; } = [];
     public required string Email { get; set; }
-    public required string TenantName { get; set; }
     public string? Expiry { get; set; }
 }

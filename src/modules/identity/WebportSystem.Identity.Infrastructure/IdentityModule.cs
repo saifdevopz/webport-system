@@ -38,7 +38,7 @@ public static class IdentityModule
         string systemDatabaseString)
     {
 
-        services.AddIdentity<User, Role>(options =>
+        services.AddIdentity<User, IdentityRole>(options =>
         {
             options.Password.RequireDigit = false;
             options.Password.RequireLowercase = false;

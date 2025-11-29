@@ -45,4 +45,12 @@ internal sealed class DbConnectionFactory(IConfiguration configuration) : IDbCon
         IEnumerable<T> result = await connection.QueryAsync<T>(sql, parameters);
         return [.. result];
     }
+
+    public async Task<T> QuerySingle<T>(string sql, object parameters = null!)
+    {
+        await using var connection = new NpgsqlConnection(GetConnectionString());
+        await connection.OpenAsync();
+
+        return await connection.QuerySingleAsync<T>(sql, parameters);
+    }
 }

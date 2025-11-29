@@ -66,6 +66,8 @@ if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
         _.Servers = [];
         _.Theme = ScalarTheme.Kepler;
     });
+
+    await app.InitializeDatabases();
 }
 
 app.UseHttpsRedirection();

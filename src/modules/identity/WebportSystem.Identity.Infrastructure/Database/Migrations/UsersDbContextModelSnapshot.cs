@@ -187,6 +187,52 @@ namespace WebportSystem.Identity.Infrastructure.Database.Migrations
                     b.ToTable("AspNetUserTokens", "identity");
                 });
 
+            modelBuilder.Entity("WebportSystem.Identity.Domain.Tenants.Tenant", b =>
+                {
+                    b.Property<int>("TenantId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("tenant_id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("TenantId"));
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("created_by");
+
+                    b.Property<DateTime>("CreatedDt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_dt");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_active");
+
+                    b.Property<string>("LastModBy")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("last_mod_by");
+
+                    b.Property<DateTime>("LastModDt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("last_mod_dt");
+
+                    b.Property<DateTime>("LicenceExpiryDate")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("licence_expiry_date");
+
+                    b.Property<string>("TenantName")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("tenant_name");
+
+                    b.HasKey("TenantId")
+                        .HasName("pk_tenants");
+
+                    b.ToTable("tenants", "identity");
+                });
+
             modelBuilder.Entity("WebportSystem.Identity.Domain.Users.User", b =>
                 {
                     b.Property<string>("Id")
@@ -201,10 +247,6 @@ namespace WebportSystem.Identity.Infrastructure.Database.Migrations
                         .IsConcurrencyToken()
                         .HasColumnType("text")
                         .HasColumnName("concurrency_stamp");
-
-                    b.Property<DateTime>("CreatedAtUtc")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("created_at_utc");
 
                     b.Property<string>("Email")
                         .HasMaxLength(256)
@@ -249,13 +291,13 @@ namespace WebportSystem.Identity.Infrastructure.Database.Migrations
                         .HasColumnType("text")
                         .HasColumnName("security_stamp");
 
+                    b.Property<int>("TenantId")
+                        .HasColumnType("integer")
+                        .HasColumnName("tenant_id");
+
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("boolean")
                         .HasColumnName("two_factor_enabled");
-
-                    b.Property<DateTime?>("UpdatedAtUtc")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("updated_at_utc");
 
                     b.Property<string>("UserName")
                         .HasMaxLength(256)

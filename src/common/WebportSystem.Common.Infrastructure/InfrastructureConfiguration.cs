@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Quartz;
 using WebportSystem.Common.Application.Database;
+using WebportSystem.Common.Infrastructure.Authentication;
 using WebportSystem.Common.Infrastructure.Clock;
 using WebportSystem.Common.Infrastructure.Database;
 using WebportSystem.Common.Infrastructure.Interceptors;
@@ -15,6 +16,7 @@ public static class InfrastructureConfiguration
         this IServiceCollection services,
         IConfiguration configuration)
     {
+        services.AddAuthenticationInternal();
         // DateTime Provider
         services.TryAddSingleton<IDateTimeProvider, DateTimeProvider>();
 

@@ -1,11 +1,10 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using System.Data;
-using System.Globalization;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using WebportSystem.Common.Application.Database;
 using WebportSystem.Common.Domain.Errors;
 using WebportSystem.Common.Domain.Results;
 using WebportSystem.Common.Infrastructure.Authentication;
@@ -13,7 +12,6 @@ using WebportSystem.Common.Infrastructure.Clock;
 using WebportSystem.Identity.Application.Dtos;
 using WebportSystem.Identity.Application.Interfaces;
 using WebportSystem.Identity.Domain.Users;
-using WebportSystem.Identity.Infrastructure.Database;
 
 namespace WebportSystem.Identity.Infrastructure.Services;
 
@@ -21,8 +19,8 @@ public class TokenService(
     IOptions<JwtOptions> JwtOptions,
     UserManager<User> userManager,
     SignInManager<User> signInManager,
-    UsersDbContext usersDbContext,
-    IDateTimeProvider dateTimeProvider) : ITokenService
+    IDateTimeProvider dateTimeProvider,
+    IDbConnectionFactory dbConnection) : ITokenService
 {
     public async Task<Result<TokenResponse>> AccessToken(AccessTokenRequest request)
     {
@@ -52,7 +50,7 @@ public class TokenService(
 
     private async Task<Result<TokenResponse>> GenerateTokensAndUpdateUser(User user)
     {
-        UserTokenClaims tokenClaims = GetAllUserDetails(user.Email!);
+        UserTokenClaims tokenClaims = await GetAllUserDetails(user.Email!);
         string token = GenerateJwt(tokenClaims);
 
         var response = new TokenResponse(token, null, null);
@@ -86,17 +84,22 @@ public class TokenService(
 
     private static List<Claim> GetClaims(UserTokenClaims customClaims)
     {
-        List<Claim> claims =
-        [
-            new Claim(CustomClaims.TenantId, customClaims.TenantId.ToString(CultureInfo.CurrentCulture)),
-            new Claim(CustomClaims.UserId, customClaims.UserId.ToString(CultureInfo.CurrentCulture)),
-            new Claim(ClaimTypes.Email, customClaims.Email),
-            new Claim(ClaimTypes.Role, customClaims.Role),
-            new Claim(CustomClaims.TenantName, customClaims.TenantName),
-        ];
+        var claims = new List<Claim>
+        {
+            new(CustomClaims.TenantId, customClaims.TenantId.ToString()),
+            new(CustomClaims.UserId, customClaims.UserId.ToString()),
+            new(ClaimTypes.Email, customClaims.Email)
+        };
+
+        // Add ClaimTypes.Role for EACH role
+        foreach (var role in customClaims.Roles)
+        {
+            claims.Add(new Claim(ClaimTypes.Role, role));
+        }
 
         return claims;
     }
+
 
     //private ClaimsPrincipal GetPrincipalFromExpiredToken(string token)
 
@@ -123,25 +126,25 @@ public class TokenService(
     //        : principal;
     //}
 
-    private UserTokenClaims GetAllUserDetails(string email)
-#pragma warning restore S125 // Sections of code should not be commented out
+    private async Task<UserTokenClaims> GetAllUserDetails(string email)
     {
-        var userDetails = usersDbContext.Users
-            .Where(u => u.Email == email)
-            //.Include(_ => _.Tenant)
-            //.Include(_ => _.Role)
-            .Select(_ => new UserTokenClaims
-            {
-                UserId = 2,
-                Email = "_.Email",
-                TenantId = 2,
-                TenantName = "_.Tenant!.TenantName",
-                Role = "_.Role!.RoleName"
-            })
-            .FirstOrDefault();
+        string sql =
+        $"""
+            SELECT * 
+            FROM {ModuleConstants.Schema}."AspNetUsers" anu
+            WHERE anu.Email = '{email}';
+        """;
 
-        return userDetails!;
+        User userObj = await dbConnection.QuerySingle<User>(sql);
+
+        return new UserTokenClaims
+        {
+            UserId = userObj.Id,
+            Email = userObj.Email!,
+            TenantId = userObj.TenantId,
+        };
     }
+
 }
 
 

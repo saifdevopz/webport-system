@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using WebportSystem.Identity.Application.Data;
 using WebportSystem.Identity.Domain.Tenants;
@@ -7,7 +8,7 @@ using WebportSystem.Identity.Domain.Users;
 namespace WebportSystem.Identity.Infrastructure.Database;
 
 public sealed class UsersDbContext(DbContextOptions<UsersDbContext> options)
-    : IdentityDbContext<User>(options), IUsersDbContext
+    : IdentityDbContext<User, IdentityRole, string>(options), IUsersDbContext
 {
     public DbSet<Tenant> Tenants => Set<Tenant>();
 
