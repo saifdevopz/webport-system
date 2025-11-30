@@ -1,22 +1,16 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace WebportSystem.Common.Domain.Contracts.Identity;
+﻿namespace WebportSystem.Common.Domain.Contracts.Identity;
 
 public class UserDto
 {
-    public int UserId { get; set; }
+    public string Id { get; set; } = null!;
 
-    [DeniedValues(0)]
     public int TenantId { get; set; }
+    public string UserName { get; set; } = null!;
+    public string Email { get; set; } = null!;
 
-    [Required]
-    public int RoleId { get; set; }
+    public string TenantName { get; set; } = string.Empty;
 
-    [Required]
-    public string? FullName { get; set; }
-
-    [Required]
-    public string? Email { get; set; }
+    public List<RoleDto> Roles { get; set; } = [];
 }
 
 public record UserWrapper<T>(T User);

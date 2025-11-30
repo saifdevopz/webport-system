@@ -17,6 +17,7 @@ public static class InfrastructureConfiguration
         IConfiguration configuration)
     {
         services.AddAuthenticationInternal();
+
         // DateTime Provider
         services.TryAddSingleton<IDateTimeProvider, DateTimeProvider>();
 

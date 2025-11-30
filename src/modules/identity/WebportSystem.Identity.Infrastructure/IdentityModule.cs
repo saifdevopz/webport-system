@@ -5,9 +5,13 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using WebportSystem.Common.Application.Abstractions;
+using WebportSystem.Common.Application.Authorization;
+using WebportSystem.Common.Infrastructure.Database;
+using WebportSystem.Common.Infrastructure.Interceptors;
 using WebportSystem.Common.Presentation.Endpoints;
 using WebportSystem.Identity.Application.Data;
 using WebportSystem.Identity.Application.Interfaces;
+using WebportSystem.Identity.Domain.Roles;
 using WebportSystem.Identity.Domain.Users;
 using WebportSystem.Identity.Infrastructure.Database;
 using WebportSystem.Identity.Infrastructure.Outbox;
@@ -38,7 +42,7 @@ public static class IdentityModule
         string systemDatabaseString)
     {
 
-        services.AddIdentity<User, IdentityRole>(options =>
+        services.AddIdentityCore<UserM>(options =>
         {
             options.Password.RequireDigit = false;
             options.Password.RequireLowercase = false;
@@ -46,11 +50,14 @@ public static class IdentityModule
             options.Password.RequireNonAlphanumeric = false;
             options.Password.RequiredLength = 6;
         })
+            .AddRoles<RoleM>()
             .AddEntityFrameworkStores<UsersDbContext>()
             .AddSignInManager()
             .AddDefaultTokenProviders();
 
+        services.AddScoped<TenantProvider>();
         services.AddScoped<ITokenService, TokenService>();
+        services.AddScoped<IPermissionService, PermissionService>();
 
         services.AddDbContext<IUsersDbContext, UsersDbContext>((sp, options) =>
         {
@@ -64,7 +71,9 @@ public static class IdentityModule
                 npgsqlOptionsAction.MigrationsHistoryTable(HistoryRepository.DefaultTableName, ModuleConstants.Schema);
             })
             .UseSnakeCaseNamingConvention()
-            ;
+            .AddInterceptors(
+                sp.GetRequiredService<AuditableEntityInterceptor>(),
+                sp.GetRequiredService<InsertOutboxMessagesInterceptor>());
         });
     }
 

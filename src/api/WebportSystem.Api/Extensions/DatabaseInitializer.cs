@@ -1,13 +1,12 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using System.Data;
+using WebportSystem.Identity.Domain.Roles;
 using WebportSystem.Identity.Domain.Users;
 using WebportSystem.Identity.Infrastructure.Database;
 
 namespace WebportSystem.Api.Extensions;
 
-internal static class DatabaseInitializer 
+internal static class DatabaseInitializer
 {
     public static async Task InitializeDatabases(this IApplicationBuilder app)
     {
@@ -46,10 +45,10 @@ internal static class DatabaseInitializer
         using IServiceScope scope = app.ApplicationServices.CreateScope();
 
         var dbContext = scope.ServiceProvider.GetRequiredService<UsersDbContext>();
-        var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
-        var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+        var userManager = scope.ServiceProvider.GetRequiredService<UserManager<UserM>>();
+        var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<RoleM>>();
 
-        await DatabaseSeedService.SeedAsync(dbContext, userManager, roleManager);        
+        await DatabaseSeedService.SeedAsync(dbContext, userManager, roleManager);
     }
 }
 

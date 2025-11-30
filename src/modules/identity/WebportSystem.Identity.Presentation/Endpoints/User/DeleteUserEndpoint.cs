@@ -1,6 +1,4 @@
-﻿using WebportSystem.Identity.Presentation.Common;
-
-namespace WebportSystem.Identity.Presentation.Endpoints.User;
+﻿namespace WebportSystem.Identity.Presentation.Endpoints.User;
 
 internal sealed class DeleteUserEndpoint : IEndpoint
 {

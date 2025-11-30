@@ -1,12 +1,12 @@
-﻿namespace WebportSystem.Identity.Presentation.Endpoints.User;
+﻿namespace WebportSystem.Identity.Presentation.Endpoints.Tenants;
 
-internal sealed class CreateUserEndpoint : IEndpoint
+internal sealed class UpdateTenantEndpoint : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapPost("user", async (
-            CreateUserCommand request,
-            ICommandHandler<CreateUserCommand> handler,
+        app.MapPut("tenant", async (
+            UpdateTenantCommand request,
+            ICommandHandler<UpdateTenantCommand> handler,
             CancellationToken cancellationToken) =>
         {
             var response = await handler
@@ -15,6 +15,6 @@ internal sealed class CreateUserEndpoint : IEndpoint
 
             return response;
         })
-        .WithTags(Tags.User);
+        .WithTags(Tags.Tenant);
     }
 }

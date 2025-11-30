@@ -1,26 +1,28 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
-using WebportSystem.Common.Application.Database;
+using WebportSystem.Common.Domain.Contracts.Identity;
 using WebportSystem.Common.Domain.Errors;
 using WebportSystem.Common.Domain.Results;
 using WebportSystem.Common.Infrastructure.Authentication;
 using WebportSystem.Common.Infrastructure.Clock;
-using WebportSystem.Identity.Application.Dtos;
 using WebportSystem.Identity.Application.Interfaces;
 using WebportSystem.Identity.Domain.Users;
+using WebportSystem.Identity.Infrastructure.Database;
 
 namespace WebportSystem.Identity.Infrastructure.Services;
 
 public class TokenService(
     IOptions<JwtOptions> JwtOptions,
-    UserManager<User> userManager,
-    SignInManager<User> signInManager,
-    IDateTimeProvider dateTimeProvider,
-    IDbConnectionFactory dbConnection) : ITokenService
+    UserManager<UserM> userManager,
+    SignInManager<UserM> signInManager,
+    UsersDbContext usersDbContext,
+    IDateTimeProvider dateTimeProvider) : ITokenService
 {
     public async Task<Result<TokenResponse>> AccessToken(AccessTokenRequest request)
     {
@@ -45,17 +47,33 @@ public class TokenService(
 
     public async Task<Result<TokenResponse>> RefreshToken(RefreshTokenRequest request)
     {
-        throw new NotImplementedException("RefreshToken functionality not implemented yet.");
+        ClaimsPrincipal userPrincipal = GetPrincipalFromExpiredToken(request.Token);
+
+        UserM? user = await userManager.FindByEmailAsync(userPrincipal.GetUserEmail());
+
+        if (user is null)
+        {
+            return Result.Failure<TokenResponse>(CustomError.NotFound("404", "User not found."));
+        }
+
+        // Get stored token from AspNetUserTokens
+        string? refreshToken = await userManager.GetAuthenticationTokenAsync(user, "JWTAuthentication", "RefreshToken");
+
+        return refreshToken != request.RefreshToken
+            ? Result.Failure<TokenResponse>(CustomError.NotFound("404", "Invalid Refresh Token."))
+            : await GenerateTokensAndUpdateUser(user);
     }
 
-    private async Task<Result<TokenResponse>> GenerateTokensAndUpdateUser(User user)
+    private async Task<Result<TokenResponse>> GenerateTokensAndUpdateUser(UserM user)
     {
-        UserTokenClaims tokenClaims = await GetAllUserDetails(user.Email!);
+        UserTokenClaims tokenClaims = await GetAllUserDetails(user.Id);
+
         string token = GenerateJwt(tokenClaims);
+        string refreshToken = GenerateRefreshToken();
 
-        var response = new TokenResponse(token, null, null);
+        await userManager.SetAuthenticationTokenAsync(user, "JWTAuthentication", "RefreshToken", refreshToken);
 
-        return Result.Success(response);
+        return Result.Success(new TokenResponse(token, refreshToken));
     }
 
     private string GenerateJwt(UserTokenClaims customClaims)
@@ -101,48 +119,57 @@ public class TokenService(
     }
 
 
-    //private ClaimsPrincipal GetPrincipalFromExpiredToken(string token)
-
-#pragma warning disable S125 // Sections of code should not be commented out
-    //{
-    //    TokenValidationParameters tokenValidationParameters = new()
-    //    {
-    //        ValidateIssuerSigningKey = true,
-    //        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(JwtOptions.Value.Key)),
-    //        ValidateIssuer = true,
-    //        ValidateAudience = true,
-    //        ValidAudience = JwtOptions.Value.Audience,
-    //        ValidIssuer = JwtOptions.Value.Issuer,
-    //        RoleClaimType = ClaimTypes.Role,
-    //        ClockSkew = TimeSpan.Zero,
-    //    };
-
-    //    JwtSecurityTokenHandler tokenHandler = new();
-    //    ClaimsPrincipal principal = tokenHandler.ValidateToken(token, tokenValidationParameters, out SecurityToken? securityToken);
-
-    //    return securityToken is not JwtSecurityToken jwtSecurityToken ||
-    //        !jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.OrdinalIgnoreCase)
-    //        ? throw new SecurityTokenValidationException("Invalid token.")
-    //        : principal;
-    //}
-
-    private async Task<UserTokenClaims> GetAllUserDetails(string email)
+    private ClaimsPrincipal GetPrincipalFromExpiredToken(string token)
     {
-        string sql =
-        $"""
-            SELECT * 
-            FROM {ModuleConstants.Schema}."AspNetUsers" anu
-            WHERE anu.Email = '{email}';
-        """;
-
-        User userObj = await dbConnection.QuerySingle<User>(sql);
-
-        return new UserTokenClaims
+        TokenValidationParameters tokenValidationParameters = new()
         {
-            UserId = userObj.Id,
-            Email = userObj.Email!,
-            TenantId = userObj.TenantId,
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(JwtOptions.Value.Key)),
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidAudience = JwtOptions.Value.Audience,
+            ValidIssuer = JwtOptions.Value.Issuer,
+            RoleClaimType = ClaimTypes.Role,
+            ClockSkew = TimeSpan.Zero,
         };
+
+        JwtSecurityTokenHandler tokenHandler = new();
+        ClaimsPrincipal principal = tokenHandler.ValidateToken(token, tokenValidationParameters, out SecurityToken? securityToken);
+
+        return securityToken is not JwtSecurityToken jwtSecurityToken ||
+            !jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.OrdinalIgnoreCase)
+            ? throw new SecurityTokenValidationException("Invalid token.")
+            : principal;
+    }
+
+    private async Task<UserTokenClaims> GetAllUserDetails(string userId)
+    {
+        var userDto = await usersDbContext.Users
+            .Where(u => u.Id == userId)
+            .Include(u => u.UserRoles)
+                .ThenInclude(ur => ur.Role)
+            .Include(u => u.Tenant)
+            .Select(u => new UserTokenClaims
+            {
+                UserId = u.Id,
+                Email = u.Email!,
+                TenantId = u.TenantId,
+                Roles = u.UserRoles
+                    .Select(ur => ur.Role.Name!)
+                    .ToList()
+            })
+            .FirstOrDefaultAsync();
+
+
+        return userDto!;
+    }
+
+    public static string GenerateRefreshToken()
+    {
+        byte[] randomNumber = new byte[32];
+        using RandomNumberGenerator rng = RandomNumberGenerator.Create();
+        rng.GetBytes(randomNumber);
+        return Convert.ToBase64String(randomNumber);
     }
 
 }

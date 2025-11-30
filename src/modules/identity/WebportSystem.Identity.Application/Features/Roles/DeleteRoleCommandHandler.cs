@@ -1,10 +1,10 @@
 ﻿using FluentValidation;
 using Microsoft.AspNetCore.Identity;
-using WebportSystem.Identity.Domain.Users;
+using WebportSystem.Identity.Domain.Roles;
 
 namespace WebportSystem.Identity.Application.Features.Roles;
 
-public class DeleteRoleCommandHandler(RoleManager<IdentityRole> roleManager)
+public class DeleteRoleCommandHandler(RoleManager<RoleM> roleManager)
     : ICommandHandler<DeleteRoleCommand>
 {
     public async Task<Result> Handle(
@@ -12,7 +12,7 @@ public class DeleteRoleCommandHandler(RoleManager<IdentityRole> roleManager)
         CancellationToken cancellationToken)
     {
 
-        IdentityRole? roleToDelete = await roleManager.FindByIdAsync(command.RoleId);
+        RoleM? roleToDelete = await roleManager.FindByIdAsync(command.RoleId);
 
         if (roleToDelete == null)
         {

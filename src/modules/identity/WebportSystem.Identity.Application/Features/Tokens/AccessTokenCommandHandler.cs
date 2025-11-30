@@ -1,5 +1,5 @@
 ﻿using FluentValidation;
-using WebportSystem.Identity.Application.Dtos;
+using WebportSystem.Common.Domain.Contracts.Identity;
 using WebportSystem.Identity.Application.Interfaces;
 
 namespace WebportSystem.Identity.Application.Features.Tokens;

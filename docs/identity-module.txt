@@ -25,6 +25,19 @@ JSON Serialization
 
 - Newtonsoft.Json
 
+Resilliency & Fault Tolerance
+
+- Polly
+
+Messaging
+
+- RabbitMQ
+- MassTransit
+
+Invoicing
+
+- QuestPDF
+
 CI / CD
 
 - GitHub Actions
@@ -49,4 +62,8 @@ Invoice Management System
 
 Multi Tenant (Tenant Id)
 
+-------------------------------------------------------------------------------
 
+Endpoints
+
+Tenant

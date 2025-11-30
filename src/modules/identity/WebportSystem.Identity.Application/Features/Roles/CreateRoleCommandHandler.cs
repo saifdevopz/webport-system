@@ -1,19 +1,19 @@
 ﻿using FluentValidation;
 using Microsoft.AspNetCore.Identity;
-using WebportSystem.Identity.Domain.Users;
+using WebportSystem.Identity.Domain.Roles;
 
 namespace WebportSystem.Identity.Application.Features.Roles;
 
-public class CreateRoleCommandHandler(RoleManager<IdentityRole> roleManager)
+public class CreateRoleCommandHandler(RoleManager<RoleM> roleManager)
     : ICommandHandler<CreateRoleCommand>
 {
     public async Task<Result> Handle(
         CreateRoleCommand command,
         CancellationToken cancellationToken)
     {
-        var role = new IdentityRole
+        var role = new RoleM
         {
-            Name = command.RoleName            
+            Name = command.RoleName
         };
 
         var result = await roleManager.CreateAsync(role);

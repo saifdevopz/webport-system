@@ -14,9 +14,5 @@
     <ProjectReference Include="..\..\..\common\WebportSystem.Common.Domain\WebportSystem.Common.Domain.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Roles\" />
-  </ItemGroup>
-
 </Project>
 

@@ -1,10 +1,10 @@
 ﻿using FluentValidation;
 using Microsoft.AspNetCore.Identity;
-using WebportSystem.Identity.Domain.Users;
+using WebportSystem.Identity.Domain.Roles;
 
 namespace WebportSystem.Identity.Application.Features.Roles;
 
-public class UpdateRoleCommandHandler(RoleManager<IdentityRole> roleManager)
+public class UpdateRoleCommandHandler(RoleManager<RoleM> roleManager)
     : ICommandHandler<UpdateRoleCommand>
 {
     public async Task<Result> Handle(
@@ -19,7 +19,7 @@ public class UpdateRoleCommandHandler(RoleManager<IdentityRole> roleManager)
         }
 
         roleToUpdate.Name = command.RoleName;
-        
+
         var result = await roleManager.UpdateAsync(roleToUpdate);
 
         if (!result.Succeeded)

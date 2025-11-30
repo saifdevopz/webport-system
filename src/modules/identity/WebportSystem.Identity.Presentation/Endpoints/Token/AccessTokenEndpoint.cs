@@ -1,6 +1,4 @@
-﻿using WebportSystem.Identity.Presentation.Common;
-
-namespace WebportSystem.Identity.Presentation.Endpoints.Token;
+﻿namespace WebportSystem.Identity.Presentation.Endpoints.Token;
 
 internal sealed class AccessTokenEndpoint : IEndpoint
 {
@@ -17,6 +15,7 @@ internal sealed class AccessTokenEndpoint : IEndpoint
 
             return response;
         })
-        .WithTags(Tags.Token);
+        .WithTags(Tags.Token)
+        .AllowAnonymous();
     }
 }

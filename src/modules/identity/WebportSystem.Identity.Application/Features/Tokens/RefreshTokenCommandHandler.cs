@@ -1,7 +1,5 @@
-﻿
-
-using FluentValidation;
-using WebportSystem.Identity.Application.Dtos;
+﻿using FluentValidation;
+using WebportSystem.Common.Domain.Contracts.Identity;
 using WebportSystem.Identity.Application.Interfaces;
 
 namespace WebportSystem.Identity.Application.Features.Tokens;
@@ -13,11 +11,7 @@ public class RefreshTokenCommandHandler(ITokenService tokenService)
         RefreshTokenCommand command,
         CancellationToken cancellationToken)
     {
-        var tokenResult = await tokenService.RefreshToken(new RefreshTokenRequest
-        {
-            Token = command.Token,
-            RefreshToken = command.RefreshToken
-        });
+        var tokenResult = await tokenService.RefreshToken(new RefreshTokenRequest(command.Token, command.RefreshToken));
 
         if (tokenResult.IsFailure)
         {

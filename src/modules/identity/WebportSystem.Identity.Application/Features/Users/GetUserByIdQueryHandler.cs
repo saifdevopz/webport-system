@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using WebportSystem.Common.Domain.Contracts.Identity;
 using WebportSystem.Identity.Application.Data;
-using WebportSystem.Identity.Domain.Users;
 
 namespace WebportSystem.Identity.Application.Features.Users;
 
@@ -11,10 +11,29 @@ public class GetUserByIdQueryHandler(IUsersDbContext usersDbContext)
         GetUserByIdQuery query,
         CancellationToken cancellationToken)
     {
-        var user = await usersDbContext.Users.FirstOrDefaultAsync(u => u.Id == query.UserId, cancellationToken);
+        var userDto = await usersDbContext.Users
+            .Where(u => u.Id == query.UserId)
+            .Include(u => u.UserRoles)
+                .ThenInclude(ur => ur.Role)
+            .Include(u => u.Tenant)
+            .Select(u => new UserDto
+            {
+                Id = u.Id,
+                UserName = u.UserName!,
+                Email = u.Email!,
+                TenantName = u.Tenant != null ? u.Tenant.TenantName : null!,
+                Roles = u.UserRoles
+                    .Select(ur => new RoleDto
+                    {
+                        RoleId = ur.RoleId,
+                        RoleName = ur.Role.Name
+                    })
+                    .ToList()
+            })
+            .FirstOrDefaultAsync(cancellationToken);
 
-        return user is not null
-            ? Result.Success(new GetUserByIdQueryResult(user))
+        return userDto is not null
+            ? Result.Success(new GetUserByIdQueryResult(userDto))
             : Result.Failure<GetUserByIdQueryResult>(CustomError.NotFound("Not Found", "User not found."));
 
     }
@@ -22,4 +41,4 @@ public class GetUserByIdQueryHandler(IUsersDbContext usersDbContext)
 
 public sealed record GetUserByIdQuery(string UserId) : IQuery<GetUserByIdQueryResult>;
 
-public sealed record GetUserByIdQueryResult(User User);
+public sealed record GetUserByIdQueryResult(UserDto User);

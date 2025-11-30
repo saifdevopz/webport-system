@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using WebportSystem.Identity.Domain.Users;
+using WebportSystem.Identity.Domain.Roles;
 
 namespace WebportSystem.Identity.Application.Features.Roles;
 
-public class GetRoleByIdQueryHandler(RoleManager<IdentityRole> roleManager)
+public class GetRoleByIdQueryHandler(RoleManager<RoleM> roleManager)
     : IQueryHandler<GetRoleByIdQuery, GetRoleByIdQueryResult>
 {
     public async Task<Result<GetRoleByIdQueryResult>> Handle(

@@ -23,68 +23,6 @@ namespace WebportSystem.Identity.Infrastructure.Database.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("text")
-                        .HasColumnName("id");
-
-                    b.Property<string>("ConcurrencyStamp")
-                        .IsConcurrencyToken()
-                        .HasColumnType("text")
-                        .HasColumnName("concurrency_stamp");
-
-                    b.Property<string>("Name")
-                        .HasMaxLength(256)
-                        .HasColumnType("character varying(256)")
-                        .HasColumnName("name");
-
-                    b.Property<string>("NormalizedName")
-                        .HasMaxLength(256)
-                        .HasColumnType("character varying(256)")
-                        .HasColumnName("normalized_name");
-
-                    b.HasKey("Id")
-                        .HasName("pk_asp_net_roles");
-
-                    b.HasIndex("NormalizedName")
-                        .IsUnique()
-                        .HasDatabaseName("RoleNameIndex");
-
-                    b.ToTable("AspNetRoles", "identity");
-                });
-
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasColumnName("id");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("ClaimType")
-                        .HasColumnType("text")
-                        .HasColumnName("claim_type");
-
-                    b.Property<string>("ClaimValue")
-                        .HasColumnType("text")
-                        .HasColumnName("claim_value");
-
-                    b.Property<string>("RoleId")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("role_id");
-
-                    b.HasKey("Id")
-                        .HasName("pk_asp_net_role_claims");
-
-                    b.HasIndex("RoleId")
-                        .HasDatabaseName("ix_asp_net_role_claims_role_id");
-
-                    b.ToTable("AspNetRoleClaims", "identity");
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
                     b.Property<int>("Id")
@@ -144,25 +82,6 @@ namespace WebportSystem.Identity.Infrastructure.Database.Migrations
                     b.ToTable("AspNetUserLogins", "identity");
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
-                {
-                    b.Property<string>("UserId")
-                        .HasColumnType("text")
-                        .HasColumnName("user_id");
-
-                    b.Property<string>("RoleId")
-                        .HasColumnType("text")
-                        .HasColumnName("role_id");
-
-                    b.HasKey("UserId", "RoleId")
-                        .HasName("pk_asp_net_user_roles");
-
-                    b.HasIndex("RoleId")
-                        .HasDatabaseName("ix_asp_net_user_roles_role_id");
-
-                    b.ToTable("AspNetUserRoles", "identity");
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
                     b.Property<string>("UserId")
@@ -187,7 +106,88 @@ namespace WebportSystem.Identity.Infrastructure.Database.Migrations
                     b.ToTable("AspNetUserTokens", "identity");
                 });
 
-            modelBuilder.Entity("WebportSystem.Identity.Domain.Tenants.Tenant", b =>
+            modelBuilder.Entity("WebportSystem.Identity.Domain.Roles.RoleClaimM", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ClaimType")
+                        .HasColumnType("text")
+                        .HasColumnName("claim_type");
+
+                    b.Property<string>("ClaimValue")
+                        .HasColumnType("text")
+                        .HasColumnName("claim_value");
+
+                    b.Property<string>("RoleId")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("role_id");
+
+                    b.HasKey("Id")
+                        .HasName("pk_role_claims");
+
+                    b.HasIndex("RoleId")
+                        .HasDatabaseName("ix_role_claims_role_id");
+
+                    b.ToTable("role_claims", "identity");
+                });
+
+            modelBuilder.Entity("WebportSystem.Identity.Domain.Roles.RoleM", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("text")
+                        .HasColumnName("id");
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .HasColumnType("text")
+                        .HasColumnName("concurrency_stamp");
+
+                    b.Property<string>("Name")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)")
+                        .HasColumnName("name");
+
+                    b.Property<string>("NormalizedName")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)")
+                        .HasColumnName("normalized_name");
+
+                    b.HasKey("Id")
+                        .HasName("pk_roles");
+
+                    b.HasIndex("NormalizedName")
+                        .IsUnique()
+                        .HasDatabaseName("RoleNameIndex");
+
+                    b.ToTable("roles", "identity");
+                });
+
+            modelBuilder.Entity("WebportSystem.Identity.Domain.Roles.UserRoleM", b =>
+                {
+                    b.Property<string>("UserId")
+                        .HasColumnType("text")
+                        .HasColumnName("user_id");
+
+                    b.Property<string>("RoleId")
+                        .HasColumnType("text")
+                        .HasColumnName("role_id");
+
+                    b.HasKey("UserId", "RoleId")
+                        .HasName("pk_asp_net_user_roles");
+
+                    b.HasIndex("RoleId")
+                        .HasDatabaseName("ix_asp_net_user_roles_role_id");
+
+                    b.ToTable("AspNetUserRoles", "identity");
+                });
+
+            modelBuilder.Entity("WebportSystem.Identity.Domain.Tenants.TenantM", b =>
                 {
                     b.Property<int>("TenantId")
                         .ValueGeneratedOnAdd()
@@ -204,6 +204,10 @@ namespace WebportSystem.Identity.Infrastructure.Database.Migrations
                     b.Property<DateTime>("CreatedDt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_dt");
+
+                    b.Property<string>("DatabaseConnectionString")
+                        .HasColumnType("text")
+                        .HasColumnName("database_connection_string");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("boolean")
@@ -224,16 +228,21 @@ namespace WebportSystem.Identity.Infrastructure.Database.Migrations
 
                     b.Property<string>("TenantName")
                         .IsRequired()
-                        .HasColumnType("text")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
                         .HasColumnName("tenant_name");
 
                     b.HasKey("TenantId")
                         .HasName("pk_tenants");
 
+                    b.HasIndex("TenantName")
+                        .IsUnique()
+                        .HasDatabaseName("ix_tenants_tenant_name");
+
                     b.ToTable("tenants", "identity");
                 });
 
-            modelBuilder.Entity("WebportSystem.Identity.Domain.Users.User", b =>
+            modelBuilder.Entity("WebportSystem.Identity.Domain.Users.UserM", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("text")
@@ -314,22 +323,15 @@ namespace WebportSystem.Identity.Infrastructure.Database.Migrations
                         .IsUnique()
                         .HasDatabaseName("UserNameIndex");
 
-                    b.ToTable("AspNetUsers", "identity");
-                });
+                    b.HasIndex("TenantId")
+                        .HasDatabaseName("ix_asp_net_users_tenant_id");
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
-                {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
-                        .WithMany()
-                        .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_asp_net_role_claims_asp_net_roles_role_id");
+                    b.ToTable("AspNetUsers", "identity");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("WebportSystem.Identity.Domain.Users.User", null)
+                    b.HasOne("WebportSystem.Identity.Domain.Users.UserM", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -339,7 +341,7 @@ namespace WebportSystem.Identity.Infrastructure.Database.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("WebportSystem.Identity.Domain.Users.User", null)
+                    b.HasOne("WebportSystem.Identity.Domain.Users.UserM", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -347,31 +349,76 @@ namespace WebportSystem.Identity.Infrastructure.Database.Migrations
                         .HasConstraintName("fk_asp_net_user_logins_asp_net_users_user_id");
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
-                {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
-                        .WithMany()
-                        .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_asp_net_user_roles_asp_net_roles_role_id");
-
-                    b.HasOne("WebportSystem.Identity.Domain.Users.User", null)
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_asp_net_user_roles_asp_net_users_user_id");
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.HasOne("WebportSystem.Identity.Domain.Users.User", null)
+                    b.HasOne("WebportSystem.Identity.Domain.Users.UserM", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("fk_asp_net_user_tokens_asp_net_users_user_id");
+                });
+
+            modelBuilder.Entity("WebportSystem.Identity.Domain.Roles.RoleClaimM", b =>
+                {
+                    b.HasOne("WebportSystem.Identity.Domain.Roles.RoleM", "Role")
+                        .WithMany("RoleClaims")
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_role_claims_asp_net_roles_role_id");
+
+                    b.Navigation("Role");
+                });
+
+            modelBuilder.Entity("WebportSystem.Identity.Domain.Roles.UserRoleM", b =>
+                {
+                    b.HasOne("WebportSystem.Identity.Domain.Roles.RoleM", "Role")
+                        .WithMany("UserRoles")
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_asp_net_user_roles_asp_net_roles_role_id");
+
+                    b.HasOne("WebportSystem.Identity.Domain.Users.UserM", "User")
+                        .WithMany("UserRoles")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_asp_net_user_roles_asp_net_users_user_id");
+
+                    b.Navigation("Role");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("WebportSystem.Identity.Domain.Users.UserM", b =>
+                {
+                    b.HasOne("WebportSystem.Identity.Domain.Tenants.TenantM", "Tenant")
+                        .WithMany("Users")
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_asp_net_users_tenants_tenant_id");
+
+                    b.Navigation("Tenant");
+                });
+
+            modelBuilder.Entity("WebportSystem.Identity.Domain.Roles.RoleM", b =>
+                {
+                    b.Navigation("RoleClaims");
+
+                    b.Navigation("UserRoles");
+                });
+
+            modelBuilder.Entity("WebportSystem.Identity.Domain.Tenants.TenantM", b =>
+                {
+                    b.Navigation("Users");
+                });
+
+            modelBuilder.Entity("WebportSystem.Identity.Domain.Users.UserM", b =>
+                {
+                    b.Navigation("UserRoles");
                 });
 #pragma warning restore 612, 618
         }

@@ -16,7 +16,7 @@ namespace WebportSystem.Identity.Infrastructure.Database.Migrations
                 name: "identity");
 
             migrationBuilder.CreateTable(
-                name: "AspNetRoles",
+                name: "roles",
                 schema: "identity",
                 columns: table => new
                 {
@@ -27,7 +27,51 @@ namespace WebportSystem.Identity.Infrastructure.Database.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("pk_asp_net_roles", x => x.id);
+                    table.PrimaryKey("pk_roles", x => x.id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "tenants",
+                schema: "identity",
+                columns: table => new
+                {
+                    tenant_id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    tenant_name = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
+                    licence_expiry_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    database_connection_string = table.Column<string>(type: "text", nullable: true),
+                    is_active = table.Column<bool>(type: "boolean", nullable: false),
+                    last_mod_by = table.Column<string>(type: "text", nullable: false),
+                    last_mod_dt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    created_by = table.Column<string>(type: "text", nullable: false),
+                    created_dt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_tenants", x => x.tenant_id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "role_claims",
+                schema: "identity",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    role_id = table.Column<string>(type: "text", nullable: false),
+                    claim_type = table.Column<string>(type: "text", nullable: true),
+                    claim_value = table.Column<string>(type: "text", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_role_claims", x => x.id);
+                    table.ForeignKey(
+                        name: "fk_role_claims_asp_net_roles_role_id",
+                        column: x => x.role_id,
+                        principalSchema: "identity",
+                        principalTable: "roles",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -55,49 +99,13 @@ namespace WebportSystem.Identity.Infrastructure.Database.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("pk_asp_net_users", x => x.id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "tenants",
-                schema: "identity",
-                columns: table => new
-                {
-                    tenant_id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    tenant_name = table.Column<string>(type: "text", nullable: false),
-                    licence_expiry_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    is_active = table.Column<bool>(type: "boolean", nullable: false),
-                    last_mod_by = table.Column<string>(type: "text", nullable: false),
-                    last_mod_dt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    created_by = table.Column<string>(type: "text", nullable: false),
-                    created_dt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("pk_tenants", x => x.tenant_id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "AspNetRoleClaims",
-                schema: "identity",
-                columns: table => new
-                {
-                    id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    role_id = table.Column<string>(type: "text", nullable: false),
-                    claim_type = table.Column<string>(type: "text", nullable: true),
-                    claim_value = table.Column<string>(type: "text", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("pk_asp_net_role_claims", x => x.id);
                     table.ForeignKey(
-                        name: "fk_asp_net_role_claims_asp_net_roles_role_id",
-                        column: x => x.role_id,
+                        name: "fk_asp_net_users_tenants_tenant_id",
+                        column: x => x.tenant_id,
                         principalSchema: "identity",
-                        principalTable: "AspNetRoles",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalTable: "tenants",
+                        principalColumn: "tenant_id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -160,7 +168,7 @@ namespace WebportSystem.Identity.Infrastructure.Database.Migrations
                         name: "fk_asp_net_user_roles_asp_net_roles_role_id",
                         column: x => x.role_id,
                         principalSchema: "identity",
-                        principalTable: "AspNetRoles",
+                        principalTable: "roles",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
@@ -195,19 +203,6 @@ namespace WebportSystem.Identity.Infrastructure.Database.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "ix_asp_net_role_claims_role_id",
-                schema: "identity",
-                table: "AspNetRoleClaims",
-                column: "role_id");
-
-            migrationBuilder.CreateIndex(
-                name: "RoleNameIndex",
-                schema: "identity",
-                table: "AspNetRoles",
-                column: "normalized_name",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
                 name: "ix_asp_net_user_claims_user_id",
                 schema: "identity",
                 table: "AspNetUserClaims",
@@ -232,20 +227,42 @@ namespace WebportSystem.Identity.Infrastructure.Database.Migrations
                 column: "normalized_email");
 
             migrationBuilder.CreateIndex(
+                name: "ix_asp_net_users_tenant_id",
+                schema: "identity",
+                table: "AspNetUsers",
+                column: "tenant_id");
+
+            migrationBuilder.CreateIndex(
                 name: "UserNameIndex",
                 schema: "identity",
                 table: "AspNetUsers",
                 column: "normalized_user_name",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "ix_role_claims_role_id",
+                schema: "identity",
+                table: "role_claims",
+                column: "role_id");
+
+            migrationBuilder.CreateIndex(
+                name: "RoleNameIndex",
+                schema: "identity",
+                table: "roles",
+                column: "normalized_name",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "ix_tenants_tenant_name",
+                schema: "identity",
+                table: "tenants",
+                column: "tenant_name",
                 unique: true);
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
-                name: "AspNetRoleClaims",
-                schema: "identity");
-
             migrationBuilder.DropTable(
                 name: "AspNetUserClaims",
                 schema: "identity");
@@ -263,15 +280,19 @@ namespace WebportSystem.Identity.Infrastructure.Database.Migrations
                 schema: "identity");
 
             migrationBuilder.DropTable(
-                name: "tenants",
-                schema: "identity");
-
-            migrationBuilder.DropTable(
-                name: "AspNetRoles",
+                name: "role_claims",
                 schema: "identity");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers",
+                schema: "identity");
+
+            migrationBuilder.DropTable(
+                name: "roles",
+                schema: "identity");
+
+            migrationBuilder.DropTable(
+                name: "tenants",
                 schema: "identity");
         }
     }

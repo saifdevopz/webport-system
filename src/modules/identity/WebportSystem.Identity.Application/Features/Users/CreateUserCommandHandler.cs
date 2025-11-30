@@ -5,14 +5,14 @@ using WebportSystem.Identity.Domain.Users;
 
 namespace WebportSystem.Identity.Application.Features.Users;
 
-public class CreateUserCommandHandler(UserManager<User> userManager)
+public class CreateUserCommandHandler(UserManager<UserM> userManager)
     : ICommandHandler<CreateUserCommand>
 {
     public async Task<Result> Handle(
         CreateUserCommand command,
         CancellationToken cancellationToken)
     {
-        var model = new User
+        var model = new UserM
         {
             Id = Guid.NewGuid().ToString(),
             TenantId = command.TenantId,

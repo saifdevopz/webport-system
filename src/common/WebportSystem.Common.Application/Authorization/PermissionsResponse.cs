@@ -1,3 +1,3 @@
 ﻿namespace WebportSystem.Common.Application.Authorization;
 
-public sealed record PermissionsResponse(int UserId, HashSet<string> Permissions);
+public sealed record PermissionsResponse(string UserId, HashSet<string> Permissions);

@@ -3,9 +3,10 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using WebportSystem.Identity.Domain.Tenants;
 
 namespace WebportSystem.Identity.Infrastructure.Database.Configurations;
-internal sealed class TenantConfig : IEntityTypeConfiguration<Tenant>
+
+internal sealed class TenantConfig : IEntityTypeConfiguration<TenantM>
 {
-    public void Configure(EntityTypeBuilder<Tenant> builder)
+    public void Configure(EntityTypeBuilder<TenantM> builder)
     {
         builder
             .HasKey(_ => _.TenantId);

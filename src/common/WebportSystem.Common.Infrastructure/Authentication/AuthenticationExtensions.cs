@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -10,6 +11,7 @@ public static class AuthenticationExtensions
 {
     public static IServiceCollection AddAuthenticationInternal(this IServiceCollection services)
     {
+
         services.AddHttpContextAccessor();
 
         services.AddOptions<JwtOptions>()
@@ -30,23 +32,23 @@ public static class AuthenticationExtensions
 
                 options.RequireHttpsMetadata = false;
                 options.SaveToken = true;
-#pragma warning disable CA5404 // Do not disable token validation checks
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
+                    ValidateIssuerSigningKey = true,
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOptions.Key)),
+
+                    ValidateIssuer = false,
                     ValidIssuer = jwtOptions.Issuer,
+
+                    ValidateAudience = false,
                     ValidAudience = jwtOptions.Audience,
 
-                    ValidateIssuerSigningKey = true,
-                    ValidateIssuer = false,
-                    ValidateAudience = false,
                     ValidateLifetime = true,
-
-                    RequireExpirationTime = true,
-                    ClockSkew = TimeSpan.Zero,
+                    ClockSkew = TimeSpan.Zero
                 };
-#pragma warning restore CA5404 // Do not disable token validation checks
             });
+
+        services.AddAuthorization();
 
         return services;
     }
