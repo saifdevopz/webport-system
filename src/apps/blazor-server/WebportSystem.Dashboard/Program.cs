@@ -24,14 +24,7 @@ builder.Services.AddHttpClient<BaseHttpClient>((sp, client) =>
     client.BaseAddress = new Uri(configuration["BaseUrls:Production"]!);
 });
 
-builder.Services.AddHttpClient<TenantHttpClient>((sp, client) =>
-{
-    IConfiguration configuration = sp.GetRequiredService<IConfiguration>();
-    client.BaseAddress = new Uri(configuration["Tenant:BaseUrl"]!);
-});
-
 builder.Services.AddScoped<BaseHttpClient>();
-builder.Services.AddScoped<TenantHttpClient>();
 
 // Services
 builder.Services.AddScoped<DataService>();

@@ -3,52 +3,87 @@ using WebportSystem.Common.Domain.Errors;
 using WebportSystem.Common.Domain.Results;
 using WebportSystem.Dashboard.Common.HttpClients;
 
-
 namespace WebportSystem.Dashboard.Common.Services.Implementations;
 
-public class DataService(BaseHttpClient BaseHttpClient, TenantHttpClient TenantHttpClient)
+public class DataService(BaseHttpClient BaseHttpClient)
 {
     private readonly BaseHttpClient _baseHttpClient = BaseHttpClient;
-    private readonly TenantHttpClient _tenantHttpClient = TenantHttpClient;
 
-    private HttpClient GetClient(bool useBaseClient)
-    {
-        return useBaseClient
-            ? _baseHttpClient.GetPrivateHttpClient()
-            : _tenantHttpClient.GetPrivateHttpClient();
-    }
-
-    public async Task<Result<T>> GetAllAsync<T>(string source, bool useBaseClient = false)
+    public async Task<Result<ListWrapper<T>>> GetAllAsync<T>(string source)
     {
         try
         {
             HttpClient client = _baseHttpClient.GetPrivateHttpClient();
-            var httpResponse = await client.GetAsync(new Uri(source, UriKind.RelativeOrAbsolute));
-
-            if (httpResponse == null)
-                return Result.Failure<T>(CustomError.Conflict("Connection Issue", "No response from server."));
+            HttpResponseMessage httpResponse = await client.GetAsync(new Uri(source, UriKind.RelativeOrAbsolute)).ConfigureAwait(false);
 
             if (!httpResponse.IsSuccessStatusCode)
             {
-                var problem = await httpResponse.Content.ReadFromJsonAsync<ProblemDetails>();
+                var problem = await httpResponse.Content
+                    .ReadFromJsonAsync<ProblemDetails>()
+                    .ConfigureAwait(false);
 
                 if (problem is not null)
-                    return Result.Failure<T>(CustomError.Failure(problem.Title!, problem.Detail!));
+                    return Result.Failure<ListWrapper<T>>(CustomError.Failure(problem.Title!, problem.Detail!));
 
-                return Result.Failure<T>(CustomError.Conflict("HTTP", $"Unexpected status: {httpResponse.StatusCode}"));
+                return Result.Failure<ListWrapper<T>>(CustomError.Conflict("HTTP", $"Unexpected status: {httpResponse.StatusCode}"));
 
             }
             else
             {
-                var result = await httpResponse.Content.ReadFromJsonAsync<Result<T>>();
+                var result = await httpResponse.Content.ReadFromJsonAsync<Result<ListWrapper<T>>>().ConfigureAwait(false);
 
                 if (result is null)
-                    return Result.Failure<T>(CustomError.Conflict("Deserialization", "Invalid response format."));
+                {
+                    return Result.Failure<ListWrapper<T>>(CustomError.Conflict("Deserialization", "Invalid response format."));
+                }
 
                 return result.IsSuccess
-                    ? Result.Success(result.Data)
-                    : Result.Failure<T>(CustomError.Failure("API Error", "Request failed."));
+                    ? Result.Success(result.Data!)
+                    : Result.Failure<ListWrapper<T>>(CustomError.Failure("API Error", "Request failed."));
             }
+        }
+        catch (HttpRequestException ex)
+        {
+            return Result.Failure<ListWrapper<T>>(CustomError.Conflict("Exception Occured", $"{ex.Message}"));
+        }
+    }
+
+    public async Task<Result<T>> GetByIdAsync<T>(string basePath, string id)
+    {
+        try
+        {
+            HttpClient client = _baseHttpClient.GetPrivateHttpClient();
+            HttpResponseMessage httpResponse = await client.GetAsync($"{basePath}/{id}").ConfigureAwait(false);
+
+            if (!httpResponse.IsSuccessStatusCode)
+            {
+                var problemDetails = await httpResponse.Content
+                    .ReadFromJsonAsync<ProblemDetails>()
+                    .ConfigureAwait(false);
+
+                if (problemDetails is not null)
+                    return Result.Failure<T>(CustomError.Failure(problemDetails.Title!, problemDetails.Detail!));
+
+                return Result.Failure<T>(
+                    CustomError.Conflict("HTTP", $"Unexpected status: {httpResponse.StatusCode}")
+                );
+            }
+            else
+            {
+                var result = await httpResponse.Content
+                    .ReadFromJsonAsync<Result<Wrapper<T>>>()
+                    .ConfigureAwait(false);
+
+                if (result is null)
+                {
+                    return Result.Failure<T>(CustomError.Conflict("Deserialization", "Invalid response format."));
+                }
+
+                return result.IsSuccess
+                    ? Result.Success(result.Data.Record)
+                    : Result.Failure<T>(CustomError.Failure("Error", "Request failed."));
+            }
+
         }
         catch (HttpRequestException ex)
         {
@@ -56,59 +91,41 @@ public class DataService(BaseHttpClient BaseHttpClient, TenantHttpClient TenantH
         }
     }
 
-    public async Task<Result<T>> GetByIdAsync<T>(string basePath, string id, bool useBaseClient = false)
+    public async Task<Result> PostAsync<T>(string source, T obj)
     {
         try
         {
             HttpClient client = _baseHttpClient.GetPrivateHttpClient();
-            var response = await client.GetFromJsonAsync<Result<T>>($"{basePath}/{id}");
+            HttpResponseMessage httpResponse = await client.PostAsJsonAsync(source, obj).ConfigureAwait(false);
 
-            if (response == null)
-                return Result.Failure<T>(CustomError.Conflict(",", "No response from server."));
+            if (!httpResponse.IsSuccessStatusCode)
+            {
+                var problemDetails = await httpResponse.Content
+                    .ReadFromJsonAsync<ProblemDetails>()
+                    .ConfigureAwait(false);
 
-            if (!response.IsSuccess)
-                return Result.Failure<T>(CustomError.Conflict(",", "No response from server."));
+                if (problemDetails is not null)
+                    return Result.Failure<T>(CustomError.Failure(problemDetails.Title!, problemDetails.Detail!));
 
-            return Result.Success(response.Data);
+                return Result.Failure<T>(CustomError.Conflict("HTTP", $"Unexpected status: {httpResponse.StatusCode}"));
+            }
+
+            var result = await httpResponse.Content
+                .ReadFromJsonAsync<Result>()
+                .ConfigureAwait(false);
+
+            if (result == null)
+            {
+                return Result.Failure(CustomError.Conflict("Deserialization", "Response could not be parsed."));
+            }
+
+            return result.IsSuccess
+                ? Result.Success()
+                : Result.Failure(result.Error!);
         }
         catch (HttpRequestException ex)
         {
-            return Result.Failure<T>(CustomError.Conflict(",", $"{ex.Message}"));
-        }
-    }
-
-    public async Task<Result> PostAsync<T>(string source, T obj, bool useBaseClient = true)
-    {
-        try
-        {
-            HttpClient client = _baseHttpClient.GetPrivateHttpClient();
-            var response = await client.PostAsJsonAsync(source, obj);
-
-            if (response == null)
-                return Result.Failure<T>(CustomError.Conflict("NETWORK", "No response from server."));
-
-            if (response.IsSuccessStatusCode)
-            {
-                var result = await response.Content.ReadFromJsonAsync<Result>();
-
-                if (result == null || result.IsFailure)
-                    return Result.Failure<T>(CustomError.Conflict("RESPONSE", "Unexpected empty or failed result."));
-
-                return Result.Success(result);
-            }
-
-            var problem = await response.Content.ReadFromJsonAsync<ProblemDetails>();
-
-            if (problem != null)
-            {
-                return Result.Failure<T>(CustomError.Failure(problem.Title!, problem.Detail!));
-            }
-
-            return Result.Failure<T>(CustomError.Conflict("HTTP", $"Unexpected error: {response.StatusCode}"));
-        }
-        catch (HttpRequestException ex)
-        {
-            return Result.Failure<T>(CustomError.Conflict(",", $"{ex.Message}"));
+            return Result.Failure(CustomError.Conflict("Exception Occurred", ex.Message));
         }
     }
 
@@ -117,45 +134,81 @@ public class DataService(BaseHttpClient BaseHttpClient, TenantHttpClient TenantH
         try
         {
             HttpClient client = _baseHttpClient.GetPrivateHttpClient();
-            var response = await client.PutAsJsonAsync(source, obj);
+            HttpResponseMessage httpResponse = await client.PutAsJsonAsync(source, obj).ConfigureAwait(false);
 
-            var result = response.Content.ReadFromJsonAsync<Result>();
+            if (!httpResponse.IsSuccessStatusCode)
+            {
+                var problem = await httpResponse.Content
+                    .ReadFromJsonAsync<ProblemDetails>()
+                    .ConfigureAwait(false);
 
-            if (response == null)
-                return Result.Failure<T>(CustomError.Conflict(",", "No response from server."));
+                if (problem is not null)
+                {
+                    return Result.Failure(CustomError.Failure(problem.Title!, problem.Detail!));
+                }
 
-            if (result.IsFaulted)
-                return Result.Failure<T>(CustomError.Conflict(",", "No response from server."));
+                return Result.Failure(CustomError.Conflict("HTTP", $"Unexpected error: {httpResponse.StatusCode}"));
+            }
 
-            return response.IsSuccessStatusCode
+            var result = await httpResponse.Content
+                .ReadFromJsonAsync<Result>()
+                .ConfigureAwait(false);
+
+            if (result is null)
+            {
+                return Result.Failure(CustomError.Conflict("Deserialization", "Invalid response format."));
+            }
+
+            return result.IsSuccess
                 ? Result.Success()
-                : Result.Failure(CustomError.Conflict(",", "No response from server."));
+                : Result.Failure(result.Error!);
         }
         catch (HttpRequestException ex)
         {
-            return Result.Failure<T>(CustomError.Conflict(",", $"{ex.Message}"));
+            return Result.Failure(CustomError.Conflict("Exception Occurred", ex.Message));
         }
     }
-
 
     public async Task<Result> DeleteByIdAsync(string source, int id)
     {
         try
         {
-            var deleteUri = new Uri($"{source}/{id}", UriKind.Relative);
+            var deleteUri = new Uri($"{source}/{id}", UriKind.RelativeOrAbsolute);
 
-            HttpClient client = GetClient(true);
-            var response = await client.DeleteAsync(deleteUri);
+            HttpClient client = _baseHttpClient.GetPrivateHttpClient();
+            HttpResponseMessage httpResponse = await client.DeleteAsync(deleteUri).ConfigureAwait(false);
 
-            if (response == null)
-                return Result.Failure(CustomError.Conflict(",", "No response from server."));
+            if (!httpResponse.IsSuccessStatusCode)
+            {
+                var problem = await httpResponse.Content
+                    .ReadFromJsonAsync<ProblemDetails>()
+                    .ConfigureAwait(false);
 
-            return response.IsSuccessStatusCode ? Result.Success()
-                : Result.Failure(CustomError.Conflict(",", "No response from server."));
+                if (problem != null)
+                {
+                    return Result.Failure(CustomError.Failure(problem.Title!, problem.Detail!));
+                }
+
+                return Result.Failure(CustomError.Conflict("HTTP", $"Unexpected status: {httpResponse.StatusCode}"));
+            }
+
+            var result = await httpResponse.Content
+                .ReadFromJsonAsync<Result>()
+                .ConfigureAwait(false);
+
+            if (result is null)
+            {
+                return Result.Failure(CustomError.Conflict("Deserialization", "Invalid response format."));
+            }
+
+            return result.IsSuccess
+                ? Result.Success()
+                : Result.Failure(result.Error!);
         }
         catch (HttpRequestException ex)
         {
-            return Result.Failure(CustomError.Conflict(",", $"{ex.Message}"));
+            return Result.Failure(CustomError.Conflict("Exception Occurred", ex.Message));
         }
     }
+
 }

@@ -1,0 +1,73 @@
+﻿<EditForm Model="@model" OnValidSubmit="OnValidSubmit">
+    <DataAnnotationsValidator />
+
+        <MudCardContent>
+            <MudTextField @bind-Value="model.ItemCode" Variant="Variant.Outlined" For="@(() => model.ItemCode)" Label="Code" ReadOnly="ItemId is not null" />
+            <MudTextField @bind-Value="model.ItemDesc" Variant="Variant.Outlined" For="@(() => model.ItemDesc)" Label="Description" />
+            <MudCheckBox @bind-Value="Basic_CheckBox1">Is Ecomm</MudCheckBox>
+        </MudCardContent>
+
+        <MudSelect T="CategoryDto">
+            @if (Categories == null)
+            {
+                <MudSelectItem T="CategoryDto" Value="null">No Categories Found</MudSelectItem>
+            }
+            else
+            {
+                <MudSelectItem T="CategoryDto" Value="null">Select Category</MudSelectItem>
+                @foreach (var item in Categories)
+                {
+                    <MudSelectItem T="CategoryDto" Value="item">@item.CategoryDesc</MudSelectItem>
+                }
+            }
+        </MudSelect>
+
+        <MudCardActions>
+            <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Outlined" Color="Color.Success">Save</MudButton>
+            <MudButton OnClick="Cancel" Variant="Variant.Outlined" Color="Color.Error">Cancel</MudButton>
+        </MudCardActions>
+
+</EditForm>
+
+@code {
+    [Parameter] public required string ItemId { get; set; }
+    private readonly ItemDto model = new();
+
+
+    protected IEnumerable<CategoryDto>? Categories { get; set; }
+
+    public bool Basic_CheckBox1 { get; set; } = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+
+            Categories = await GetCategories();
+
+        
+    }
+
+    private async Task<IEnumerable<CategoryDto>> GetCategories()
+    {
+        var response = await _DataService.GetByIdAsync<ListWrapper<CategoryDto>>("category", ItemId!);
+        return response.Data!.Records;
+    }
+
+    private async Task OnValidSubmit(EditContext context)
+    {
+        if (string.IsNullOrWhiteSpace(ItemId))
+        {
+            await _DataService.PostAsync("category", model);
+        }
+        else
+        {
+            await _DataService.PutAsync($"category", model);
+        }
+
+        _NavigationManager.NavigateTo("/category/index");
+    }
+
+    void Cancel()
+    {
+        _NavigationManager.NavigateTo("/category/index");
+    }
+}

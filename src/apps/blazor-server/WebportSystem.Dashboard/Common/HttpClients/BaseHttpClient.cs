@@ -9,8 +9,14 @@ public sealed class BaseHttpClient(IHttpClientFactory httpClientFactory, IHttpCo
     {
         HttpClient client = httpClientFactory.CreateClient(nameof(BaseHttpClient));
 
-        string? stringToken = httpContextAccessor?.HttpContext?.Request.Cookies[BlazorConstants.AuthCookieName];
-        if (string.IsNullOrEmpty(stringToken))
+        var httpContext = httpContextAccessor.HttpContext;
+        if (httpContext == null)
+        {
+            return client;
+        }
+
+        if (!httpContext.Request.Cookies.TryGetValue(BlazorConstants.AuthCookieName, out var stringToken)
+                || string.IsNullOrEmpty(stringToken))
         {
             return client;
         }
@@ -22,7 +28,12 @@ public sealed class BaseHttpClient(IHttpClientFactory httpClientFactory, IHttpCo
     public HttpClient GetPublicHttpClient()
     {
         HttpClient client = httpClientFactory.CreateClient(nameof(BaseHttpClient));
-        client.DefaultRequestHeaders.Remove(HeaderKey);
+
+        if (client.DefaultRequestHeaders.Contains(HeaderKey))
+        {
+            client.DefaultRequestHeaders.Remove(HeaderKey);
+        }
+
         return client;
     }
 }

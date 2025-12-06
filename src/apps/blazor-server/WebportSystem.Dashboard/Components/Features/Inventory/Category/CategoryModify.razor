@@ -1,5 +1,4 @@
-﻿@page "/category/modify"
-@page "/category/modify/{Id}"
+﻿@page "/category/modify/{Id?}"
 @attribute [Authorize(Roles = "User")]
 
 <EditForm Model="@model" OnValidSubmit="OnValidSubmit">

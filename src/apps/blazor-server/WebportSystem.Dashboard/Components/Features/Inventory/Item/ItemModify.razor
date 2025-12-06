@@ -1,0 +1,43 @@
+﻿@page "/item/modify"
+@page "/item/modify/{ItemId}"
+@attribute [Authorize(Roles = "User")]
+
+<MudCardHeader>
+    <CardHeaderContent>
+        @if (ItemId == null)
+        {
+            <MudText Typo="Typo.h6">Add Item</MudText>
+        }
+        else
+        {
+            <MudText Typo="Typo.h6">Update Item</MudText>
+        }
+    </CardHeaderContent>
+</MudCardHeader>
+
+<MudTabs Elevation="2" Rounded="true" ApplyEffectsToContainer="true" PanelClass="pa-6">
+    <MudTabPanel Text="Description">
+      
+    </MudTabPanel>
+    <MudTabPanel Text="Quantity">
+        <MudText>Content Two</MudText>
+
+    </MudTabPanel>
+@*     <MudTabPanel Text="Attributes">
+        <MudText>Content Three</MudText>
+        <ItemDesc ItemId="@ItemId" />
+    </MudTabPanel>
+    <MudTabPanel Text="Images" Disabled="true">
+        <MudText>Content Disabled</MudText>
+        <ItemDesc ItemId="@ItemId" /> *@
+@*     </MudTabPanel> *@
+</MudTabs>
+
+
+
+@code {
+    [Parameter] public string? ItemId { get; set; } = "3";
+
+    [Parameter] public string? Id { get; set; }
+
+}

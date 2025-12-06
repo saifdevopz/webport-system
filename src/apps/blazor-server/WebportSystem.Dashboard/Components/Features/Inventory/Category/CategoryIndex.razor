@@ -50,7 +50,7 @@
 
     private async Task GetCategories()
     {
-        var response = await _DataService.GetAllAsync<ListWrapper<CategoryDto>>("category");
+        var response = await _DataService.GetAllAsync<CategoryDto>("category");
 
         if (response.IsSuccess && response.Data.Records != null)
         {

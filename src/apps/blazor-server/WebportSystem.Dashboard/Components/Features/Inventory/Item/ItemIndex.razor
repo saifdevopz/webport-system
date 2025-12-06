@@ -1,0 +1,57 @@
+﻿@page "/item/index"
+@attribute [Authorize(Roles = "User")]
+
+<MudText Typo="Typo.h6">Item Index</MudText>
+
+
+
+<MudDataGrid Items="@Items.Take(50)" Filterable="true" ColumnResizeMode="ResizeMode.Column" Dense="true" Hover="true" Striped="true" RowStyle="height: 5px;">
+    <ToolBarContent>
+        <MudIconButton Href="@($"item/modify")" Icon="@Icons.Material.Filled.Add" aria-label="delete" />
+        <MudSpacer />
+        <MudTextField Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+    </ToolBarContent>
+    <Columns>
+        <PropertyColumn Property="_ => _.ItemId" Title="Id" />
+        <PropertyColumn Property="_ => _.ItemCode" Title="Code" />
+        <PropertyColumn Property="_ => _.ItemDesc" Title="Description" />
+        <TemplateColumn CellClass="">
+            <CellTemplate>
+                <MudStack Row>
+                    <MudIconButton Href="@($"item/modify/{context.Item.ItemId}")" Icon="@Icons.Material.Filled.Edit" Color="Color.Success" />
+                    <MudIconButton OnClick="@(() => Delete(context.Item.ItemId))" Icon="@Icons.Material.Filled.Delete" Color="Color.Error" />
+                </MudStack>
+            </CellTemplate>
+        </TemplateColumn>
+    </Columns>
+    <PagerContent>
+        <MudDataGridPager T="ItemDto" />
+    </PagerContent>
+</MudDataGrid>
+
+
+@code {
+    private List<ItemDto> Items = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await GetItems();
+    }
+
+    private async Task GetItems()
+    {
+        var response = await _DataService.GetAllAsync<ItemDto>("item");
+
+        if (response.IsSuccess && response.Data.Records != null)
+        {
+            Items = response.Data.Records.ToList();
+        }
+    }
+
+    private async Task Delete(int id)
+    {
+        await _DataService.DeleteByIdAsync("role", id);
+        await GetItems();        
+    }
+}
+
