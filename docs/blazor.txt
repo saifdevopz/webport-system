@@ -1,3 +1,7 @@
 My Blazor Changes
 
 - Css Files Added
+
+TASKS
+
+1. Complete Support CSS In Login Page

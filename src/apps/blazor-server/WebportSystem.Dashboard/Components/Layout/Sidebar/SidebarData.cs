@@ -9,7 +9,6 @@ internal static class SidebarData
     }
 
     // Menu Groups
-
     public static List<MenuGroup> GetAdminMenuGroups() =>
     [
         new MenuGroup
@@ -33,7 +32,7 @@ internal static class SidebarData
     [
         new MenuGroup
         {
-            Title = "Inventory",
+            Title = "General",
             Items = GetInventoryItems()
         },
     ];
@@ -42,16 +41,10 @@ internal static class SidebarData
 
     public static List<MenuItem> GetInventoryItems() =>
     [
-        new MenuItem(title: "Category", icon: "ri-archive-2-fill", suffix: new("Hot", "primary"), childMenuItems:
+        new MenuItem(title: "Inventory", icon: "ri-archive-2-fill", suffix: new("Hot", "primary"), childMenuItems:
         [
             new MenuItem(href:"/category/index", title:"Categories"),
-            new MenuItem(href:"/role/index", title:"Category Enquiries"),
-        ]),
-
-        new MenuItem(title: "Item", icon: "ri-archive-2-fill", suffix: new("Hot", "primary"), childMenuItems:
-        [
             new MenuItem(href:"/item/index", title:"Items"),
-            new MenuItem(href:"/role/index", title:"Item Enquiries"),
         ]),
     ];
 

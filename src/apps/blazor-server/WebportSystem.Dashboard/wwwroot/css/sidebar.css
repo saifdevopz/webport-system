@@ -50,8 +50,13 @@
 
 /* ============= SIDEBAR NAVBAR =============== */
 
+.menu{
+    padding: 0;
+}
+
 .menu-li {
     line-height: 40px;
+    list-style: none;
 }
 
 .menu-a {
@@ -86,6 +91,7 @@
     max-height: 0;
     overflow: hidden;
     transition: max-height 0.3s ease-in-out;
+    padding: 0;
 }
 
     .sub-menu.show {

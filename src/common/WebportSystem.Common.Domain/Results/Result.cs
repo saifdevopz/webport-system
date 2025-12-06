@@ -31,10 +31,7 @@ public class Result<T>(T? data, bool isSuccess, CustomError error) : Result(isSu
     public T Data => IsSuccess
         ? _data!
         : throw new InvalidOperationException("Cannot access the value of a failed result.");
-
-    public static Result<T> ValidationFailure(CustomError error)
-    {
-        return new(default, false, error);
-    }
 }
 
+public record ListWrapper<T>(IEnumerable<T> Records);
+public record Wrapper<T>(T Record);

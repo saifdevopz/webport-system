@@ -1,8 +1,16 @@
--------------------------------------------------------------------------------------------------------
 
+-------------------------------------------------------------------------------------------------------
 
 IdentityDBContext Migration Commands
 
 Add-Migration -Name InitialCreate -Context UsersDbContext -OutputDir Database/Migrations -Project WebportSystem.Identity.Infrastructure -StartupProject WebportSystem.Api
 
-Update-Database -Context UsersDbContext -Project WebportSystem.Api -StartupProject WebportSystem.Api --configuration
+Update-Database -Context UsersDbContext -Project WebportSystem.Api -StartupProject WebportSystem.Api 
+
+-------------------------------------------------------------------------------------------------------
+
+InventoryDbContext Migration Commands
+
+Add-Migration -Name InitialCreate -Context InventoryDbContext -OutputDir Database/Migrations -Project WebportSystem.Inventory.Infrastructure -StartupProject WebportSystem.Api
+
+Update-Database -Context InventoryDbContext -Project WebportSystem.Api -StartupProject WebportSystem.Api

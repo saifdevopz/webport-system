@@ -31,6 +31,12 @@
     <Project Path="src/modules/identity/WebportSystem.Identity.Infrastructure/WebportSystem.Identity.Infrastructure.csproj" Id="820936fe-2b48-46e7-a549-7dbbeeafa2d7" />
     <Project Path="src/modules/identity/WebportSystem.Identity.Presentation/WebportSystem.Identity.Presentation.csproj" Id="87e28f42-4227-467a-8c11-61b29291fb52" />
   </Folder>
+  <Folder Name="/src/modules/inventory/">
+    <Project Path="src/modules/inventory/WebportSystem.Inventory.Application/WebportSystem.Inventory.Application.csproj" Id="339ae9b6-2bab-4567-9f35-ad3ea8703061" />
+    <Project Path="src/modules/inventory/WebportSystem.Inventory.Domain/WebportSystem.Inventory.Domain.csproj" Id="b1a7d769-4c1d-460c-aa68-d8fec436a020" />
+    <Project Path="src/modules/inventory/WebportSystem.Inventory.Infrastructure/WebportSystem.Inventory.Infrastructure.csproj" Id="1e26cecb-8d71-4466-9f33-76dfd7937a20" />
+    <Project Path="src/modules/inventory/WebportSystem.Inventory.Presentation/WebportSystem.Inventory.Presentation.csproj" Id="38a8ce43-2dd5-439d-b7b0-eed690b14964" />
+  </Folder>
   <Project Path="docker-compose.dcproj">
     <Build />
   </Project>

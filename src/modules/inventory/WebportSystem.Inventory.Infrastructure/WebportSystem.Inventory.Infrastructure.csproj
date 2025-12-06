@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\common\WebportSystem.Common.Infrastructure\WebportSystem.Common.Infrastructure.csproj" />
+    <ProjectReference Include="..\WebportSystem.Inventory.Application\WebportSystem.Inventory.Application.csproj" />
+    <ProjectReference Include="..\WebportSystem.Inventory.Presentation\WebportSystem.Inventory.Presentation.csproj" />
+  </ItemGroup>
+
+</Project>

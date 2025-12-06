@@ -6,6 +6,7 @@ using WebportSystem.Common.Application;
 using WebportSystem.Common.Infrastructure;
 using WebportSystem.Common.Presentation.Endpoints;
 using WebportSystem.Identity.Infrastructure;
+using WebportSystem.Inventory.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,8 +20,10 @@ string basePath = $"Database:Providers:{activeProvider}";
 
 // Fetch connection strings dynamically
 string? identityDbString = config[$"{basePath}:IdentityConnection"];
+string? inventoryDbString = config[$"{basePath}:InventoryConnection"];
 
 ArgumentException.ThrowIfNullOrWhiteSpace(identityDbString);
+ArgumentException.ThrowIfNullOrWhiteSpace(inventoryDbString);
 
 // --- MVC & API ---
 builder.Services.AddControllers();
@@ -40,7 +43,8 @@ builder.Services.AddProblemDetails(options => options.CustomizeProblemDetails = 
 // --- Application Modules ---
 Assembly[] moduleApplicationAssemblies =
 [
-    WebportSystem.Identity.Application.AssemblyReference.Assembly
+    WebportSystem.Identity.Application.AssemblyReference.Assembly,
+    WebportSystem.Inventory.Application.AssemblyReference.Assembly
 ];
 
 // --- Common Modules ---
@@ -49,6 +53,7 @@ builder.Services.AddCommonInfrastructure(builder.Configuration);
 
 // --- Infrastructure Modules ---
 builder.Services.AddIdentityModule(builder.Configuration, identityDbString);
+builder.Services.AddInventoryModule(builder.Configuration, inventoryDbString);
 
 // --- CORS ---
 builder.Services.AddCors(options =>
