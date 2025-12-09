@@ -1,0 +1,21 @@
+--- Getting started with Swarm mode ---
+
+
+- Install Docker Engine on Linux machines
+
+
+You can run ifconfig on Linux or macOS to see a list of the available network interfaces
+
+
+
+2. Open protocols and ports between the hosts
+
+
+--- Create a swarm ---
+
+1. Open a terminal and ssh into the machine where you want to run your manager node.
+
+
+2. docker swarm init --advertise-addr <MANAGER-IP>
+
+- The --advertise-addr flag configures the manager node to publish its address as 192.168.99.100. The other nodes in the swarm must be able to access the manager at the IP address.
