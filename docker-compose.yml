@@ -1,6 +1,6 @@
 services:
-  webportsystem.api:
-    image: ${DOCKER_REGISTRY-}webportsystemapi
+  webportsystem.api:    
+    image: ghcr.io/saifdevopz/webportsystem-api:latest
     build:
       context: .
       dockerfile: src/api/WebportSystem.Api/Dockerfile
@@ -8,8 +8,8 @@ services:
       - ASPNETCORE_ENVIRONMENT:Production
       - ASPNETCORE_URLS=http://+:8080  
 
-  webportsystem.dashboard:
-    image: ${DOCKER_REGISTRY-}webportsystemdashboard
+  webportsystem.dashboard:    
+    image: ghcr.io/saifdevopz/webportsystem-dashboard:latest
     build:
       context: .
       dockerfile: src/apps/blazor-server/WebportSystem.Dashboard/Dockerfile
