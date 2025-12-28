@@ -4,9 +4,13 @@ on:
   workflow_dispatch:
 
 jobs:
-  build_images:
+  build_image:
     name: Package Software
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write    
+      
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -14,25 +18,13 @@ jobs:
       - name: Log in to GitHub Container Registry
         run: echo "${{ secrets.GH_PAT }}" | docker login ghcr.io -u $GITHUB_ACTOR --password-stdin
       
-      - name: Build and Push Docker Image using Docker Compose
+      - name: Build and Push Docker Image 
         run: |
-          IMAGE_NAME=ghcr.io/${{ github.repository_owner }}/webportsystem-dashboard
+          IMAGE_NAME=ghcr.io/${{ github.repository_owner }}/webportsystem.dashboard
           TAG=$(echo $GITHUB_SHA | cut -c1-7)
-          docker compose -f docker-compose-production.yml build webportsystem.dashboard
-          docker compose -f docker-compose-production.yml push webportsystem.dashboard
+          
+          docker compose -f docker-compose.yml build webportsystem.dashboard
+          docker tag $IMAGE_NAME:latest $IMAGE_NAME:$TAG
 
-  deploy:
-    name: Trigger Dokploy Deployment
-    runs-on: ubuntu-latest
-    needs: build_images  
-    steps:
-      - name: Trigger Deployment via API
-        run: |
-          curl -X 'POST' \
-          'https://dokploy.webport.co.za/api/compose.redeploy' \
-          -H 'accept: application/json' \
-          -H 'x-api-key: sBWJSGdHDKkfDWdPKDhocaLbRjuhcQTioABDOEkEOmGIRcRixLZRhFxSKzHIIicL' \
-          -H 'Content-Type: application/json' \
-          -d '{           
-                "composeId": "3BoWSpoCx-POULFJHybjv"              
-          }'            
+          docker push $IMAGE_NAME:latest
+          docker push $IMAGE_NAME:$TAG
