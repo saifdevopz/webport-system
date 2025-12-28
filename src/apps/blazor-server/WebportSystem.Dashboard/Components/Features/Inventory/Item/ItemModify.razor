@@ -1,55 +1,118 @@
-﻿@page "/item/modify"
-@page "/item/modify/{ItemId}"
+﻿@page "/item/modify/{Id?}"
 @attribute [Authorize(Roles = "User")]
 
-<MudCardHeader>
-    <CardHeaderContent>
-        @if (Id == null)
-        {
-            <MudText Typo="Typo.h6">Add Item</MudText>
-        }
-        else
-        {
-            <MudText Typo="Typo.h6">Update Item</MudText>
-        }
-    </CardHeaderContent>
-</MudCardHeader>
+<EditForm Model="@model" OnValidSubmit="OnValidSubmit">
+    <DataAnnotationsValidator />
+    <MudCardHeader>
+        <CardHeaderContent>
+            @if (Id == null)
+            {
+                <MudText Typo="Typo.h6">Add Item</MudText>
+            }
+            else
+            {
+                <MudText Typo="Typo.h6">Update Item</MudText>
+            }
+        </CardHeaderContent>
+    </MudCardHeader>
 
-<MudTabs Elevation="2" Rounded="true" ApplyEffectsToContainer="true" PanelClass="pa-6">
-    <MudTabPanel Text="Description">
-      
-    </MudTabPanel>
-    <MudTabPanel Text="Quantity">
-        <MudText>Content Two</MudText>
+    <MudTabs Elevation="2" Rounded="true" ApplyEffectsToContainer="true" PanelClass="pa-6">
+        <MudTabPanel Text="Description">
+            @Categories.Count
 
-    </MudTabPanel>
-@*     <MudTabPanel Text="Attributes">
-        <MudText>Content Three</MudText>
-        <ItemDesc ItemId="@ItemId" />
-    </MudTabPanel>
-    <MudTabPanel Text="Images" Disabled="true">
-        <MudText>Content Disabled</MudText>
-        <ItemDesc ItemId="@ItemId" /> *@
-@*     </MudTabPanel> *@
-</MudTabs>
+            <MudTextField @bind-Value="model.ItemCode"
+                          Variant="Variant.Outlined"
+                          For="@(() => model.ItemCode)"
+                          Label="Item Code" />
+
+            <MudTextField @bind-Value="model.ItemDesc"
+                          Variant="Variant.Outlined"
+                          For="@(() => model.ItemDesc)"
+                          Label="Item Description" />
+
+            <MudSelect T="CategoryDto" @bind-Value="_selectedValue" Label="Select Category">
+                @foreach (var category in Categories)
+                {
+                    <MudSelectItem T="CategoryDto" Value="category">@category.CategoryDesc</MudSelectItem>
+                }
+            </MudSelect>
+        </MudTabPanel>
+        <MudTabPanel Text="Quantity">
+            <MudText>Content Two @model.ItemDesc</MudText>
+
+        </MudTabPanel>
+    </MudTabs>
+
+        <MudCardActions Style="display: flex; justify-content: end;">
+            <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Outlined" Color="Color.Primary">Save</MudButton>
+            <MudButton OnClick="Cancel" Variant="Variant.Outlined" Color="Color.Error">Cancel</MudButton>
+        </MudCardActions>
+
+        @if (!string.IsNullOrWhiteSpace(ErrorMessage))
+        {
+            <MudAlert Severity="Severity.Error" Elevation="0" Variant="Variant.Filled" Dense="true" Class="m-2">
+                @ErrorMessage
+            </MudAlert>
+        }
+
+</EditForm>
 
 
 
 @code {
     [Parameter] public string? Id { get; set; }
-    private CategoryDto model = new();
+    private bool IsEditMode => !string.IsNullOrWhiteSpace(Id);
+
+    private ItemDto model = new();
+    private List<CategoryDto> Categories = new();
+
+    private CategoryDto?
+    _selectedValue;
+    private string ErrorMessage = string.Empty;
 
     protected override async Task OnInitializedAsync()
     {
-
-                model = await GetCategory();
-
+        await GetCategories();
         
+        if (IsEditMode)
+        {
+            model = await GetItem();
+            _selectedValue = Categories.FirstOrDefault(i => i.CategoryId == model.CategoryId);
+        }
     }
 
-    private async Task<CategoryDto> GetCategory()
+    private async Task OnValidSubmit(EditContext context)
     {
-        var response = await _DataService.GetByIdAsync<CategoryDto>("category", Id!);
+        model.CategoryId = _selectedValue!.CategoryId;
+
+        Result response = IsEditMode
+            ? await _DataService.PutAsync("item", model)
+            : await _DataService.PostAsync("item", model);
+
+        if (response.IsSuccess)
+        {
+            _NavigationManager.NavigateTo("/item/index");
+        }
+        else
+        {
+            ErrorMessage = response.Error?.Description ?? "An unexpected error occurred.";
+        }
+    }
+
+    private async Task GetCategories()
+    {
+        var response = await _DataService.GetAllAsync<CategoryDto>("category");
+
+        if (response.IsSuccess && response.Data.Records != null)
+        {
+            Categories = response.Data.Records.ToList();
+        }
+    }
+
+    private async Task<ItemDto> GetItem()
+    {
+        var response = await _DataService.GetByIdAsync<ItemDto>("item", Id!);
         return response.Data!;
     }
+    private void Cancel() => _NavigationManager.NavigateTo("/category/index");
 }

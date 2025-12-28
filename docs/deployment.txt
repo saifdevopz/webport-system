@@ -15,4 +15,64 @@ ssh root@102.214.9.97
 worker1
 ssh root@102.214.9.23
 
----------------------------------------
+---------------------------------------++
+
+services:
+
+
+
+  # postgres:
+  #   image: postgres:16
+  #   container_name: webport_postgres
+  #   restart: always
+  #   environment:
+  #     POSTGRES_DB: webportdb
+  #     POSTGRES_USER: webportuser
+  #     POSTGRES_PASSWORD: webportpassword
+  #   ports:
+  #     - "5432:5432"
+  #   volumes:
+  #     - postgres_data:/var/lib/postgresql/data
+
+  webportsystem.dashboard:
+    image: ${DOCKER_REGISTRY-}webportsystemdashboard
+    build:
+      context: .
+      dockerfile: src/apps/blazor-server/WebportSystem.Dashboard/Dockerfile
+
+volumes:
+  postgres_data:
+ 
+
+
+ services:
+
+  webportsystem.api:
+    image: ghcr.io/saifdevopz/webportsystem-api:latest
+    build:
+      context: .
+      dockerfile: src/api/WebportSystem.Api/Dockerfile
+    pull_policy: never
+    container_name: webportsystem-api
+    environment: 
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://+:8080
+    ports:
+      - "5060:8080"   
+    restart: always
+
+  # webportsystem.dashboard:
+  #   image: ghcr.io/saifdevopz/webportsystem-dashboard:latest
+  #   build:
+  #     context: .
+  #     dockerfile: src/apps/blazor-server/WebportSystem.Dashboard/Dockerfile
+  #   pull_policy: never
+  #   container_name: webportsystem-dashboard
+  #   environment: 
+  #     - ASPNETCORE_ENVIRONMENT=Production
+  #     - ASPNETCORE_URLS=http://+:8080
+  #   ports:
+  #     - "5065:8080"   
+  #   restart: always
+
+

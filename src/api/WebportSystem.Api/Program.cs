@@ -1,3 +1,4 @@
+using QuestPDF.Infrastructure;
 using Scalar.AspNetCore;
 using System.Reflection;
 using System.Security.Claims;
@@ -9,6 +10,9 @@ using WebportSystem.Identity.Infrastructure;
 using WebportSystem.Inventory.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// QuestPDF
+QuestPDF.Settings.License = LicenseType.Community;
 
 // --- Database Configuration ---
 var config = builder.Configuration;

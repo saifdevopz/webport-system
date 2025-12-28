@@ -7,4 +7,5 @@ public class ItemDto
     public string ItemDesc { get; set; } = string.Empty;
 
     public CategoryDto Category { get; set; } = new();
+    public int CategoryId { get; set; } = new();
 }

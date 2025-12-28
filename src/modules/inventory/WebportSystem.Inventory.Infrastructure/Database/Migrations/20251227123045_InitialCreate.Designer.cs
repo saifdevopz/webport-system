@@ -12,7 +12,7 @@ using WebportSystem.Inventory.Infrastructure.Database;
 namespace WebportSystem.Inventory.Infrastructure.Database.Migrations
 {
     [DbContext(typeof(InventoryDbContext))]
-    [Migration("20251206092132_InitialCreate")]
+    [Migration("20251227123045_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />

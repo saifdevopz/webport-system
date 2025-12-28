@@ -1,40 +1,18 @@
 services:
-
   webportsystem.api:
     image: ${DOCKER_REGISTRY-}webportsystemapi
     build:
       context: .
       dockerfile: src/api/WebportSystem.Api/Dockerfile
-    depends_on:
-      - postgres
     environment:
-      ASPNETCORE_ENVIRONMENT: "Docker"
-      ConnectionStrings__DefaultConnection: "Host=postgres;Port=5432;Database=webportdb;Username=webportuser;Password=webportpassword"
-    ports:
-      - "8080:80"   
-    restart: always
-
-  postgres:
-    image: postgres:16
-    container_name: webport_postgres
-    restart: always
-    environment:
-      POSTGRES_DB: webportdb
-      POSTGRES_USER: webportuser
-      POSTGRES_PASSWORD: webportpassword
-    ports:
-      - "5432:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - ASPNETCORE_ENVIRONMENT:Production
+      - ASPNETCORE_URLS=http://+:8080  
 
   webportsystem.dashboard:
     image: ${DOCKER_REGISTRY-}webportsystemdashboard
     build:
       context: .
       dockerfile: src/apps/blazor-server/WebportSystem.Dashboard/Dockerfile
-
-volumes:
-  postgres_data:
- 
-
-
+    environment: 
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://+:8080

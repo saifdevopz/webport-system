@@ -22,6 +22,10 @@ COPY ["src/modules/identity/WebportSystem.Identity.Application/WebportSystem.Ide
 COPY ["src/modules/identity/WebportSystem.Identity.Domain/WebportSystem.Identity.Domain.csproj", "src/modules/identity/WebportSystem.Identity.Domain/"]
 COPY ["src/modules/identity/WebportSystem.Identity.Presentation/WebportSystem.Identity.Presentation.csproj", "src/modules/identity/WebportSystem.Identity.Presentation/"]
 COPY ["src/common/WebportSystem.Common.Presentation/WebportSystem.Common.Presentation.csproj", "src/common/WebportSystem.Common.Presentation/"]
+COPY ["src/modules/inventory/WebportSystem.Inventory.Infrastructure/WebportSystem.Inventory.Infrastructure.csproj", "src/modules/inventory/WebportSystem.Inventory.Infrastructure/"]
+COPY ["src/modules/inventory/WebportSystem.Inventory.Application/WebportSystem.Inventory.Application.csproj", "src/modules/inventory/WebportSystem.Inventory.Application/"]
+COPY ["src/modules/inventory/WebportSystem.Inventory.Domain/WebportSystem.Inventory.Domain.csproj", "src/modules/inventory/WebportSystem.Inventory.Domain/"]
+COPY ["src/modules/inventory/WebportSystem.Inventory.Presentation/WebportSystem.Inventory.Presentation.csproj", "src/modules/inventory/WebportSystem.Inventory.Presentation/"]
 RUN dotnet restore "./src/api/WebportSystem.Api/WebportSystem.Api.csproj"
 COPY . .
 WORKDIR "/src/src/api/WebportSystem.Api"

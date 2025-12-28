@@ -1,0 +1,76 @@
+services:
+  webportsystem.api:
+    image: ghcr.io/saifdevopz/webportsystem-api:latest
+
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ASPNETCORE_URLS: http://+:8080
+    deploy:
+      mode: global
+      placement:
+        constraints:
+          - node.role == worker
+      restart_policy:
+        condition: any
+      labels:
+        - "traefik.enable=true"
+ 
+        # HTTP
+        - "traefik.http.routers.webport-api.entrypoints=web"
+        - "traefik.http.routers.webport-api.rule=Host(`api.webport.co.za`)"
+        - "traefik.http.routers.webport-api.middlewares=webport-api-https-redirect"
+
+        # HTTPS
+        - "traefik.http.routers.webport-api-secure.entrypoints=websecure"
+        - "traefik.http.routers.webport-api-secure.rule=Host(`api.webport.co.za`)"
+        - "traefik.http.routers.webport-api-secure.tls=true"
+        - "traefik.http.routers.webport-api-secure.tls.certresolver=letsencrypt"
+
+        # Service
+        - "traefik.http.services.webport-api.loadbalancer.server.port=8080"
+
+        # Authentication
+        - "traefik.http.middlewares.webport-api-https-redirect.redirectscheme.scheme=https"
+        - "traefik.http.middlewares.sslheader.headers.customrequestheaders.X-Forwarded-Proto=https"
+    networks:
+      - traefik-proxy
+
+
+  webportsystem.dashboard:
+    image: ghcr.io/saifdevopz/webportsystem-dashboard:latest
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ASPNETCORE_URLS: http://+:8080
+    deploy:
+      mode: global
+      placement:
+        constraints:
+          - node.role == worker
+      restart_policy:
+        condition: any
+      labels:
+        - "traefik.enable=true"
+
+        # HTTP
+        - "traefik.http.routers.webport-dashboard.entrypoints=web"
+        - "traefik.http.routers.webport-dashboard.rule=Host(`dashboard.webport.co.za`)"
+        - "traefik.http.routers.webport-dashboard.middlewares=dashboard-https-redirect"
+
+        # HTTPS
+        - "traefik.http.routers.webport-dashboard-secure.entrypoints=websecure"
+        - "traefik.http.routers.webport-dashboard-secure.rule=Host(`dashboard.webport.co.za`)"
+        - "traefik.http.routers.webport-dashboard-secure.tls=true"
+        - "traefik.http.routers.webport-dashboard-secure.tls.certresolver=letsencrypt"
+
+        # Service
+        - "traefik.http.services.webport-dashboard.loadbalancer.server.port=8080"
+
+        # Authentication
+        - "traefik.http.middlewares.webport-dashboard-https-redirect.redirectscheme.scheme=https"
+        - "traefik.http.middlewares.sslheader.headers.customrequestheaders.X-Forwarded-Proto=https"
+    networks:
+      - traefik-proxy
+
+networks:
+  traefik-proxy:
+    external: true
