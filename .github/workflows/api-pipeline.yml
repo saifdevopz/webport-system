@@ -7,18 +7,28 @@ jobs:
   build_images:
     name: Package Software
     runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      packages: write    
+    
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
       
-      - name: Log in to GitHub Container Registry
+      - name: Login to GitHub Container Registry
         run: echo "${{ secrets.GH_PAT }}" | docker login ghcr.io -u $GITHUB_ACTOR --password-stdin
       
-      - name: Build and Push Docker Image using Docker Compose
+      - name: Build and Push Docker API Docker Image
         run: |
           IMAGE_NAME=ghcr.io/${{ github.repository_owner }}/webportsystem-api
           TAG=$(echo $GITHUB_SHA | cut -c1-7)
-          docker compose -f docker-compose-production.yml build webportsystem.api
-          docker compose -f docker-compose-production.yml push webportsystem.api
+
+          docker build -t $IMAGE_NAME:$TAG -t $IMAGE_NAME:latest ./src/api/WebportSystem.Api
+          docker push $IMAGE_NAME:$TAG
+          docker push $IMAGE_NAME:latest
+
+
+
 
 
