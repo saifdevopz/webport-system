@@ -4,10 +4,9 @@ on:
   workflow_dispatch:
 
 jobs:
-  build_images:
+  build_image:
     name: Package Software
     runs-on: ubuntu-latest
-
     permissions:
       contents: read
       packages: write    
@@ -19,14 +18,20 @@ jobs:
       - name: Login to GitHub Container Registry
         run: echo "${{ secrets.GH_PAT }}" | docker login ghcr.io -u $GITHUB_ACTOR --password-stdin
       
-      - name: Build and Push Docker API Docker Image
+      - name: Build and Push Docker Image
         run: |
           IMAGE_NAME=ghcr.io/${{ github.repository_owner }}/webportsystem-api
           TAG=$(echo $GITHUB_SHA | cut -c1-7)
 
-          docker build -t $IMAGE_NAME:$TAG -t $IMAGE_NAME:latest ./src/api/WebportSystem.Api
-          docker push $IMAGE_NAME:$TAG
+          # Build the API image using docker-compose build
+          docker compose -f docker-compose.yml build webportsystem.api
+
+          # Tag the image with commit SHA
+          docker tag $IMAGE_NAME:latest $IMAGE_NAME:$TAG
+
+          # Push both tags
           docker push $IMAGE_NAME:latest
+          docker push $IMAGE_NAME:$TAG
 
 
 
