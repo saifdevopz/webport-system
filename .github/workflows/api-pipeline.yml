@@ -24,7 +24,7 @@ jobs:
           TAG=$(echo $GITHUB_SHA | cut -c1-7)
 
           # Build the API image using docker-compose build
-          docker-compose -f docker-compose.yml build webportsystem.api
+          docker compose -f docker-compose.yml build webportsystem.api
 
           # Tag the image with commit SHA
           docker tag $IMAGE_NAME:latest $IMAGE_NAME:$TAG
