@@ -20,10 +20,10 @@ jobs:
       
       - name: Build and Push Docker Image 
         run: |
-          IMAGE_NAME=ghcr.io/${{ github.repository_owner }}/webportsystem.dashboard
+          IMAGE_NAME=ghcr.io/${{ github.repository_owner }}/webportsystem-dashboard
           TAG=$(echo $GITHUB_SHA | cut -c1-7)
           
-          docker compose -f docker-compose.yml build webportsystem.dashboard
+          docker compose -f docker-compose.yml build webportsystem-dashboard
           docker tag $IMAGE_NAME:latest $IMAGE_NAME:$TAG
 
           docker push $IMAGE_NAME:latest
