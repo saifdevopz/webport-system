@@ -28,3 +28,12 @@ jobs:
 
           docker push $IMAGE_NAME:latest
           docker push $IMAGE_NAME:$TAG
+          
+  deploy_image:
+    name: Deploy to Portainer
+    runs-on: ubuntu-latest
+    needs: build_image   
+    steps:
+      - name: Trigger Portainer Webhook
+        run: |
+          curl -X POST "https://portainer.webport.co.za/api/webhooks/da2ee11e-8f87-4ae4-9a94-aebe17ad663f"               
