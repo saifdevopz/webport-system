@@ -20,6 +20,3 @@ internal sealed class GetTenantsQueryHandler(IUsersDbContext dbContext)
 public sealed record GetTenantsQuery : IQuery<GetTenantsQueryResult>;
 
 public sealed record GetTenantsQueryResult(IEnumerable<TenantM> Tenants);
-
-
-

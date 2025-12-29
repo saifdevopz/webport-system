@@ -51,4 +51,3 @@ internal static class DatabaseInitializer
         await DatabaseSeedService.SeedAsync(dbContext, userManager, roleManager);
     }
 }
-

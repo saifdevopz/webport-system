@@ -22,4 +22,3 @@ public class CreateRoleDto
 
 public record RoleWrapper<T>(T Role);
 public record RolesWrapper<T>(IEnumerable<T> roles);
-

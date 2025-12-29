@@ -27,4 +27,3 @@ public sealed class CategoryM : AggregateRoot, IMustHaveTenant
         return model;
     }
 }
-

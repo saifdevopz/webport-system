@@ -84,15 +84,15 @@ internal sealed class ProcessOutboxJob(
 
         string sql =
             $"""
-             SELECT
-                id AS {nameof(OutboxMessageResponse.Id)},
-                content AS {nameof(OutboxMessageResponse.Content)}
-             FROM {ModuleConstants.Schema}.outbox_messages
-             WHERE processed_on_utc IS NULL
-             ORDER BY occurred_on_utc
-             LIMIT {outboxOptions.Value.BatchSize}
-             FOR UPDATE
-             """;
+         SELECT
+            id AS {nameof(OutboxMessageResponse.Id)},
+            content AS {nameof(OutboxMessageResponse.Content)}
+         FROM {ModuleConstants.Schema}.outbox_messages
+         WHERE processed_on_utc IS NULL
+         ORDER BY occurred_on_utc
+         LIMIT {outboxOptions.Value.BatchSize}
+         FOR UPDATE
+         """;
 
         IEnumerable<OutboxMessageResponse> outboxMessages = await connection.QueryAsync<OutboxMessageResponse>(
                 sql,
@@ -110,11 +110,11 @@ internal sealed class ProcessOutboxJob(
 
         const string sql =
             $"""
-            UPDATE {ModuleConstants.Schema}.outbox_messages
-            SET processed_on_utc = @ProcessedOnUtc,
-                error = @Error
-            WHERE id = @Id
-            """;
+        UPDATE {ModuleConstants.Schema}.outbox_messages
+        SET processed_on_utc = @ProcessedOnUtc,
+            error = @Error
+        WHERE id = @Id
+        """;
 
         await connection.ExecuteAsync(
                 sql,

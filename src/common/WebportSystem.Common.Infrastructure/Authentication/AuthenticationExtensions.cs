@@ -11,7 +11,6 @@ public static class AuthenticationExtensions
 {
     public static IServiceCollection AddAuthenticationInternal(this IServiceCollection services)
     {
-
         services.AddHttpContextAccessor();
 
         services.AddOptions<JwtOptions>()
@@ -30,25 +29,25 @@ public static class AuthenticationExtensions
             {
                 JwtOptions jwtOptions = services.BuildServiceProvider().GetRequiredService<IOptions<JwtOptions>>().Value;
 
-                options.RequireHttpsMetadata = false;
-                options.SaveToken = true;
+                options.RequireHttpsMetadata = true;
+                options.SaveToken = false;
+
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidateIssuerSigningKey = true,
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOptions.Key)),
 
-                    ValidateIssuer = false,
+                    ValidateIssuer = true,
                     ValidIssuer = jwtOptions.Issuer,
 
-                    ValidateAudience = false,
+                    ValidateAudience = true,
                     ValidAudience = jwtOptions.Audience,
 
                     ValidateLifetime = true,
-                    ClockSkew = TimeSpan.Zero
+                    RequireExpirationTime = true,
+                    ClockSkew = TimeSpan.FromMinutes(jwtOptions.ClockSkewInMinutes)
                 };
             });
-
-        services.AddAuthorization();
 
         return services;
     }

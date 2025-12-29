@@ -44,4 +44,3 @@ public class CreateCategoryCommandValidator : AbstractValidator<CreateCategoryCo
             .MaximumLength(255).WithMessage("Category description must not exceed 255 characters.");
     }
 }
-

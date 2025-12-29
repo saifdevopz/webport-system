@@ -37,4 +37,3 @@ public sealed class BaseHttpClient(IHttpClientFactory httpClientFactory, IHttpCo
         return client;
     }
 }
-

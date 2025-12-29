@@ -32,13 +32,13 @@ internal sealed class IdempotentDomainEventHandler<TDomainEvent>(
     {
         const string sql =
             $"""
-            SELECT EXISTS(
-                SELECT 1
-                FROM {InventoryConstants.Schema}.outbox_message_consumers
-                WHERE outbox_message_id = @OutboxMessageId AND
-                      name = @Name
-            )
-            """;
+        SELECT EXISTS(
+            SELECT 1
+            FROM {InventoryConstants.Schema}.outbox_message_consumers
+            WHERE outbox_message_id = @OutboxMessageId AND
+                  name = @Name
+        )
+        """;
 
         return await dbConnection.ExecuteScalarAsync<bool>(sql, outboxMessageConsumer);
     }
@@ -49,9 +49,9 @@ internal sealed class IdempotentDomainEventHandler<TDomainEvent>(
     {
         const string sql =
             $"""
-            INSERT INTO {InventoryConstants.Schema}.outbox_message_consumers(outbox_message_id, name)
-            VALUES (@OutboxMessageId, @Name)
-            """;
+        INSERT INTO {InventoryConstants.Schema}.outbox_message_consumers(outbox_message_id, name)
+        VALUES (@OutboxMessageId, @Name)
+        """;
 
         await dbConnection.ExecuteAsync(sql, outboxMessageConsumer);
     }

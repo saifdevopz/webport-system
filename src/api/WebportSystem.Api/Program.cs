@@ -1,7 +1,7 @@
 using QuestPDF.Infrastructure;
 using Scalar.AspNetCore;
+using Serilog;
 using System.Reflection;
-using System.Security.Claims;
 using WebportSystem.Api.Extensions;
 using WebportSystem.Common.Application;
 using WebportSystem.Common.Infrastructure;
@@ -9,13 +9,34 @@ using WebportSystem.Common.Presentation.Endpoints;
 using WebportSystem.Identity.Infrastructure;
 using WebportSystem.Inventory.Infrastructure;
 
-var builder = WebApplication.CreateBuilder(args);
+WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
-// QuestPDF
+// Build logger temporarily so we can log before app is built
+Log.Logger = new LoggerConfiguration()
+    .ReadFrom.Configuration(builder.Configuration)
+    .CreateLogger();
+
+// Environment info logging
+IWebHostEnvironment environment = builder.Environment;
+
+if (environment.IsDevelopment())
+{
+    Log.Information("Running in Development environment.");
+}
+else if (environment.IsProduction())
+{
+    Log.Information("Running in Production environment.");
+}
+else
+{
+    Log.Information("Running in {EnvironmentName} environment.", environment.EnvironmentName);
+}
+
+// --- QuestPDF ---
 QuestPDF.Settings.License = LicenseType.Community;
 
-// --- Database Configuration ---
-var config = builder.Configuration;
+// --- Database Configurations ---
+ConfigurationManager config = builder.Configuration;
 
 string activeProvider = config["Database:ActiveProvider"]
     ?? throw new ArgumentException("Missing Database:ActiveProvider in configuration.");
@@ -28,6 +49,9 @@ string? inventoryDbString = config[$"{basePath}:InventoryConnection"];
 
 ArgumentException.ThrowIfNullOrWhiteSpace(identityDbString);
 ArgumentException.ThrowIfNullOrWhiteSpace(inventoryDbString);
+
+// --- Serilog ---
+builder.Host.UseSerilog((context, loggerConfig) => loggerConfig.ReadFrom.Configuration(context.Configuration));
 
 // --- MVC & API ---
 builder.Services.AddControllers();
@@ -74,6 +98,8 @@ var app = builder.Build();
 
 app.UseCors("MyPolicy");
 
+app.UseStaticFiles();
+
 if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
 {
     app.MapOpenApi();
@@ -86,6 +112,10 @@ if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
     await app.InitializeDatabases();
 }
 
+app.UseApplicationMiddlewares();
+
+app.UseSerilogRequestLogging();
+
 app.UseHttpsRedirection();
 
 // Converts unhandled exceptions into Problem Details responses
@@ -93,33 +123,6 @@ app.UseExceptionHandler();
 
 // Returns the Problem Details response for (empty) non-successful responses
 app.UseStatusCodePages();
-
-app.MapGet("me", (HttpContext httpContext, ClaimsPrincipal claimsPrincipal) =>
-{
-    var request = httpContext.Request;
-
-    // Check if Authorization header contains a Bearer token
-    var authHeader = request.Headers["Authorization"].FirstOrDefault();
-    var hasBearerToken = authHeader?.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase) ?? false;
-
-    return Results.Ok(new
-    {
-        User = claimsPrincipal.Identity?.Name,
-        Claims = claimsPrincipal.Claims.Select(c => new { c.Type, c.Value }),
-        RequestInfo = new
-        {
-            Method = request.Method,
-            Path = request.Path.ToString(),
-            Query = request.Query.ToDictionary(q => q.Key, q => q.Value.ToString()),
-            Headers = request.Headers.ToDictionary(h => h.Key, h => h.Value.ToString()),
-            HasBearerToken = hasBearerToken,
-            BearerToken = hasBearerToken ? authHeader : null
-        }
-    });
-}).RequireAuthorization();
-
-
-
 
 app.UseAuthentication();
 

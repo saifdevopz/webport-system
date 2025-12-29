@@ -17,5 +17,3 @@ internal sealed class GetTenantsEndpoint : IEndpoint
         .WithTags(Tags.Tenant);
     }
 }
-
-

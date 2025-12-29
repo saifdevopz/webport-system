@@ -37,5 +37,3 @@ public class GetUsersQueryHandler(IUsersDbContext usersDbContext)
 public sealed record GetUsersQuery : IQuery<GetUsersQueryResult>;
 
 public sealed record GetUsersQueryResult(IEnumerable<UserDto> Users);
-
-
