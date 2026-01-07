@@ -1,0 +1,44 @@
+
+----------------------------------------------
+
+--- Infrastructure ---
+Ansible
+Ubuntu Server
+Docker Swarm
+Traefik Reverse Proxy
+
+----------------------------------------------
+
+--- Frontend ---
+Angular
+Blazor Server-Side
+
+----------------------------------------------
+
+--- Backend ---
+.NET Web API
+
+----------------------------------------------
+
+--- Database ---
+PostgreSQL 
+Redis Cache
+
+----------------------------------------------
+
+--- CI/CD ---
+GitHub Actions
+
+----------------------------------------------
+
+--- Source Control ---
+Git
+Github
+
+----------------------------------------------
+
+--- Tools & Utilities ---
+Vagrant
+Portainer
+Uptime Kuma
+Homepage

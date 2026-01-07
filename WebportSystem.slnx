@@ -1,6 +1,7 @@
 <Solution>
   <Folder Name="/docs/">
     <File Path="docs/applications.txt" />
+    <File Path="docs/architecture.txt" />
     <File Path="docs/blazor.txt" />
     <File Path="docs/deployment.txt" />
     <File Path="docs/docker-swarm.txt" />
