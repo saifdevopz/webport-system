@@ -107,6 +107,7 @@ app.UseCors("MyPolicy");
 app.UseStaticFiles();
 
 if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
+#pragma warning disable S125 // Sections of code should not be commented out
 {
     app.MapOpenApi();
     app.MapScalarApiReference(_ =>
@@ -115,8 +116,9 @@ if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
         _.Theme = ScalarTheme.Kepler;
     });
 
-    await app.InitializeDatabases();
+    //await app.InitializeDatabases();
 }
+#pragma warning restore S125 // Sections of code should not be commented out
 
 app.UseApplicationMiddlewares();
 
