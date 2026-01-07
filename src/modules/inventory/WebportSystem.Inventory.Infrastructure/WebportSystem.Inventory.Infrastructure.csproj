@@ -12,8 +12,4 @@
     <ProjectReference Include="..\WebportSystem.Inventory.Presentation\WebportSystem.Inventory.Presentation.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Database\Migrations\" />
-  </ItemGroup>
-
 </Project>
