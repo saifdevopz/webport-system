@@ -56,7 +56,6 @@ jobs:
              
             cd /home/webport-system
             docker stack deploy \
-              --prune \
               --with-registry-auth \
               -c docker-stack.yaml \
               webport-api
