@@ -111,7 +111,7 @@ if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
     app.MapOpenApi();
     app.MapScalarApiReference("/", _ =>
     {
-        _.WithTitle("My API Documentation");
+        _.WithTitle("My API Documentationzzz");
         _.Servers = [];
         _.Theme = ScalarTheme.Kepler;
     });
