@@ -33,20 +33,6 @@ jobs:
   #         docker push $IMAGE_NAME:latest
   #         docker push $IMAGE_NAME:$TAG
 
-         set -e
-
-          export IMAGE_TAG=${IMAGE_TAG:0:7}
-          echo "🚀 Deploying IMAGE_TAG=$IMAGE_TAG"
-
-          # 🔐 Login to GHCR on the Swarm manager
-
-          cd /home/webport-system
-
-          docker stack deploy \
-            --with-registry-auth \
-            -c docker-stack.yaml \
-            webport-api
-
   update_server:
     name: Deploy to Server
     runs-on: ubuntu-latest
