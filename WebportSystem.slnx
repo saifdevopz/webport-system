@@ -18,6 +18,33 @@
     <Project Path="src/api/WebportSystem.Api/WebportSystem.Api.csproj" Id="dd8ae131-8144-4e7e-b5cf-f8e0d1e8f4e2" />
   </Folder>
   <Folder Name="/src/apps/" />
+  <Folder Name="/src/apps/angular-pos/">
+    <Project Path="../Angular Projects/angular-pos/" Type="Website" DisplayName="angular-pos">
+      <BuildType Project="Debug" />
+      <Properties Name="WebsiteProperties">
+        <Property Name="Debug.AspNetCompiler.Debug" Value="&quot;True&quot;" />
+        <Property Name="Debug.AspNetCompiler.FixedNames" Value="&quot;false&quot;" />
+        <Property Name="Debug.AspNetCompiler.ForceOverwrite" Value="&quot;true&quot;" />
+        <Property Name="Debug.AspNetCompiler.PhysicalPath" Value="&quot;..\Angular Projects\angular-pos\&quot;" />
+        <Property Name="Debug.AspNetCompiler.TargetPath" Value="&quot;PrecompiledWeb\localhost_62266\&quot;" />
+        <Property Name="Debug.AspNetCompiler.Updateable" Value="&quot;true&quot;" />
+        <Property Name="Debug.AspNetCompiler.VirtualPath" Value="&quot;/localhost_62266&quot;" />
+        <Property Name="Release.AspNetCompiler.Debug" Value="&quot;False&quot;" />
+        <Property Name="Release.AspNetCompiler.FixedNames" Value="&quot;false&quot;" />
+        <Property Name="Release.AspNetCompiler.ForceOverwrite" Value="&quot;true&quot;" />
+        <Property Name="Release.AspNetCompiler.PhysicalPath" Value="&quot;..\Angular Projects\angular-pos\&quot;" />
+        <Property Name="Release.AspNetCompiler.TargetPath" Value="&quot;PrecompiledWeb\localhost_62266\&quot;" />
+        <Property Name="Release.AspNetCompiler.Updateable" Value="&quot;true&quot;" />
+        <Property Name="Release.AspNetCompiler.VirtualPath" Value="&quot;/localhost_62266&quot;" />
+        <Property Name="TargetFrameworkMoniker" Value="&quot;.NETFramework,Version%3Dv4.8&quot;" />
+        <Property Name="VWDPort" Value="&quot;62266&quot;" />
+      </Properties>
+    </Project>
+    <Project Path="src/apps/angular-pos/WebportSystem.POS/WebportSystem.POS.esproj">
+      <Build />
+      <Deploy />
+    </Project>
+  </Folder>
   <Folder Name="/src/apps/blazor-server/">
     <Project Path="src/apps/blazor-server/WebportSystem.Dashboard/WebportSystem.Dashboard.csproj" Id="a099018b-1955-45c6-a1e2-3aea7caf2875" />
   </Folder>
