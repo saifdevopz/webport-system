@@ -4,54 +4,58 @@ on:
   workflow_dispatch:
 
 jobs:
-  build_image:
-    name: Package Software
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
+  # build_image:
+  #   name: Package Software
+  #   runs-on: ubuntu-latest
+  #   permissions:
+  #     contents: read
+  #     packages: write
 
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
+  #   steps:
+  #     - name: Checkout Code
+  #       uses: actions/checkout@v4
 
-      - name: Login to GitHub Container Registry
-        run: echo "${{ secrets.GH_PAT }}" | docker login ghcr.io -u $GITHUB_ACTOR --password-stdin
+  #     - name: Login to GitHub Container Registry
+  #       run: echo "${{ secrets.GH_PAT }}" | docker login ghcr.io -u $GITHUB_ACTOR --password-stdin
 
-      - name: Build and Push Docker Image
-        run: |
-          IMAGE_NAME=ghcr.io/${{ github.repository_owner }}/webportsystem-api
-          TAG=$(echo $GITHUB_SHA | cut -c1-7)
+  #     - name: Build and Push Docker Image
+  #       run: |
+  #         IMAGE_NAME=ghcr.io/${{ github.repository_owner }}/webportsystem-api
+  #         TAG=$(echo $GITHUB_SHA | cut -c1-7)
 
-          # Build the API image using docker-compose build
-          docker compose -f docker-compose.yml build webportsystem.api
+  #         # Build the API image using docker-compose build
+  #         docker compose -f docker-compose.yml build webportsystem.api
 
-          # Tag the image with commit SHA
-          docker tag $IMAGE_NAME:latest $IMAGE_NAME:$TAG
+  #         # Tag the image with commit SHA
+  #         docker tag $IMAGE_NAME:latest $IMAGE_NAME:$TAG
 
-          # Push both tags
-          docker push $IMAGE_NAME:latest
-          docker push $IMAGE_NAME:$TAG
+  #         # Push both tags
+  #         docker push $IMAGE_NAME:latest
+  #         docker push $IMAGE_NAME:$TAG
 
   update_server:
     name: Deploy to Server
     runs-on: ubuntu-latest
-    needs: build_image
+    #needs: build_image
 
     steps:
       - name: Deploy via SSH
         uses: appleboy/ssh-action@master
+        env:
+          IMAGE_TAG: ${{ github.sha }}
         with:
           host: ${{ secrets.SERVER_HOST }}
           username: ${{ secrets.SERVER_USERNAME }}
           key: ${{ secrets.SERVER_SSH_KEY }}
+          envs: IMAGE_TAG
           script: |
             set -e
 
-            export IMAGE_TAG=$(echo $GITHUB_SHA | cut -c1-7)
+            echo "${{ secrets.GH_PAT }}" | docker login ghcr.io -u saifdevopz --password-stdin
+            echo "🚀 Deploying IMAGE_TAG=$IMAGE_TAG"            
+             
             cd /home/webport-system
             docker stack deploy \
-              --prune \
               --with-registry-auth \
               -c docker-stack.yaml \
               webport-api
