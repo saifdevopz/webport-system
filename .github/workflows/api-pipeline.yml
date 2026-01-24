@@ -49,6 +49,8 @@ jobs:
             set -e
 
             export IMAGE_TAG=$(echo $GITHUB_SHA | cut -c1-7)
+            echo "🚀 Deploying IMAGE_TAG=$IMAGE_TAG"
+             
             cd /home/webport-system
             docker stack deploy \
               --prune \
