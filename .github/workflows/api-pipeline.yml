@@ -41,15 +41,18 @@ jobs:
     steps:
       - name: Deploy via SSH
         uses: appleboy/ssh-action@master
+        env:
+          IMAGE_TAG: ${{ github.sha }}
         with:
           host: ${{ secrets.SERVER_HOST }}
           username: ${{ secrets.SERVER_USERNAME }}
           key: ${{ secrets.SERVER_SSH_KEY }}
+          envs: IMAGE_TAG
           script: |
             set -e
 
-            export IMAGE_TAG=$(echo $GITHUB_SHA | cut -c1-7)
-            echo "🚀 Deploying IMAGE_TAG=$IMAGE_TAG"
+            export IMAGE_TAG=${IMAGE_TAG:0:7}
+            echo "🚀 Deploying IMAGE_TAG=$IMAGE_TAG"            
              
             cd /home/webport-system
             docker stack deploy \
