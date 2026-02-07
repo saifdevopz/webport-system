@@ -1,0 +1,33 @@
+name: WebportSystem.POS CI/CD
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build_image:
+    name: Package Software
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Login to GitHub Container Registry
+        run: echo "${{ secrets.GH_PAT }}" | docker login ghcr.io -u $GITHUB_ACTOR --password-stdin
+
+      - name: Build and Push Docker Image
+        run: |
+          IMAGE_NAME=ghcr.io/${{ github.repository_owner }}/webportsystem-pos
+          TAG=$(echo $GITHUB_SHA | cut -c1-7)
+
+          # Build the POS image using docker-compose build
+          docker compose -f docker-compose.yml build webportsystem.pos
+          # Tag the image with commit SHA
+          docker tag $IMAGE_NAME:latest $IMAGE_NAME:$TAG
+
+          # Push both tags
+          docker push $IMAGE_NAME:latest
+          docker push $IMAGE_NAME:$TAG
