@@ -17,8 +17,7 @@ services:
       - ASPNETCORE_ENVIRONMENT=Production
       - ASPNETCORE_URLS=http://+:8080
  
-  webportsystem-pos:
-    image: ghcr.io/saifdevopz/webportsystem-pos:latest
+  webportsystem.pos:
     build:
       context: .
       dockerfile: src/apps/angular-pos/Dockerfile
