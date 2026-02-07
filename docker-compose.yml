@@ -1,18 +1,31 @@
 services:
-  webportsystem.api:    
+  webportsystem.api:
     image: ghcr.io/saifdevopz/webportsystem-api:latest
     build:
       context: .
       dockerfile: src/api/WebportSystem.Api/Dockerfile
     environment:
       - ASPNETCORE_ENVIRONMENT:Production
-      - ASPNETCORE_URLS=http://+:8080  
+      - ASPNETCORE_URLS=http://+:8080
 
-  webportsystem.dashboard:    
+  webportsystem.dashboard:
     image: ghcr.io/saifdevopz/webportsystem-dashboard:latest
     build:
       context: .
       dockerfile: src/apps/blazor-server/WebportSystem.Dashboard/Dockerfile
-    environment: 
+    environment:
       - ASPNETCORE_ENVIRONMENT=Production
       - ASPNETCORE_URLS=http://+:8080
+ 
+  webportsystem-pos:
+    build:
+      context: .
+      dockerfile: src/apps/angular-pos/Dockerfile
+    container_name: webportsystem-pos
+    ports:
+      - "4200:4200"
+    volumes:
+      - ./src/apps/angular-pos:/app
+      - /app/node_modules  
+    environment:
+      - STYLE=css
