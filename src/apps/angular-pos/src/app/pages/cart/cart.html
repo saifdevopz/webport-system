@@ -2,89 +2,93 @@
   <h1 class="text-3xl font-bold text-slate-900 mb-8">Shopping Cart</h1>
   <!-- Loading -->
 
-  @if(loading()) {
-  <div class="flex items-center justify-center h-64">
-    <p class="text-slate-500">Loading cart...</p>
-  </div>
-  } @else if(items()?.length) {
-  <div class="grid gap-6 lg:grid-cols-3">
-    <div class="lg:col-span-2 space-y-4">
-      @for (item of items(); track item.product.id) {
-      <div class="bg-white rounded-xl shadow-md p-4 flex gap-4">
-        <img
-          [src]="item.product.image"
-          [alt]="item.product.title"
-          class="size-24 object-contain rounded-lg bg-slate-50"
-        />
-        <div class="flex-1 min-w-0">
-          <h3 class="font-semibold text-slate-900 line-clamp-2">{{ item.product.title }}</h3>
-          <p class="text-sm text-slate-500 mt-1">{{ item.product.category }}</p>
-          <p class="text-lg font-bold text-slate-900 mt-2">{{ item.product.price | currency }}</p>
-        </div>
-        <div class="flex flex-col items-end justify-between">
+  @if (loading()) {
+    <div class="flex items-center justify-center h-64">
+      <p class="text-slate-500">Loading cart...</p>
+    </div>
+  } @else if (items()?.length) {
+    <div class="grid gap-6 lg:grid-cols-3">
+      <div class="lg:col-span-2 space-y-4">
+        @for (item of items(); track item.product.id) {
+          <div class="bg-white rounded-xl shadow-md p-4 flex gap-4">
+            <img
+              [src]="item.product.image"
+              [alt]="item.product.title"
+              class="size-24 object-contain rounded-lg bg-slate-50"
+            />
+            <div class="flex-1 min-w-0">
+              <h3 class="font-semibold text-slate-900 line-clamp-2">{{ item.product.title }}</h3>
+              <p class="text-sm text-slate-500 mt-1">{{ item.product.category }}</p>
+              <p class="text-lg font-bold text-slate-900 mt-2">
+                {{ item.product.price | currency }}
+              </p>
+            </div>
+            <div class="flex flex-col items-end justify-between">
+              <button
+                type="button"
+                class="p-2 text-slate-400 hover:text-red-500 transition-colors"
+                (click)="onRemove(item.product.id)"
+              >
+                <lucide-icon [img]="icons.Trash2" class="size-5" />
+              </button>
+              <div class="flex items-center gap-2 bg-slate-100 rounded-lg p-1">
+                <button
+                  type="button"
+                  class="p-1 hover:bg-slate-200 rounded transition-colors"
+                  (click)="onUpdateQuantity(item.product.id, item.quantity - 1)"
+                >
+                  <lucide-icon [img]="icons.Minus" class="size-4" />
+                </button>
+                <span class="w-8 text-center font-medium">{{ item.quantity }}</span>
+                <button
+                  type="button"
+                  class="p-1 hover:bg-slate-200 rounded transition-colors"
+                  (click)="onUpdateQuantity(item.product.id, item.quantity + 1)"
+                >
+                  <lucide-icon [img]="icons.Plus" class="size-4" />
+                </button>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+      <div class="lg:col-span-1">
+        <div class="bg-white rounded-xl shadow-md p-6 sticky top-24">
+          <h2 class="text-lg font-semibold text-slate-900 mb-4">Order Summary</h2>
+          <div class="space-y-3 text-sm">
+            <div class="flex justify-between">
+              <span class="text-slate-500">Subtotal ({{ cartCount() }} items)</span>
+              <span class="font-medium">{{ cartTotal() | currency }}</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-slate-500">Shipping</span>
+              <span class="font-medium text-green-600">Free</span>
+            </div>
+            <div class="border-t pt-3 flex justify-between text-base">
+              <span class="font-semibold">Total</span>
+              <span class="font-bold text-slate-900">{{ cartTotal() | currency }}</span>
+            </div>
+          </div>
+          <button appButton class="w-full mt-6">Proceed to Checkout</button>
           <button
-            type="button"
-            class="p-2 text-slate-400 hover:text-red-500 transition-colors"
-            (click)="onRemove(item.product.id)"
+            appButton
+            variant="ghost"
+            class="w-full mt-2 text-red-500 hover:text-red-600 hover:bg-red-50"
+            (click)="onClearCart()"
           >
-            <lucide-icon [img]="icons.Trash2" class="size-5" />
+            Clear Cart
           </button>
-          <div class="flex items-center gap-2 bg-slate-100 rounded-lg p-1">
-            <button
-              type="button"
-              class="p-1 hover:bg-slate-200 rounded transition-colors"
-              (click)="onUpdateQuantity(item.product.id, item.quantity - 1)"
-            >
-              <lucide-icon [img]="icons.Minus" class="size-4" />
-            </button>
-            <span class="w-8 text-center font-medium">{{ item.quantity }}</span>
-            <button
-              type="button"
-              class="p-1 hover:bg-slate-200 rounded transition-colors"
-              (click)="onUpdateQuantity(item.product.id, item.quantity + 1)"
-            >
-              <lucide-icon [img]="icons.Plus" class="size-4" />
-            </button>
-          </div>
         </div>
       </div>
-      }
     </div>
-    <div class="lg:col-span-1">
-      <div class="bg-white rounded-xl shadow-md p-6 sticky top-24">
-        <h2 class="text-lg font-semibold text-slate-900 mb-4">Order Summary</h2>
-        <div class="space-y-3 text-sm">
-          <div class="flex justify-between">
-            <span class="text-slate-500">Subtotal ({{ cartCount() }} items)</span>
-            <span class="font-medium">{{ cartTotal() | currency }}</span>
-          </div>
-          <div class="flex justify-between">
-            <span class="text-slate-500">Shipping</span>
-            <span class="font-medium text-green-600">Free</span>
-          </div>
-          <div class="border-t pt-3 flex justify-between text-base">
-            <span class="font-semibold">Total</span>
-            <span class="font-bold text-slate-900">{{ cartTotal() | currency }}</span>
-          </div>
-        </div>
-        <button appButton class="w-full mt-6">Proceed to Checkout</button>
-        <button
-          appButton
-          variant="ghost"
-          class="w-full mt-2 text-red-500 hover:text-red-600 hover:bg-red-50"
-          (click)="onClearCart()"
-        >
-          Clear Cart
-        </button>
-      </div>
-    </div>
-  </div>
   } @else {
-  <div class="flex flex-col items-center justify-center h-64 bg-white rounded-xl shadow-md">
-    <lucide-icon [img]="icons.ShoppingBag" class="size-16 text-slate-300 mb-4" />
-    <p class="text-xl font-medium text-slate-500 mb-2">Your cart is empty</p>
-    <p class="text-slate-400 mb-6">Looks like you haven't added anything yet.</p>
-    <a appButton routerLink="/products">Continue Shopping</a>
-  </div>
+    <div class="flex flex-col items-center justify-center h-64 bg-white rounded-xl shadow-md">
+      <lucide-icon [img]="icons.ShoppingBag" class="size-16 text-slate-300 mb-4" />
+      <p class="text-xl font-medium text-slate-500 mb-2">Your cart is empty</p>
+      <p class="text-slate-400 mb-6">Looks like you haven't added anything yet.</p>
+      <a appButton routerLink="/products">Continue Shopping</a>
+    </div>
   }
 </div>
+
+<app-woo-products></app-woo-products>

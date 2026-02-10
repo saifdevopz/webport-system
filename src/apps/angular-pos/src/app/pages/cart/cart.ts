@@ -7,10 +7,11 @@ import { cartFeature } from './store/cart-feature';
 import { cartActions } from './store/cart-actions';
 import { Button } from '../../shared/components/button';
 import { LucideAngularModule, Minus, Plus, ShoppingBag, Trash2 } from 'lucide-angular';
+import { WooProducts } from '../../shared/components/woo-products/woo-products';
 
 @Component({
   selector: 'app-cart',
-  imports: [LucideAngularModule, RouterLink, Button, CurrencyPipe],
+  imports: [LucideAngularModule, RouterLink, Button, CurrencyPipe, WooProducts],
   templateUrl: './cart.html',
 })
 export class Cart {
