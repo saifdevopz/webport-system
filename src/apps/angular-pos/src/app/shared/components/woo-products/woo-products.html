@@ -1,10 +1,14 @@
 <div *ngIf="loading">Loading products...</div>
 
 <div class="grid">
-  <div class="product" *ngFor="let p of products">
-    <img [src]="p.images[0]?.src" />
-    <h4>{{ p.name }}</h4>
-    <p>R {{ p.price }}</p>
-    <button>Add</button>
+  <div class="product">
+    @for (p of products; track p.id) {
+      <img [src]="p.images[0]?.src" />
+      <h4>{{ p.name }}</h4>
+      <p>R {{ p.price }}</p>
+      <button>Add</button>
+    } @empty {
+      <div>List is empty</div>
+    }
   </div>
 </div>

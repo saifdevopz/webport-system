@@ -1,4 +1,4 @@
-import { Product } from '../products/product-type';
+import { Product } from '../products/product-model';
 
 export type CartItem = {
   product: Product;

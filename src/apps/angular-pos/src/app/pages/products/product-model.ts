@@ -8,6 +8,13 @@ export type Product = {
   rating: Rating;
 };
 
+export type WooProduct = {
+  id: number;
+  name: string;
+  description: string;
+  price: number;
+};
+
 export type Rating = {
   rate: number;
   count: number;

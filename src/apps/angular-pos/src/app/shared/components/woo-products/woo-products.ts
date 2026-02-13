@@ -14,7 +14,7 @@ export class WooProducts {
   constructor(private wc: WoocommerceService) {}
 
   ngOnInit() {
-    this.wc.getProducts().subscribe({
+    this.wc.getWooCommerceProducts().subscribe({
       next: (data) => {
         this.products = data;
         console.log(data);

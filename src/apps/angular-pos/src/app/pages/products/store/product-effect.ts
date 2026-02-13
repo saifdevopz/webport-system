@@ -9,17 +9,17 @@ export const productEffect = createEffect(
     return action$.pipe(
       ofType(productActions.load),
       switchMap(() => {
-        return productApi.getProducts().pipe(
+        return productApi.getWooCommerceProducts().pipe(
           tap((products) => {
             console.log('Products JSON:', products);
           }),
           map((products) => productActions.loadSuccess({ products })),
-          catchError((error) => of(productActions.loadFailure({ error: error.message })))
+          catchError((error) => of(productActions.loadFailure({ error: error.message }))),
         );
-      })
+      }),
     );
   },
   {
     functional: true,
-  }
+  },
 );
