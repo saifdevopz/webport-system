@@ -12,6 +12,7 @@ import { provideNgToast } from 'ng-angular-popup';
 import { provideState, provideStore } from '@ngrx/store';
 import { provideEffects } from '@ngrx/effects';
 import { authFeatures } from './shared/store/auth-feature';
+import { provideHttpClient } from '@angular/common/http';
 1;
 
 export const API_URL = new InjectionToken<string>('API_URL');
@@ -19,6 +20,7 @@ export const API_URL = new InjectionToken<string>('API_URL');
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
+    provideHttpClient(),
     provideRouter(routes),
     provideStore(),
     provideEffects(authEffects),

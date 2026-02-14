@@ -10,9 +10,13 @@ export type Product = {
 
 export type WooProduct = {
   id: number;
+  title: string;
   name: string;
   description: string;
   price: number;
+  category: string;
+  image: string;
+  rating: Rating;
 };
 
 export type Rating = {

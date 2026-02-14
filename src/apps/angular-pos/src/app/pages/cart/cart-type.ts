@@ -1,6 +1,6 @@
-import { Product } from '../products/product-model';
+import { WooProduct } from '../products/product-model';
 
 export type CartItem = {
-  product: Product;
+  product: WooProduct;
   quantity: number;
 };

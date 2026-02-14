@@ -39,6 +39,7 @@
         <Property Name="VWDPort" Value="&quot;61502&quot;" />
       </Properties>
     </Project>
+    <Project Path="src/apps/WebportSystem.WorkerService/WebportSystem.WorkerService.csproj" Id="9c0427d8-595d-4200-8c6f-85010950c776" />
   </Folder>
   <Folder Name="/src/apps/blazor-server/">
     <Project Path="src/apps/blazor-server/WebportSystem.Dashboard/WebportSystem.Dashboard.csproj" Id="a099018b-1955-45c6-a1e2-3aea7caf2875" />

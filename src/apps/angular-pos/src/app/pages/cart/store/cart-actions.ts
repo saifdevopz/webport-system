@@ -1,6 +1,6 @@
 import { createActionGroup, emptyProps, props } from '@ngrx/store';
 import { CartItem } from '../cart-type';
-import { Product } from '../../products/product-model';
+import { WooProduct } from '../../products/product-model';
 
 export const cartActions = createActionGroup({
   source: 'Cart',
@@ -9,8 +9,8 @@ export const cartActions = createActionGroup({
     loadSuccess: props<{ items: CartItem[] }>(),
     loadFailure: props<{ error: string }>(),
 
-    addToCart: props<{ product: Product }>(),
-    addToCartSuccess: props<{ product: Product }>(),
+    addToCart: props<{ product: WooProduct }>(),
+    addToCartSuccess: props<{ product: WooProduct }>(),
     addToCartFailure: props<{ error: string }>(),
 
     removeFromCart: props<{ productId: number }>(),
