@@ -31,7 +31,7 @@ app.MapGet("/ping", () =>
 {
     return Results.Ok(new
     {
-        status = "online",
+        status = "animeeeeeeeeeee",
         version = "1.0.0"
     });
 });
