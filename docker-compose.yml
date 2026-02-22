@@ -21,12 +21,13 @@ services:
     image: ghcr.io/saifdevopz/webportsystem-pos:latest
     build:
       context: .
-      dockerfile: src/apps/angular-pos/Dockerfile
+      dockerfile: src/apps/WebportSystem.POS/Dockerfile
     container_name: webportsystem-pos
     ports:
       - "4200:4200"
     volumes:
-      - ./src/apps/angular-pos:/app
+      - ./src/apps/WebportSystem.POS:/app
       - /app/node_modules  
     environment:
       - STYLE=css
+
