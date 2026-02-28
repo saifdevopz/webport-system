@@ -1,10 +1,10 @@
 import { createFeature, createReducer, on } from '@ngrx/store';
 import { productActions } from './product-actions';
-import { Product, WooProduct } from '../product-model';
+import { Product } from '../product-model';
 
 export type ProductState = {
-  products: WooProduct[]; // 20 records
-  filteredProducts: WooProduct[]; // filtered records based on search
+  products: Product[]; // 20 records
+  filteredProducts: Product[]; // filtered records based on search
   searchQuery: string | null;
   error: string | null;
   loading: boolean;
@@ -45,7 +45,7 @@ export const productFeature = createFeature({
 
     on(productActions.search, (state, { searchQuery }) => {
       const filteredProducts = state.products.filter((product) =>
-        product.name.toLowerCase().includes(searchQuery.toLowerCase()),
+        product.title.toLowerCase().includes(searchQuery.toLowerCase()),
       );
       return {
         ...state,

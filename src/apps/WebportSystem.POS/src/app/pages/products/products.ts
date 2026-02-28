@@ -6,7 +6,7 @@ import { productActions } from './store/product-actions';
 import { ProductCard } from './product-card';
 import { FormsModule } from '@angular/forms';
 import { cartActions } from '../cart/store/cart-actions';
-import { Product, WooProduct } from './product-model';
+import { Product } from './product-model';
 
 @Component({
   selector: 'app-products',
@@ -29,7 +29,7 @@ export class Products implements OnInit {
     this.store.dispatch(productActions.search({ searchQuery: query }));
   }
 
-  protected onAddToCart(product: WooProduct): void {
+  protected onAddToCart(product: Product): void {
     this.store.dispatch(cartActions.addToCart({ product }));
   }
 }

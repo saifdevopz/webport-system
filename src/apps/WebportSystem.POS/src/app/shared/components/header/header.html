@@ -1,6 +1,6 @@
 <div class="sticky top-0 z-50 w-full px-4 py-3 bg-slate-900 text-white shadow-lg">
   <nav class="container mx-auto flex items-center justify-between">
-    <a routerLink="/" class="text-xl font-bold tracking-tight">Webport sahjo</a>
+    <a routerLink="/" class="text-xl font-bold tracking-tight">Webport</a>
 
     <div class="flex items-center gap-4">
       <button
@@ -36,16 +36,6 @@
         >
           {{ cartItemCount() }}
         </span>
-      </button>
-      <button
-        appButton
-        variant="ghost"
-        type="button"
-        class="text-white hover:text-gray-300 hover:bg-white/10"
-        routerLink="/woo"
-      >
-        <lucide-icon [img]="icons.LogOut" class="size-4 mr-2" />
-        Woo
       </button>
     </div>
   </nav>

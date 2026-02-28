@@ -9,7 +9,7 @@ export const productEffect = createEffect(
     return action$.pipe(
       ofType(productActions.load),
       switchMap(() => {
-        return productApi.getWooCommerceProducts().pipe(
+        return productApi.getProducts().pipe(
           tap((products) => {
             console.log('Products JSON:', products);
           }),

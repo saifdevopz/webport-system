@@ -1,11 +1,11 @@
 import { createActionGroup, emptyProps, props } from '@ngrx/store';
-import { WooProduct } from '../product-model';
+import { Product } from '../product-model';
 
 export const productActions = createActionGroup({
   source: 'Products',
   events: {
     load: emptyProps(),
-    loadSuccess: props<{ products: WooProduct[] }>(),
+    loadSuccess: props<{ products: Product[] }>(),
     loadFailure: props<{ error: string }>(),
 
     search: props<{ searchQuery: string }>(),
