@@ -8,11 +8,11 @@ WORKDIR /app
 
 # Install deps first (better caching)
 # Copy package.json from the Angular app directory
-COPY src/apps/angular-pos/package*.json ./
+COPY src/apps/WebportSystem.POS/package*.json ./
 RUN npm install
 
 # Copy the Angular app source
-COPY src/apps/angular-pos/ .
+COPY src/apps/WebportSystem.POS/ .
 
 # Expose Angular dev server
 EXPOSE 4200
