@@ -71,7 +71,7 @@ jobs:
             cd /home/webportsystem-pos
 
             # Login to GHCR on manager node (credentials sent to workers)
-            #echo "$GHCR_PAT" | docker login ghcr.io -u saifdevopz --password-stdin
+            echo "$GHCR_PAT" | docker login ghcr.io -u saifdevopz --password-stdin
 
             # Optional: pull the image first to ensure all nodes have it
             docker pull ghcr.io/saifdevopz/webportsystem-pos:$SHORT_TAG
