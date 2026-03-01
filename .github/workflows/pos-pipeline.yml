@@ -20,17 +20,22 @@ jobs:
 
       - name: Build and Push Docker Image
         run: |
-          IMAGE_NAME=ghcr.io/${{ github.repository_owner }}/webportsystem.pos
-          TAG=$(echo $GITHUB_SHA | cut -c1-7)
+          IMAGE_NAME=ghcr.io/${{ github.repository_owner }}/webportsystem-pos
+          TAG=${GITHUB_SHA::7}
 
-          # Build the POS image using docker-compose build
+          echo "Building image with tag: $TAG"
+
+          # Build image
           docker compose -f docker-compose.yml build webportsystem.pos
-          # Tag the image with commit SHA
+
+          # Tag image
           docker tag $IMAGE_NAME:latest $IMAGE_NAME:$TAG
 
           # Push both tags
           docker push $IMAGE_NAME:latest
           docker push $IMAGE_NAME:$TAG
+
+          echo "✅ Image pushed: $IMAGE_NAME:$TAG"
 
   update_server:
     name: Deploy to Server
@@ -42,21 +47,38 @@ jobs:
         uses: appleboy/ssh-action@master
         env:
           IMAGE_TAG: ${{ github.sha }}
+          GHCR_PAT: ${{ secrets.GH_PAT }}
         with:
           host: ${{ secrets.SERVER_HOST }}
           username: ${{ secrets.SERVER_USERNAME }}
           key: ${{ secrets.SERVER_SSH_KEY }}
-          envs: IMAGE_TAG
+          envs: IMAGE_TAG,GHCR_PAT
           script: |
             set -e
 
-            SHORT_TAG=$(echo $IMAGE_TAG | cut -c1-7)
+            # Generate short SHA tag
+            echo "Full IMAGE_TAG from GitHub: $IMAGE_TAG"
+            SHORT_TAG=${IMAGE_TAG::7}
             echo "🚀 Deploying image tag: $SHORT_TAG"
 
-            export IMAGE_TAG=$SHORT_TAG
+            if [ -z "$SHORT_TAG" ]; then
+              echo "❌ ERROR: SHORT_TAG is empty"
+              exit 1
+            fi
+
+            echo "🚀 Deploying image tag: $SHORT_TAG"
 
             cd /home/webportsystem-pos
-            docker stack deploy \
+
+            # Login to GHCR on manager node (credentials sent to workers)
+            echo "$GHCR_PAT" | docker login ghcr.io -u saifdevopz --password-stdin
+
+            # Optional: pull the image first to ensure all nodes have it
+            docker pull ghcr.io/saifdevopz/webportsystem-pos:$SHORT_TAG
+
+            IMAGE_TAG=$SHORT_TAG docker stack deploy \
               --with-registry-auth \
               -c docker-stack.yaml \
-              webportsystem-pos          
+              webportsystem-pos
+
+            echo "✅ Deployment complete"
