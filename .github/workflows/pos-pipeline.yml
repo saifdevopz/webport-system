@@ -21,17 +21,21 @@ jobs:
       - name: Build and Push Docker Image
         run: |
           IMAGE_NAME=ghcr.io/${{ github.repository_owner }}/webportsystem-pos
-          TAG=$(echo $GITHUB_SHA | cut -c1-7)
+          TAG=${GITHUB_SHA::7}
 
-          # Build the POS image using docker-compose build
+          echo "Building image with tag: $TAG"
+
+          # Build image
           docker compose -f docker-compose.yml build webportsystem.pos
 
-          # Tag the image with commit SHA
+          # Tag image
           docker tag $IMAGE_NAME:latest $IMAGE_NAME:$TAG
 
           # Push both tags
           docker push $IMAGE_NAME:latest
           docker push $IMAGE_NAME:$TAG
+
+          echo "✅ Image pushed: $IMAGE_NAME:$TAG"
 
   update_server:
     name: Deploy to Server
@@ -53,7 +57,7 @@ jobs:
 
             echo "Full IMAGE_TAG from GitHub: $IMAGE_TAG"
 
-            SHORT_TAG=$(echo $IMAGE_TAG | cut -c1-7)
+            SHORT_TAG=${IMAGE_TAG::7}
             echo "🚀 Deploying image tag: $SHORT_TAG"
 
             if [ -z "$SHORT_TAG" ]; then
