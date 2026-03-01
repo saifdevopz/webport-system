@@ -55,8 +55,8 @@ jobs:
           script: |
             set -e
 
+            # Generate short SHA tag
             echo "Full IMAGE_TAG from GitHub: $IMAGE_TAG"
-
             SHORT_TAG=${IMAGE_TAG::7}
             echo "🚀 Deploying image tag: $SHORT_TAG"
 
@@ -68,6 +68,12 @@ jobs:
             echo "🚀 Deploying image tag: $SHORT_TAG"
 
             cd /home/webportsystem-pos
+
+            # Login to GHCR on manager node (credentials sent to workers)
+            echo "$GHCR_PAT" | docker login ghcr.io -u saifdevopz --password-stdin
+
+            # Optional: pull the image first to ensure all nodes have it
+            docker pull ghcr.io/saifdevopz/webportsystem-pos:$SHORT_TAG
 
             IMAGE_TAG=$SHORT_TAG docker stack deploy \
               --with-registry-auth \
