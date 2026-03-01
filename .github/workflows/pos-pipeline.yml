@@ -74,7 +74,7 @@ jobs:
             #echo "$GHCR_PAT" | docker login ghcr.io -u saifdevopz --password-stdin
 
             # Optional: pull the image first to ensure all nodes have it
-            #docker pull ghcr.io/saifdevopz/webportsystem-pos:$SHORT_TAG
+            docker pull ghcr.io/saifdevopz/webportsystem-pos:$SHORT_TAG
 
             IMAGE_TAG=$SHORT_TAG docker stack deploy \
               --with-registry-auth \
