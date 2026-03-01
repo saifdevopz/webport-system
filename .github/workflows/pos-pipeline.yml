@@ -25,6 +25,7 @@ jobs:
 
           # Build the POS image using docker-compose build
           docker compose -f docker-compose.yml build webportsystem.pos
+
           # Tag the image with commit SHA
           docker tag $IMAGE_NAME:latest $IMAGE_NAME:$TAG
 
@@ -50,13 +51,23 @@ jobs:
           script: |
             set -e
 
+            echo "Full IMAGE_TAG from GitHub: $IMAGE_TAG"
+
             SHORT_TAG=$(echo $IMAGE_TAG | cut -c1-7)
             echo "🚀 Deploying image tag: $SHORT_TAG"
 
-            export IMAGE_TAG=$SHORT_TAG
+            if [ -z "$SHORT_TAG" ]; then
+              echo "❌ ERROR: SHORT_TAG is empty"
+              exit 1
+            fi
+
+            echo "🚀 Deploying image tag: $SHORT_TAG"
 
             cd /home/webportsystem-pos
-            docker stack deploy \
+
+            IMAGE_TAG=$SHORT_TAG docker stack deploy \
               --with-registry-auth \
               -c docker-stack.yaml \
-              webportsystem-pos          
+              webportsystem-pos
+
+            echo "✅ Deployment complete"
