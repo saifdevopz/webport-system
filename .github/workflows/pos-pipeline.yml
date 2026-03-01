@@ -20,7 +20,7 @@ jobs:
 
       - name: Build and Push Docker Image
         run: |
-          IMAGE_NAME=ghcr.io/${{ github.repository_owner }}/webportsystem.pos
+          IMAGE_NAME=ghcr.io/${{ github.repository_owner }}/webportsystem-pos
           TAG=$(echo $GITHUB_SHA | cut -c1-7)
 
           # Build the POS image using docker-compose build
