@@ -62,7 +62,7 @@
         "serve": {
           "builder": "@angular/build:dev-server",
           "options": {
-            "allowedHosts": [ "pos.webport.co.za" ]
+            "allowedHosts": [ "shop.webport.co.za" ]
           },
           "configurations": {
             "production": {
