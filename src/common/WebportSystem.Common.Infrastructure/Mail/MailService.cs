@@ -18,7 +18,7 @@ public class MailService(IOptions<MailOptions> settings, ILogger<MailService> lo
         using MimeMessage email = new();
 
         // From
-        email.From.Add(new MailboxAddress(_settings.DisplayName, request?.From ?? _settings.From));
+        email.From.Add(new MailboxAddress(_settings.DisplayName, request!.From ?? _settings.From!));
 
         // To
         foreach (string address in request!.To)
@@ -61,7 +61,7 @@ public class MailService(IOptions<MailOptions> settings, ILogger<MailService> lo
 
         // Content
         BodyBuilder builder = new();
-        email.Sender = new MailboxAddress(request.DisplayName ?? _settings.DisplayName, request.From ?? _settings.From);
+        email.Sender = new MailboxAddress(request.DisplayName ?? _settings.DisplayName, request.From ?? _settings.From!);
         email.Subject = request.Subject;
         builder.HtmlBody = request.Body;
 

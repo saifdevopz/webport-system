@@ -2,7 +2,7 @@
 
 internal static class Tags
 {
-    internal const string Token = "Identity.qweeeeee";
+    internal const string Token = "Identity.Tokens";
     internal const string Tenant = "Identity.Tenants";
     internal const string Role = "Identity.Roles";
     internal const string User = "Identity.Users";

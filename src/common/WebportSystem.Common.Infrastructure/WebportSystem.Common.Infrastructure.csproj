@@ -27,7 +27,7 @@
     <PackageReference Include="Npgsql.OpenTelemetry" Version="10.0.1" />
 
     <!-- Mail -->
-    <PackageReference Include="MailKit" Version="4.14.1" />
+    <PackageReference Include="MailKit" Version="4.15.1" />
 
     <!-- Authentication -->
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.0" />
