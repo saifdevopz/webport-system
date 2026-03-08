@@ -14,8 +14,8 @@ ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 
 COPY ["Directory.Build.props", "."]
-COPY ["webport-system/src/apps/WebportSystem.Dashboard/WebportSystem.Dashboard.csproj", "webport-system/src/apps/WebportSystem.Dashboard/"]
-COPY ["webport-system/src/common/WebportSystem.Common.Domain/WebportSystem.Common.Domain.csproj", "webport-system/src/common/WebportSystem.Common.Domain/"]
+COPY ["src/apps/WebportSystem.Dashboard/WebportSystem.Dashboard.csproj", "webport-system/src/apps/WebportSystem.Dashboard/"]
+COPY ["src/common/WebportSystem.Common.Domain/WebportSystem.Common.Domain.csproj", "webport-system/src/common/WebportSystem.Common.Domain/"]
 RUN dotnet restore "./webport-system/src/apps/WebportSystem.Dashboard/WebportSystem.Dashboard.csproj"
 COPY . .
 WORKDIR "/src/webport-system/src/apps/WebportSystem.Dashboard"
