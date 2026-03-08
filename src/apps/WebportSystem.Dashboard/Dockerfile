@@ -12,6 +12,7 @@ EXPOSE 8081
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
+
 COPY ["Directory.Build.props", "."]
 COPY ["webport-system/src/apps/WebportSystem.Dashboard/WebportSystem.Dashboard.csproj", "webport-system/src/apps/WebportSystem.Dashboard/"]
 COPY ["webport-system/src/common/WebportSystem.Common.Domain/WebportSystem.Common.Domain.csproj", "webport-system/src/common/WebportSystem.Common.Domain/"]
