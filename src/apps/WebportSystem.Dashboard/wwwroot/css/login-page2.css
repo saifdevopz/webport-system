@@ -15,7 +15,7 @@
   height: 80px;
 }
 
-/* Panel Container */
+/* Body */
 .body-layout {
   display: flex;
   flex: 1;
@@ -75,7 +75,7 @@
 
 .login-header-txt {
     font-family: "Poppins", sans-serif;
-    color: #5909ee;
+    color: #2196F3;
     font-size: 30px;
     margin-bottom: 5px;
 }
