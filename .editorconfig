@@ -77,5 +77,7 @@ dotnet_diagnostic.S2326.severity = none
 [*.cs]
 csharp_style_namespace_declarations = file_scoped:warning
 
+[**/Migrations/*.cs]
+dotnet_diagnostic.IDE0161.severity = none
 
 
