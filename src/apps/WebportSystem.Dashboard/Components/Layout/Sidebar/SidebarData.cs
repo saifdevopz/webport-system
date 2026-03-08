@@ -35,6 +35,11 @@ internal static class SidebarData
             Title = "General",
             Items = GetInventoryItems()
         },
+        new MenuGroup
+        {
+            Title = "General",
+            Items = GetGeneralMenuItems()
+        },
     ];
 
     // Item Lists

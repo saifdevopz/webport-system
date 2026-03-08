@@ -115,6 +115,11 @@ if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
         _.Servers = [];
         _.Theme = ScalarTheme.Kepler;
     });
+
+    if (app.Environment.IsDevelopment())
+    {
+        DatabaseInitializer.InitializeDatabases(app).Wait();
+    }
 }
 
 app.UseApplicationMiddlewares();
