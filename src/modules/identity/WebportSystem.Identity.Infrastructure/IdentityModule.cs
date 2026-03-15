@@ -34,7 +34,12 @@ public static class IdentityModule
 
         services.AddEndpoints(Presentation.AssemblyReference.Assembly);
 
+
+#pragma warning disable S125 // Sections of code should not be commented out
+        //RegisterGenericHandlers<UsersDbContext>(services, typeof(RoleM).Assembly);
+
         return services;
+#pragma warning restore S125 // Sections of code should not be commented out
     }
 
     private static void AddInfrastructure(
@@ -98,4 +103,25 @@ public static class IdentityModule
             services.Decorate(domainEventHandler, closedIdempotentHandler);
         }
     }
+
+    //private static void RegisterGenericHandlers<TContext>(
+    //    IServiceCollection services,
+    //    Assembly entityAssembly)
+    //    where TContext : DbContext
+
+#pragma warning disable S125 // Sections of code should not be commented out
+    //{
+    //    var entityTypes = entityAssembly
+    //        .GetTypes()
+    //        .Where(t => typeof(ISimpleEntity).IsAssignableFrom(t) && t.IsClass && !t.IsAbstract);
+
+    //    foreach (var entity in entityTypes)
+    //    {
+    //        var deleteCommand = typeof(GenericDeleteCommand<>).MakeGenericType(entity);
+    //        services.AddScoped(
+    //            typeof(ICommandHandler<>).MakeGenericType(deleteCommand),
+    //            typeof(GenericDeleteCommandHandler<,>).MakeGenericType(entity, typeof(TContext)));
+    //    }
+    //}
 }
+#pragma warning restore S125 // Sections of code should not be commented out

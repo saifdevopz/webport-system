@@ -10,10 +10,12 @@ public static class ApplicationConfiguration
 {
     public static IServiceCollection AddCommonApplication(
     this IServiceCollection services,
-        Assembly[] moduleAssemblies)
+        Assembly[] moduleAssemblies,
+        (Type ContextType, Assembly EntityAssembly)[] moduleContexts)
     {
         RegisterQueryHandlers(services, moduleAssemblies);
         RegisterCommandHandlers(services, moduleAssemblies);
+        RegisterGenericHandlers(services, moduleContexts);
         RegisterPipelineBehaviors(services);
 
         services.AddValidatorsFromAssemblies(moduleAssemblies, includeInternalTypes: true);
@@ -50,5 +52,25 @@ public static class ApplicationConfiguration
         services.Decorate(typeof(ICommandHandler<,>), typeof(LoggingDecorator.CommandHandler<,>));
         services.Decorate(typeof(ICommandHandler<>), typeof(LoggingDecorator.CommandBaseHandler<>));
         services.Decorate(typeof(IQueryHandler<,>), typeof(LoggingDecorator.QueryHandler<,>));
+    }
+
+    private static void RegisterGenericHandlers(
+    IServiceCollection services,
+    (Type ContextType, Assembly EntityAssembly)[] moduleContexts)
+    {
+        foreach (var (contextType, entityAssembly) in moduleContexts)
+        {
+            var entityTypes = entityAssembly
+                .GetTypes()
+                .Where(t => typeof(ISimpleEntity).IsAssignableFrom(t) && t.IsClass && !t.IsAbstract);
+
+            foreach (var entity in entityTypes)
+            {
+                var deleteCommand = typeof(GenericDeleteCommand<>).MakeGenericType(entity);
+                services.AddScoped(
+                    typeof(ICommandHandler<>).MakeGenericType(deleteCommand),
+                    typeof(GenericDeleteCommandHandler<,>).MakeGenericType(entity, contextType));
+            }
+        }
     }
 }

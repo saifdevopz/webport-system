@@ -6,8 +6,12 @@ using WebportSystem.Api.Extensions;
 using WebportSystem.Common.Application;
 using WebportSystem.Common.Infrastructure;
 using WebportSystem.Common.Presentation.Endpoints;
+using WebportSystem.Identity.Domain.Roles;
 using WebportSystem.Identity.Infrastructure;
+using WebportSystem.Identity.Infrastructure.Database;
+using WebportSystem.Inventory.Domain.Entities.Category;
 using WebportSystem.Inventory.Infrastructure;
+using WebportSystem.Inventory.Infrastructure.Database;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
@@ -76,7 +80,12 @@ Assembly[] moduleApplicationAssemblies =
 ];
 
 // --- Common Modules ---
-builder.Services.AddCommonApplication(moduleApplicationAssemblies);
+builder.Services.AddCommonApplication(
+moduleApplicationAssemblies,
+    moduleContexts: [
+        (typeof(UsersDbContext), typeof(RoleM).Assembly),
+        (typeof(InventoryDbContext), typeof(CategoryM).Assembly),
+    ]);
 builder.Services.AddCommonInfrastructure(builder.Configuration);
 
 // --- Infrastructure Modules ---
@@ -116,7 +125,7 @@ if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
         _.Theme = ScalarTheme.Kepler;
     });
 
-    if (app.Environment.IsDevelopment())
+    if (!app.Environment.IsDevelopment())
     {
         DatabaseInitializer.InitializeDatabases(app).Wait();
     }

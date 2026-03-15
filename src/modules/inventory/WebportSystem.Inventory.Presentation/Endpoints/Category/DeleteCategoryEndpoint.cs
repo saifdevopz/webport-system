@@ -1,4 +1,7 @@
-﻿namespace WebportSystem.Inventory.Presentation.Endpoints.Category;
+﻿using Microsoft.AspNetCore.Mvc;
+using WebportSystem.Inventory.Domain.Entities.Category;
+
+namespace WebportSystem.Inventory.Presentation.Endpoints.Category;
 
 internal sealed class DeleteCategoryEndpoint : IEndpoint
 {
@@ -6,11 +9,11 @@ internal sealed class DeleteCategoryEndpoint : IEndpoint
     {
         app.MapDelete("category/{Id}", async (
             int Id,
-            ICommandHandler<DeleteCategoryCommand> handler,
+            [FromServices] ICommandHandler<GenericDeleteCommand<CategoryM>> handler,
             CancellationToken cancellationToken) =>
         {
             var response = await handler
-                .Handle(new DeleteCategoryCommand(Id), cancellationToken)
+                .Handle(new GenericDeleteCommand<CategoryM>(Id), cancellationToken)
                 .MapResult();
 
             return response;

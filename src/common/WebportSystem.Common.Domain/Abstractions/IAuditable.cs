@@ -7,3 +7,6 @@ public interface IAuditable
     public DateTime LastModDt { get; set; }
     public string LastModBy { get; set; }
 }
+
+
+public interface ISimpleEntity { }

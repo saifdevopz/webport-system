@@ -6,6 +6,7 @@ namespace WebportSystem.Identity.Application.Data;
 
 public interface IUsersDbContext
 {
+    DbSet<TEntity> Set<TEntity>() where TEntity : class;
     DbSet<TenantM> Tenants { get; }
     DbSet<UserM> Users { get; }
 
