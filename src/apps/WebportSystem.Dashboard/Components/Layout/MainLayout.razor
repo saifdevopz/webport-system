@@ -26,7 +26,6 @@
                         <div class="div"><h1>Dashboard</h1></div>       
                         <MudMenu Label="Open menu">                            
                             <MudMenuItem Label="Toggle" @onclick="Test" />
-                            <MudMenuItem Label="Settings" @onclick="NavigateToSettings" />
                             <MudMenuItem Label="Logout" @onclick="LogoutClicked" />
                         </MudMenu>
                     </header>
@@ -87,11 +86,6 @@
     private void LogoutClicked()
     {
         _NavigationManager.NavigateTo("/logout", forceLoad: true);
-    }
-
-    private void NavigateToSettings()
-    {
-        _NavigationManager.NavigateTo("/settings", forceLoad: false);
     }
 
     protected override void OnParametersSet()

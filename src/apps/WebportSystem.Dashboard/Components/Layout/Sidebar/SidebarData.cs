@@ -71,7 +71,7 @@ internal static class SidebarData
     public static List<MenuItem> GetGeneralMenuItems() =>
     [
     // ================== DASHBOARD ==================
-        new MenuItem(href:"/dashboard", title: "Dashboard", icon:"ri-dashboard-fill"),
+        new MenuItem(href:"/home", title: "Dashboard", icon:"ri-dashboard-fill"),
 
         new(title:"Components", icon:"ri-vip-diamond-fill", suffix: new("Hot", "primary"), childMenuItems:
             [
