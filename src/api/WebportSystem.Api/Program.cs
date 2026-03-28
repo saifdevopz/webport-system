@@ -129,7 +129,7 @@ if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
 }
 
 // --- Database Initialization ---
-if (!app.Environment.IsDevelopment())
+if (app.Environment.IsDevelopment())
 {
     DatabaseInitializer.InitializeDatabases(app).Wait();
 }
