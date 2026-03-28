@@ -2,6 +2,30 @@
 
 namespace WebportSystem.Inventory.Application.Features.Item;
 
+public sealed record GetItemByIdQuery(int ItemId) : IQuery<GetItemByIdQuery>;
+
+public sealed record GetItemByIdQueryResult(ItemM Record);
+
+public class GetItemByIdQueryHandler(IInventoryDbContext dbContext)
+    : IQueryHandler<GetItemByIdQuery, GetItemByIdQueryResult>
+{
+    public async Task<Result<GetItemByIdQueryResult>> Handle(
+        GetItemByIdQuery query,
+        CancellationToken cancellationToken)
+    {
+        var record = await dbContext.Items.FindAsync([query.ItemId], cancellationToken);
+
+        return record is null
+            ? Result.Failure<GetItemByIdQueryResult>(CustomError.NotFound(nameof(GetItemByIdQueryHandler), "Record not found."))
+            : Result.Success(new GetItemByIdQueryResult(record));
+    }
+}
+
+
+public sealed record GetItemsQuery : IQuery<GetItemsQueryResult>;
+
+public sealed record GetItemsQueryResult(IEnumerable<ItemDto> Records);
+
 public class GetItemsQueryHandler(IInventoryDbContext dbContext)
     : IQueryHandler<GetItemsQuery, GetItemsQueryResult>
 {
@@ -28,7 +52,3 @@ public class GetItemsQueryHandler(IInventoryDbContext dbContext)
         return Result.Success(new GetItemsQueryResult(records));
     }
 }
-
-public sealed record GetItemsQuery : IQuery<GetItemsQueryResult>;
-
-public sealed record GetItemsQueryResult(IEnumerable<ItemDto> Records);

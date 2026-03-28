@@ -15,28 +15,18 @@ using WebportSystem.Inventory.Infrastructure.Database;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
-// Build logger temporarily so we can log before app is built
+// --- Logging ---
 Log.Logger = new LoggerConfiguration()
     .ReadFrom.Configuration(builder.Configuration)
     .CreateLogger();
 
-// Environment info logging
+builder.Host.UseSerilog((context, loggerConfig) =>
+    loggerConfig.ReadFrom.Configuration(context.Configuration));
+
 IWebHostEnvironment environment = builder.Environment;
+Log.Information("Running in {EnvironmentName} environment.", environment.EnvironmentName);
 
-if (environment.IsDevelopment())
-{
-    Log.Information("Running in Development environment.");
-}
-else if (environment.IsProduction())
-{
-    Log.Information("Running in Production environment.");
-}
-else
-{
-    Log.Information("Running in {EnvironmentName} environment.", environment.EnvironmentName);
-}
-
-// --- QuestPDF ---
+// --- Third Party Configurations ---
 QuestPDF.Settings.License = LicenseType.Community;
 
 // --- Database Configurations ---
@@ -47,22 +37,18 @@ string activeProvider = config["Database:ActiveProvider"]
 
 string basePath = $"Database:Providers:{activeProvider}";
 
-// Fetch connection strings dynamically
-string? identityDbString = config[$"{basePath}:IdentityConnection"];
-string? inventoryDbString = config[$"{basePath}:InventoryConnection"];
+string identityDbString = config[$"{basePath}:IdentityConnection"]
+    ?? throw new ArgumentException("Missing IdentityConnection in configuration.");
 
-ArgumentException.ThrowIfNullOrWhiteSpace(identityDbString);
-ArgumentException.ThrowIfNullOrWhiteSpace(inventoryDbString);
+string inventoryDbString = config[$"{basePath}:InventoryConnection"]
+    ?? throw new ArgumentException("Missing InventoryConnection in configuration.");
 
-// --- Serilog ---
-builder.Host.UseSerilog((context, loggerConfig) => loggerConfig.ReadFrom.Configuration(context.Configuration));
-
-// --- MVC & API ---
+// --- API ---
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddOpenApi();
 
-// --- Global Exception Handling ---
+// --- Error Handling ---
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddProblemDetails(options => options.CustomizeProblemDetails = context =>
 {
@@ -71,26 +57,6 @@ builder.Services.AddProblemDetails(options => options.CustomizeProblemDetails = 
 
     context.ProblemDetails.Extensions.TryAdd("requestId", context.HttpContext.TraceIdentifier);
 });
-
-// --- Application Modules ---
-Assembly[] moduleApplicationAssemblies =
-[
-    WebportSystem.Identity.Application.AssemblyReference.Assembly,
-    WebportSystem.Inventory.Application.AssemblyReference.Assembly
-];
-
-// --- Common Modules ---
-builder.Services.AddCommonApplication(
-moduleApplicationAssemblies,
-    moduleContexts: [
-        (typeof(UsersDbContext), typeof(RoleM).Assembly),
-        (typeof(InventoryDbContext), typeof(CategoryM).Assembly),
-    ]);
-builder.Services.AddCommonInfrastructure(builder.Configuration);
-
-// --- Infrastructure Modules ---
-builder.Services.AddIdentityModule(builder.Configuration, identityDbString);
-builder.Services.AddInventoryModule(builder.Configuration, inventoryDbString);
 
 // --- CORS ---
 builder.Services.AddCors(options =>
@@ -104,17 +70,53 @@ builder.Services.AddCors(options =>
 });
 
 // Health Checks
-
 builder.Services.AddHealthChecks();
+
+// --- Application Modules ---
+Assembly[] moduleApplicationAssemblies =
+[
+    WebportSystem.Identity.Application.AssemblyReference.Assembly,
+    WebportSystem.Inventory.Application.AssemblyReference.Assembly
+];
+
+builder.Services.AddCommonApplication(
+    moduleApplicationAssemblies,
+    moduleContexts: [
+        (typeof(UsersDbContext), typeof(RoleM).Assembly),
+        (typeof(InventoryDbContext), typeof(CategoryM).Assembly),
+    ]);
+
+builder.Services.AddCommonInfrastructure(builder.Configuration);
+
+// --- Infrastructure Modules ---
+builder.Services.AddIdentityModule(builder.Configuration, identityDbString);
+builder.Services.AddInventoryModule(builder.Configuration, inventoryDbString);
 
 var app = builder.Build();
 
-app.MapHealthChecks("/health");
+// --- Endpoints ---
+app.MapControllers();
+app.MapEndpoints();
 
+// --- Infrastructure ---
+app.UseHttpsRedirection();
+app.UseStaticFiles();
 app.UseCors("MyPolicy");
 
-app.UseStaticFiles();
+// --- Observability ---
+app.MapHealthChecks("/health");
+app.UseSerilogRequestLogging();
 
+// --- Error Handling ---
+app.UseExceptionHandler();
+app.UseStatusCodePages();
+app.UseApplicationMiddlewares();
+
+// --- Authentication & Authorization ---
+app.UseAuthentication();
+app.UseAuthorization();
+
+// --- API Documentation ---
 if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
 {
     app.MapOpenApi();
@@ -124,31 +126,12 @@ if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
         _.Servers = [];
         _.Theme = ScalarTheme.Kepler;
     });
-
-    if (!app.Environment.IsDevelopment())
-    {
-        DatabaseInitializer.InitializeDatabases(app).Wait();
-    }
 }
 
-app.UseApplicationMiddlewares();
-
-app.UseSerilogRequestLogging();
-
-app.UseHttpsRedirection();
-
-// Converts unhandled exceptions into Problem Details responses
-app.UseExceptionHandler();
-
-// Returns the Problem Details response for (empty) non-successful responses
-app.UseStatusCodePages();
-
-app.UseAuthentication();
-
-app.UseAuthorization();
-
-app.MapControllers();
-
-app.MapEndpoints();
+// --- Database Initialization ---
+if (!app.Environment.IsDevelopment())
+{
+    DatabaseInitializer.InitializeDatabases(app).Wait();
+}
 
 await app.RunAsync();

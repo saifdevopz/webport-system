@@ -24,7 +24,7 @@ public class TokenService(
     UsersDbContext usersDbContext,
     IDateTimeProvider dateTimeProvider) : ITokenService
 {
-    public async Task<Result<TokenResponse>> AccessToken(AccessTokenRequest request)
+    public async Task<Result<TokenResponse>> AccessToken(AccessTokenDto request)
     {
         var userObj = await userManager.FindByEmailAsync(request.Email);
 
@@ -45,7 +45,7 @@ public class TokenService(
         return await GenerateTokensAndUpdateUser(userObj);
     }
 
-    public async Task<Result<TokenResponse>> RefreshToken(RefreshTokenRequest request)
+    public async Task<Result<TokenResponse>> RefreshToken(RefreshTokenDto request)
     {
         ClaimsPrincipal userPrincipal = GetPrincipalFromExpiredToken(request.Token);
 

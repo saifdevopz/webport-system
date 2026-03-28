@@ -2,9 +2,11 @@
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using WebportSystem.Inventory.Application.Data;
 using WebportSystem.Inventory.Infrastructure.Common;
 using WebportSystem.Inventory.Infrastructure.Database;
+using WebportSystem.Inventory.Infrastructure.Outbox;
 
 namespace WebportSystem.Inventory.Infrastructure;
 
@@ -16,6 +18,8 @@ public static class InventoryModule
         string inventoryDatabaseString)
     {
         ArgumentNullException.ThrowIfNull(configuration);
+
+        services.AddDomainEventHandlers();
 
         services.AddInfrastructure(inventoryDatabaseString);
 
@@ -44,5 +48,27 @@ public static class InventoryModule
                 sp.GetRequiredService<AuditableEntityInterceptor>(),
                 sp.GetRequiredService<InsertOutboxMessagesInterceptor>());
         });
+    }
+
+    private static void AddDomainEventHandlers(this IServiceCollection services)
+    {
+        Type[] domainEventHandlers = [.. Application.AssemblyReference.Assembly
+            .GetTypes()
+            .Where(t => t.IsAssignableTo(typeof(IDomainEventDispatcher)))];
+
+        foreach (Type domainEventHandler in domainEventHandlers)
+        {
+            services.TryAddScoped(domainEventHandler);
+
+            Type domainEvent = domainEventHandler
+                .GetInterfaces()
+                .Single(i => i.IsGenericType)
+                .GetGenericArguments()
+                .Single();
+
+            Type closedIdempotentHandler = typeof(IdempotentDomainEventHandler<>).MakeGenericType(domainEvent);
+
+            services.Decorate(domainEventHandler, closedIdempotentHandler);
+        }
     }
 }

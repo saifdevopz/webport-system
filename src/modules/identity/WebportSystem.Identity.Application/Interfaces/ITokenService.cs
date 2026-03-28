@@ -4,6 +4,6 @@ namespace WebportSystem.Identity.Application.Interfaces;
 
 public interface ITokenService
 {
-    Task<Result<TokenResponse>> AccessToken(AccessTokenRequest request);
-    Task<Result<TokenResponse>> RefreshToken(Common.Domain.Contracts.Identity.RefreshTokenRequest request);
+    Task<Result<TokenResponse>> AccessToken(AccessTokenDto request);
+    Task<Result<TokenResponse>> RefreshToken(RefreshTokenDto request);
 }

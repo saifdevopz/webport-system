@@ -47,7 +47,7 @@ public class TokenService(BaseHttpClient httpClient) : ITokenService
         }
     }
 
-    public Task<TokenResponse> RefreshToken(RefreshTokenRequest request, CancellationToken cancellationToken = default)
+    public Task<TokenResponse> RefreshToken(RefreshTokenDto request, CancellationToken cancellationToken = default)
     {
         throw new NotImplementedException();
     }

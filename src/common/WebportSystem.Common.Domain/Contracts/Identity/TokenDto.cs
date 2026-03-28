@@ -14,20 +14,15 @@ public class LoginDto
     public string Password { get; set; } = string.Empty;
 }
 
-public record RefreshTokenRequest(string Token, string RefreshToken);
-public record TokenResponse(string Token, string RefreshToken);
-
-public sealed record AccessTokenRequest
+public sealed record AccessTokenDto
 (
     string Email,
     string Password
 );
 
-public class RefreshTokenRequest2
-{
-    public required string Token { get; set; }
-    public required string RefreshToken { get; set; }
-}
+public record RefreshTokenDto(string Token, string RefreshToken);
+
+public record TokenResponse(string Token, string RefreshToken);
 
 public sealed record CustomUserClaim
 (
