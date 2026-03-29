@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using QuestPDF.Companion;
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
@@ -60,7 +59,6 @@ public sealed class InvoiceController(ItemsInvoiceData invoiceData) : Controller
         var document = new InvoiceDocument(invoice);
         var pdf = document.GeneratePdf();
 
-        await document.ShowInCompanionAsync();
         return File(pdf, "application/pdf", "webport-invoice.pdf");
     }
 
