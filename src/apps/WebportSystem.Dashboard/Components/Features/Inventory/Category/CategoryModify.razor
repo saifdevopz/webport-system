@@ -19,20 +19,22 @@
 
         <MudCardContent>
             <MudTextField @bind-Value="model.CategoryCode" 
+                          Required="true"
                           Variant="Variant.Outlined" 
                           For="@(() => model.CategoryCode)" 
                           Label="Code" 
                           ReadOnly="Id is not null" />
 
             <MudTextField @bind-Value="model.CategoryDesc" 
+                          Required="true"
                           Variant="Variant.Outlined" 
                           For="@(() => model.CategoryDesc)" 
                           Label="Description" />
         </MudCardContent>
 
-        <MudCardActions Style="display: flex; justify-content: end;">
-            <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Outlined" Color="Color.Primary">Save</MudButton>
+        <MudCardActions Style="display: flex; justify-content: end; gap: 10px">
             <MudButton OnClick="Cancel" Variant="Variant.Outlined" Color="Color.Error">Cancel</MudButton>
+            <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Outlined" Color="Color.Primary">Save</MudButton>
         </MudCardActions>
 
         @if (!string.IsNullOrWhiteSpace(ErrorMessage))

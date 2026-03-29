@@ -10,14 +10,12 @@ namespace WebportSystem.Dashboard.Common.Services.Implementations;
 
 public class TokenService(BaseHttpClient httpClient) : ITokenService
 {
-    public const string baseUrl = "/token/accesstoken";
-
     public async Task<Result<TokenResponse>> AccessToken(LoginDto request, CancellationToken cancellationToken = default)
     {
         try
         {
             HttpClient httpclient = httpClient.GetPublicHttpClient();
-            var response = await httpclient.PostAsJsonAsync($"/access", request, cancellationToken);
+            var response = await httpclient.PostAsJsonAsync($"/token/access", request, cancellationToken);
 
             if (response == null)
                 return Result.Failure<TokenResponse>(CustomError.Conflict("NETWORK", "No response from server."));
