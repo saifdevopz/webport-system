@@ -1,6 +1,6 @@
 ﻿using MudBlazor;
 
-namespace WebportSystem.Dashboard.Components.Layout.Theme;
+namespace WebportSystem.Dashboard.Components.Shared.Theme;
 
 public record ThemeItem(string Name, MudTheme Theme, string ColorHex);
 

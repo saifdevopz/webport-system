@@ -23,5 +23,9 @@
     <ProjectReference Include="..\..\modules\identity\WebportSystem.Identity.Infrastructure\WebportSystem.Identity.Infrastructure.csproj" />
     <ProjectReference Include="..\..\modules\inventory\WebportSystem.Inventory.Infrastructure\WebportSystem.Inventory.Infrastructure.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="wwwroot\images\" />
+  </ItemGroup>
     
 </Project>

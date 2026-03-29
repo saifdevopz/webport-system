@@ -1,4 +1,4 @@
-﻿namespace WebportSystem.Dashboard.Components.Layout.Sidebar;
+﻿namespace WebportSystem.Dashboard.Components.Shared.Sidebar;
 
 public record Suffix(string Title, string Class);
 

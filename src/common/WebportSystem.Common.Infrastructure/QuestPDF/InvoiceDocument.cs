@@ -30,30 +30,46 @@ public class InvoiceDocument(InvoiceModel model) : IDocument
             });
     }
 
-    void ComposeHeader(IContainer container)
+    public static void ComposeHeader(IContainer container)
     {
         container.Row(row =>
         {
-            row.RelativeItem().Column(column =>
-            {
-                column
-                    .Item().Text($"Invoice #{Model.InvoiceNumber}")
-                    .FontSize(20).SemiBold().FontColor(Colors.Blue.Medium);
-
-                column.Item().Text(text =>
-                {
-                    text.Span("Issue date: ").SemiBold();
-                    text.Span($"{Model.IssueDate:d}");
-                });
-
-                column.Item().Text(text =>
-                {
-                    text.Span("Due date: ").SemiBold();
-                    text.Span($"{Model.DueDate:d}");
-                });
-            });
-
             row.ConstantItem(175).Image(LogoImage);
+
+            row.RelativeItem()
+                .AlignRight()
+                .Column(column =>
+            {
+
+                column
+                    .Item().Text("TAX INVOICE")
+                    .FontSize(25).SemiBold().FontColor(Colors.Black);
+
+                column.Item().Text("");
+
+                column
+                    .Item().AlignRight().Text($"MH MANUFACTURERS")
+                    .FontSize(10).Bold().FontColor(Colors.Black);
+
+                column
+                    .Item().AlignRight().Text($"2 Court Ln")
+                    .FontSize(10).FontColor(Colors.Black);
+
+                column
+                    .Item().AlignRight().Text($"Verula, KwaZulu-Natal 4340")
+                    .FontSize(10).FontColor(Colors.Black);
+
+                column
+                    .Item().AlignRight().Text($"SOUTH AFRICA")
+                    .FontSize(10).FontColor(Colors.Black);
+
+                column.Item().Text("");
+
+                column
+                    .Item().AlignRight().Text($"0668732375")
+                    .FontSize(10).FontColor(Colors.Black);
+
+            });
         });
     }
 
@@ -61,13 +77,13 @@ public class InvoiceDocument(InvoiceModel model) : IDocument
     {
         container.PaddingVertical(40).Column(column =>
         {
-            column.Spacing(20);
-
+            column.Spacing(10);
+            column.Item().LineHorizontal(1);
             column.Item().Row(row =>
             {
-                row.RelativeItem().Component(new AddressComponent("From", Model.SellerAddress!));
+                row.RelativeItem().Component(new AddressComponent("", Model.SellerAddress!));
                 row.ConstantItem(50);
-                row.RelativeItem().Component(new AddressComponent("For", Model.CustomerAddress!));
+                row.RelativeItem().Component(new AddressComponent("", Model.CustomerAddress!));
             });
 
             column.Item().Element(ComposeTable);
@@ -98,7 +114,7 @@ public class InvoiceDocument(InvoiceModel model) : IDocument
             table.Header(header =>
             {
                 header.Cell().Text("#");
-                header.Cell().Text("Product").Style(headerStyle);
+                header.Cell().Text("Items").Style(headerStyle);
                 header.Cell().AlignRight().Text("Unit price").Style(headerStyle);
                 header.Cell().AlignRight().Text("Quantity").Style(headerStyle);
                 header.Cell().AlignRight().Text("Total").Style(headerStyle);
@@ -144,7 +160,7 @@ public class AddressComponent(string title, Address address) : IComponent
             column.Spacing(2);
 
             column.Item().Text(Title).SemiBold();
-            column.Item().PaddingBottom(5).LineHorizontal(1);
+
 
             column.Item().Text(Address.CompanyName);
             column.Item().Text(Address.Street);

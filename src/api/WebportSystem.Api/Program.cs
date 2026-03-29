@@ -12,6 +12,7 @@ using WebportSystem.Identity.Infrastructure.Database;
 using WebportSystem.Inventory.Domain.Entities.Category;
 using WebportSystem.Inventory.Infrastructure;
 using WebportSystem.Inventory.Infrastructure.Database;
+using WebportSystem.Inventory.Infrastructure.Invoicing;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
@@ -28,6 +29,7 @@ Log.Information("Running in {EnvironmentName} environment.", environment.Environ
 
 // --- Third Party Configurations ---
 QuestPDF.Settings.License = LicenseType.Community;
+builder.Services.AddScoped<ItemsInvoiceData>();
 
 // --- Database Configurations ---
 ConfigurationManager config = builder.Configuration;
@@ -129,9 +131,11 @@ if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
 }
 
 // --- Database Initialization ---
-if (app.Environment.IsDevelopment())
-{
-    DatabaseInitializer.InitializeDatabases(app).Wait();
-}
+//if (app.Environment.IsDevelopment())
+#pragma warning disable S125 // Sections of code should not be commented out
+//{
+//    DatabaseInitializer.InitializeDatabases(app).Wait();
+//}
 
 await app.RunAsync();
+#pragma warning restore S125 // Sections of code should not be commented out

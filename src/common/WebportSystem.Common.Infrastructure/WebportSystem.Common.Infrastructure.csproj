@@ -6,12 +6,6 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
-  <ItemGroup>
-    <Compile Remove="QuestPDF\**" />
-    <EmbeddedResource Remove="QuestPDF\**" />
-    <None Remove="QuestPDF\**" />
-  </ItemGroup>
-
   <ItemGroup>      
     <!-- Entity Framework Core -->
     <PackageReference Include="EFCore.NamingConventions" Version="9.0.0" />

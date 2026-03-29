@@ -1,4 +1,4 @@
-﻿namespace WebportSystem.Dashboard.Components.Layout.Sidebar;
+﻿namespace WebportSystem.Dashboard.Components.Shared.Sidebar;
 
 internal static class SidebarData
 {
@@ -34,11 +34,6 @@ internal static class SidebarData
         {
             Title = "General",
             Items = GetInventoryItems()
-        },
-        new MenuGroup
-        {
-            Title = "General",
-            Items = GetGeneralMenuItems()
         },
     ];
 
