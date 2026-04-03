@@ -62,7 +62,7 @@ public static class ApplicationConfiguration
         {
             var entityTypes = entityAssembly
                 .GetTypes()
-                .Where(t => typeof(ISimpleEntity).IsAssignableFrom(t) && t.IsClass && !t.IsAbstract);
+                .Where(t => typeof(AggregateRoot).IsAssignableFrom(t) && t.IsClass && !t.IsAbstract);
 
             foreach (var entity in entityTypes)
             {

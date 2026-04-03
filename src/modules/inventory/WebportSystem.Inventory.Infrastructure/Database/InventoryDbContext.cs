@@ -1,6 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using WebportSystem.Inventory.Application.Data;
+using WebportSystem.Inventory.Domain.Entities.BusinessProfile;
 using WebportSystem.Inventory.Domain.Entities.Category;
+using WebportSystem.Inventory.Domain.Entities.Customer;
 using WebportSystem.Inventory.Domain.Entities.Item;
 using WebportSystem.Inventory.Infrastructure.Common;
 
@@ -12,6 +14,8 @@ public sealed class InventoryDbContext(
 {
     private readonly int _tenantId = tenantProvider.TenantId;
 
+    public DbSet<BusinessProfileM> BusinessProfiles => Set<BusinessProfileM>();
+    public DbSet<CustomerM> Customers => Set<CustomerM>();
     public DbSet<CategoryM> Categories => Set<CategoryM>();
     public DbSet<ItemM> Items => Set<ItemM>();
 
@@ -20,6 +24,12 @@ public sealed class InventoryDbContext(
         ArgumentNullException.ThrowIfNull(modelBuilder);
 
         // Query Filters
+        modelBuilder.Entity<CategoryM>()
+            .HasQueryFilter(_ => _.TenantId == _tenantId);
+
+        modelBuilder.Entity<CategoryM>()
+            .HasQueryFilter(_ => _.TenantId == _tenantId);
+
         modelBuilder.Entity<CategoryM>()
             .HasQueryFilter(_ => _.TenantId == _tenantId);
 

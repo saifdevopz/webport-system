@@ -131,11 +131,9 @@ if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
 }
 
 // --- Database Initialization ---
-//if (app.Environment.IsDevelopment())
-#pragma warning disable S125 // Sections of code should not be commented out
-//{
-//    DatabaseInitializer.InitializeDatabases(app).Wait();
-//}
+if (app.Environment.IsProduction())
+{
+    DatabaseInitializer.InitializeDatabases(app).Wait();
+}
 
 await app.RunAsync();
-#pragma warning restore S125 // Sections of code should not be commented out

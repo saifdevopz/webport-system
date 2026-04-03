@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using WebportSystem.Identity.Domain.Roles;
 using WebportSystem.Identity.Domain.Users;
 using WebportSystem.Identity.Infrastructure.Database;
+using WebportSystem.Inventory.Infrastructure.Database;
 
 namespace WebportSystem.Api.Extensions;
 
@@ -11,7 +12,10 @@ internal static class DatabaseInitializer
     public static async Task InitializeDatabases(this IApplicationBuilder app)
     {
         await app.ApplyIdentityMigrations();
+        await app.ApplyInventoryMigrations();
+
         await app.ApplyIdentityDataSeeder();
+        await app.ApplyInventoryDataSeeder();
     }
 
     public static async Task ApplyIdentityMigrations(this IApplicationBuilder app)
@@ -20,8 +24,14 @@ internal static class DatabaseInitializer
         await Task.CompletedTask;
     }
 
+    public static async Task ApplyInventoryMigrations(this IApplicationBuilder app)
+    {
+        app.ApplyCustomMigration<InventoryDbContext>(null);
+        await Task.CompletedTask;
+    }
+
     private static void ApplyCustomMigration<TDbContext>(this IApplicationBuilder app, string? connectionString)
-    where TDbContext : DbContext
+        where TDbContext : DbContext
     {
         using IServiceScope scope = app.ApplicationServices.CreateScope();
         using TDbContext context = scope.ServiceProvider.GetRequiredService<TDbContext>();
@@ -48,6 +58,15 @@ internal static class DatabaseInitializer
         var userManager = scope.ServiceProvider.GetRequiredService<UserManager<UserM>>();
         var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<RoleM>>();
 
-        await DatabaseSeedService.SeedAsync(dbContext, userManager, roleManager);
+        await IdentitySeedService.SeedAsync(dbContext, userManager, roleManager);
+    }
+
+    public static async Task ApplyInventoryDataSeeder(this IApplicationBuilder app)
+    {
+        using IServiceScope scope = app.ApplicationServices.CreateScope();
+
+        var context = scope.ServiceProvider.GetRequiredService<InventoryDbContext>();
+
+        await InventoryDataSeeder.SeedAsync(context);
     }
 }

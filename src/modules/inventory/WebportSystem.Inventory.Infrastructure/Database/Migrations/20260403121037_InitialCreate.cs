@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
@@ -13,6 +14,36 @@ namespace WebportSystem.Inventory.Infrastructure.Database.Migrations
         {
             migrationBuilder.EnsureSchema(
                 name: "inventory");
+
+            migrationBuilder.CreateTable(
+                name: "business_profiles",
+                schema: "inventory",
+                columns: table => new
+                {
+                    business_profile_id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    tenant_id = table.Column<int>(type: "integer", nullable: false),
+                    business_name = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: false),
+                    email = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
+                    phone = table.Column<string>(type: "text", nullable: false),
+                    address_line1 = table.Column<string>(type: "text", nullable: false),
+                    city = table.Column<string>(type: "text", nullable: false),
+                    province = table.Column<string>(type: "text", nullable: false),
+                    postal_code = table.Column<string>(type: "text", nullable: false),
+                    country = table.Column<string>(type: "text", nullable: false),
+                    bank_name = table.Column<string>(type: "text", nullable: true),
+                    account_number = table.Column<string>(type: "text", nullable: true),
+                    branch_code = table.Column<string>(type: "text", nullable: true),
+                    is_active = table.Column<bool>(type: "boolean", nullable: false),
+                    last_mod_by = table.Column<string>(type: "text", nullable: false),
+                    last_mod_dt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    created_by = table.Column<string>(type: "text", nullable: false),
+                    created_dt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_business_profiles", x => x.business_profile_id);
+                });
 
             migrationBuilder.CreateTable(
                 name: "categories",
@@ -33,6 +64,33 @@ namespace WebportSystem.Inventory.Infrastructure.Database.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("pk_categories", x => x.category_id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "customers",
+                schema: "inventory",
+                columns: table => new
+                {
+                    customer_id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    tenant_id = table.Column<int>(type: "integer", nullable: false),
+                    name = table.Column<string>(type: "text", nullable: false),
+                    email = table.Column<string>(type: "text", nullable: false),
+                    phone = table.Column<string>(type: "text", nullable: false),
+                    company_name = table.Column<string>(type: "text", nullable: false),
+                    address_line1 = table.Column<string>(type: "text", nullable: false),
+                    city = table.Column<string>(type: "text", nullable: false),
+                    province = table.Column<string>(type: "text", nullable: false),
+                    postal_code = table.Column<string>(type: "text", nullable: false),
+                    is_active = table.Column<bool>(type: "boolean", nullable: false),
+                    last_mod_by = table.Column<string>(type: "text", nullable: false),
+                    last_mod_dt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    created_by = table.Column<string>(type: "text", nullable: false),
+                    created_dt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_customers", x => x.customer_id);
                 });
 
             migrationBuilder.CreateTable(
@@ -95,10 +153,24 @@ namespace WebportSystem.Inventory.Infrastructure.Database.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "ix_business_profiles_business_name",
+                schema: "inventory",
+                table: "business_profiles",
+                column: "business_name",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "ix_categories_tenant_id_category_code",
                 schema: "inventory",
                 table: "categories",
                 columns: new[] { "tenant_id", "category_code" },
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "ix_customers_name",
+                schema: "inventory",
+                table: "customers",
+                column: "name",
                 unique: true);
 
             migrationBuilder.CreateIndex(
@@ -118,6 +190,14 @@ namespace WebportSystem.Inventory.Infrastructure.Database.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "business_profiles",
+                schema: "inventory");
+
+            migrationBuilder.DropTable(
+                name: "customers",
+                schema: "inventory");
+
             migrationBuilder.DropTable(
                 name: "items",
                 schema: "inventory");

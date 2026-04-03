@@ -12,7 +12,7 @@ using WebportSystem.Inventory.Infrastructure.Database;
 namespace WebportSystem.Inventory.Infrastructure.Database.Migrations
 {
     [DbContext(typeof(InventoryDbContext))]
-    [Migration("20260308033323_InitialCreate")]
+    [Migration("20260403121037_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -79,6 +79,105 @@ namespace WebportSystem.Inventory.Infrastructure.Database.Migrations
                     b.ToTable("outbox_message_consumers", "inventory");
                 });
 
+            modelBuilder.Entity("WebportSystem.Inventory.Domain.Entities.BusinessProfile.BusinessProfileM", b =>
+                {
+                    b.Property<int>("BusinessProfileId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("business_profile_id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("BusinessProfileId"));
+
+                    b.Property<string>("AccountNumber")
+                        .HasColumnType("text")
+                        .HasColumnName("account_number");
+
+                    b.Property<string>("AddressLine1")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("address_line1");
+
+                    b.Property<string>("BankName")
+                        .HasColumnType("text")
+                        .HasColumnName("bank_name");
+
+                    b.Property<string>("BranchCode")
+                        .HasColumnType("text")
+                        .HasColumnName("branch_code");
+
+                    b.Property<string>("BusinessName")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("business_name");
+
+                    b.Property<string>("City")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("city");
+
+                    b.Property<string>("Country")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("country");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("created_by");
+
+                    b.Property<DateTime>("CreatedDt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_dt");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("email");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_active");
+
+                    b.Property<string>("LastModBy")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("last_mod_by");
+
+                    b.Property<DateTime>("LastModDt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("last_mod_dt");
+
+                    b.Property<string>("Phone")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("phone");
+
+                    b.Property<string>("PostalCode")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("postal_code");
+
+                    b.Property<string>("Province")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("province");
+
+                    b.Property<int>("TenantId")
+                        .HasColumnType("integer")
+                        .HasColumnName("tenant_id");
+
+                    b.HasKey("BusinessProfileId")
+                        .HasName("pk_business_profiles");
+
+                    b.HasIndex("BusinessName")
+                        .IsUnique()
+                        .HasDatabaseName("ix_business_profiles_business_name");
+
+                    b.ToTable("business_profiles", "inventory");
+                });
+
             modelBuilder.Entity("WebportSystem.Inventory.Domain.Entities.Category.CategoryM", b =>
                 {
                     b.Property<int>("CategoryId")
@@ -134,6 +233,91 @@ namespace WebportSystem.Inventory.Infrastructure.Database.Migrations
                         .HasDatabaseName("ix_categories_tenant_id_category_code");
 
                     b.ToTable("categories", "inventory");
+                });
+
+            modelBuilder.Entity("WebportSystem.Inventory.Domain.Entities.Customer.CustomerM", b =>
+                {
+                    b.Property<int>("CustomerId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("customer_id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("CustomerId"));
+
+                    b.Property<string>("AddressLine1")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("address_line1");
+
+                    b.Property<string>("City")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("city");
+
+                    b.Property<string>("CompanyName")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("company_name");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("created_by");
+
+                    b.Property<DateTime>("CreatedDt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_dt");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("email");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_active");
+
+                    b.Property<string>("LastModBy")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("last_mod_by");
+
+                    b.Property<DateTime>("LastModDt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("last_mod_dt");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("name");
+
+                    b.Property<string>("Phone")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("phone");
+
+                    b.Property<string>("PostalCode")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("postal_code");
+
+                    b.Property<string>("Province")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("province");
+
+                    b.Property<int>("TenantId")
+                        .HasColumnType("integer")
+                        .HasColumnName("tenant_id");
+
+                    b.HasKey("CustomerId")
+                        .HasName("pk_customers");
+
+                    b.HasIndex("Name")
+                        .IsUnique()
+                        .HasDatabaseName("ix_customers_name");
+
+                    b.ToTable("customers", "inventory");
                 });
 
             modelBuilder.Entity("WebportSystem.Inventory.Domain.Entities.Item.ItemM", b =>

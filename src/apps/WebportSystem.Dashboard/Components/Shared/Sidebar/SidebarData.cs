@@ -45,6 +45,7 @@ internal static class SidebarData
         [
             new MenuItem(href:"/category/index", title:"Categories"),
             new MenuItem(href:"/item/index", title:"Items"),
+            new MenuItem(href:"/customer/index", title:"Customers"),
         ]),
     ];
 
