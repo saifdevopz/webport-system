@@ -24,7 +24,7 @@ public class GetBusinessProfileByIdQueryHandler(IInventoryDbContext dbContext)
 
 public sealed record GetBusinessProfilesQuery : IQuery<GetBusinessProfilesQueryResult>;
 
-public sealed record GetBusinessProfilesQueryResult(IEnumerable<BusinessProfileM> Records);
+public sealed record GetBusinessProfilesQueryResult(IEnumerable<BusinessProfileDto> Records);
 
 public class GetBusinessProfilesQueryHandler(IInventoryDbContext dbContext)
     : IQueryHandler<GetBusinessProfilesQuery, GetBusinessProfilesQueryResult>
@@ -35,6 +35,21 @@ public class GetBusinessProfilesQueryHandler(IInventoryDbContext dbContext)
     {
         var records = await dbContext.BusinessProfiles
             .AsNoTracking()
+            .Select(_ => new BusinessProfileDto
+            {
+                BusinessProfileId = _.BusinessProfileId,
+                BusinessName = _.BusinessName,
+                Email = _.Email,
+                Phone = _.Phone,
+                AddressLine1 = _.AddressLine1,
+                City = _.City,
+                Province = _.Province,
+                PostalCode = _.PostalCode,
+                Country = _.Country,
+                BankName = _.BankName,
+                AccountNumber = _.AccountNumber,
+                BranchCode = _.BranchCode
+            })
             .ToListAsync(cancellationToken);
 
         return Result.Success(new GetBusinessProfilesQueryResult(records));

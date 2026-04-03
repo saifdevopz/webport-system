@@ -1,15 +1,15 @@
 ﻿@page "/customer/index"
 @attribute [Authorize(Roles = "User")]
 
-<MudText Typo="Typo.h5">Customer List</MudText>
 
-<MudDataGrid Items="@Categories"
+<MudText Typo="Typo.h5">Category List</MudText>
+
+<MudDataGrid Items="@Customers"
              Filterable="true"
              ColumnResizeMode="ResizeMode.Column"
              Dense="true"
              Hover="true"
-             Striped="true"
-             QuickFilter="@_quickFilter">
+             Striped="true">
     <ToolBarContent>
         <MudIconButton Href="@($"category/modify")" Icon="@Icons.Material.Filled.Add" />
         <MudSpacer />
@@ -21,25 +21,25 @@
                       IconSize="Size.Medium" />
     </ToolBarContent>
     <Columns>
-        <PropertyColumn Property="_ => _.CategoryId" Title="Id" />
-        <PropertyColumn Property="_ => _.CategoryCode" Title="Code" />
-        <PropertyColumn Property="_ => _.CategoryDesc" Title="Description" />
+        <PropertyColumn Property="_ => _.CustomerId" Title="Id" />
+        <PropertyColumn Property="_ => _.CompanyName" Title="Code" />
+        <PropertyColumn Property="_ => _.Name" Title="Description" />
         <TemplateColumn CellClass="">
             <CellTemplate>
                 <MudStack Row>
-                    <MudIconButton Href="@($"category/modify/{context.Item.CategoryId}")" Icon="@Icons.Material.Filled.Edit" Color="Color.Success" />
-                    <MudIconButton OnClick="@(() => Delete(context.Item.CategoryId))" Icon="@Icons.Material.Filled.Delete" Color="Color.Error" />
+                    <MudIconButton Href="@($"category/modify/{context.Item.CustomerId}")" Icon="@Icons.Material.Filled.Edit" Color="Color.Success" />
+                    <MudIconButton OnClick="@(() => Delete(context.Item.CustomerId))" Icon="@Icons.Material.Filled.Delete" Color="Color.Error" />
                 </MudStack>
             </CellTemplate>
         </TemplateColumn>
     </Columns>
     <PagerContent>
-        <MudDataGridPager T="CategoryDto" />
+        <MudDataGridPager T="CustomerDto" />
     </PagerContent>
 </MudDataGrid>
 
 @code {
-    private List<CategoryDto> Categories = new();
+    private List<CustomerDto> Customers = new();
     private string _searchString = "";
 
     protected override async Task OnInitializedAsync()
@@ -49,11 +49,11 @@
 
     private async Task GetCategories()
     {
-        var response = await _DataService.GetAllAsync<CategoryDto>("category");
+        var response = await _DataService.GetAllAsync<CustomerDto>("customer");
 
         if (response.IsSuccess && response.Data.Records != null)
         {
-            Categories = response.Data.Records.ToList();
+            Customers = response.Data.Records.ToList();
         }
     }
 
@@ -78,14 +78,5 @@
             await DialogService.ShowMessageBox("Success", "Deleted Successfully");
         }
     }
-
-    private Func<CategoryDto, bool> _quickFilter => x =>
-    {
-        if (string.IsNullOrWhiteSpace(_searchString)) return true;
-
-        return x.CategoryCode.Contains(_searchString, StringComparison.OrdinalIgnoreCase)
-            || x.CategoryDesc.Contains(_searchString, StringComparison.OrdinalIgnoreCase)
-            || $"{x.CategoryCode} {x.CategoryDesc}".Contains(_searchString, StringComparison.OrdinalIgnoreCase);
-    };
 }
 

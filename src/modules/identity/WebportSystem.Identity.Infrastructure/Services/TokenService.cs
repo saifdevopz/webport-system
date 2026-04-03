@@ -106,7 +106,7 @@ public class TokenService(
         {
             new(CustomClaims.TenantId, customClaims.TenantId.ToString()),
             new(CustomClaims.UserId, customClaims.UserId.ToString()),
-            new(ClaimTypes.Email, customClaims.Email)
+            new(CustomClaims.Email, customClaims.Email)
         };
 
         // Add ClaimTypes.Role for EACH role

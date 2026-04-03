@@ -1,4 +1,5 @@
 ﻿using System.Security.Claims;
+using WebportSystem.Common.Domain.Contracts.Identity;
 using WebportSystem.Common.Infrastructure.Exceptions;
 
 namespace WebportSystem.Common.Infrastructure.Authentication;

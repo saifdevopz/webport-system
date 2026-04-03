@@ -43,6 +43,7 @@ internal static class SidebarData
     [
         new MenuItem(title: "Inventory", icon: "ri-archive-2-fill", suffix: new("Hot", "primary"), childMenuItems:
         [
+            new MenuItem(href:"/businessprofile/modify", title:"My Profile"),
             new MenuItem(href:"/category/index", title:"Categories"),
             new MenuItem(href:"/item/index", title:"Items"),
             new MenuItem(href:"/customer/index", title:"Customers"),

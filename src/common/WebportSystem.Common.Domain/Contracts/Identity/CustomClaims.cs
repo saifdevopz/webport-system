@@ -1,0 +1,8 @@
+﻿namespace WebportSystem.Common.Domain.Contracts.Identity;
+
+public static class CustomClaims
+{
+    public const string TenantId = "TenantId";
+    public const string UserId = "UserId";
+    public const string Email = "Email";
+}
