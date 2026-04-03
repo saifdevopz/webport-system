@@ -5,4 +5,5 @@ public static class CustomClaims
     public const string TenantId = "TenantId";
     public const string UserId = "UserId";
     public const string Email = "Email";
+    public const string Permission = "Permission";
 }
