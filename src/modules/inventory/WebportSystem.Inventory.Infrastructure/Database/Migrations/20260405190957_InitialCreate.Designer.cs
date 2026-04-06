@@ -12,7 +12,7 @@ using WebportSystem.Inventory.Infrastructure.Database;
 namespace WebportSystem.Inventory.Infrastructure.Database.Migrations
 {
     [DbContext(typeof(InventoryDbContext))]
-    [Migration("20260403121037_InitialCreate")]
+    [Migration("20260405190957_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -45,11 +45,11 @@ namespace WebportSystem.Inventory.Infrastructure.Database.Migrations
 
                     b.Property<DateTime>("OccurredOnUtc")
                         .HasColumnType("timestamp with time zone")
-                        .HasColumnName("occurred_on_utc");
+                        .HasColumnName("occurredOnUtc");
 
                     b.Property<DateTime?>("ProcessedOnUtc")
                         .HasColumnType("timestamp with time zone")
-                        .HasColumnName("processed_on_utc");
+                        .HasColumnName("processedOnUtc");
 
                     b.Property<string>("Type")
                         .IsRequired()
@@ -57,7 +57,7 @@ namespace WebportSystem.Inventory.Infrastructure.Database.Migrations
                         .HasColumnName("type");
 
                     b.HasKey("Id")
-                        .HasName("pk_outbox_messages");
+                        .HasName("pK_outbox_messages");
 
                     b.ToTable("outbox_messages", "inventory");
                 });
@@ -66,7 +66,7 @@ namespace WebportSystem.Inventory.Infrastructure.Database.Migrations
                 {
                     b.Property<Guid>("OutboxMessageId")
                         .HasColumnType("uuid")
-                        .HasColumnName("outbox_message_id");
+                        .HasColumnName("outboxMessageId");
 
                     b.Property<string>("Name")
                         .HasMaxLength(500)
@@ -74,7 +74,7 @@ namespace WebportSystem.Inventory.Infrastructure.Database.Migrations
                         .HasColumnName("name");
 
                     b.HasKey("OutboxMessageId", "Name")
-                        .HasName("pk_outbox_message_consumers");
+                        .HasName("pK_outbox_message_consumers");
 
                     b.ToTable("outbox_message_consumers", "inventory");
                 });
@@ -84,32 +84,32 @@ namespace WebportSystem.Inventory.Infrastructure.Database.Migrations
                     b.Property<int>("BusinessProfileId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
-                        .HasColumnName("business_profile_id");
+                        .HasColumnName("businessProfileId");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("BusinessProfileId"));
 
                     b.Property<string>("AccountNumber")
                         .HasColumnType("text")
-                        .HasColumnName("account_number");
+                        .HasColumnName("accountNumber");
 
                     b.Property<string>("AddressLine1")
                         .IsRequired()
                         .HasColumnType("text")
-                        .HasColumnName("address_line1");
+                        .HasColumnName("addressLine1");
 
                     b.Property<string>("BankName")
                         .HasColumnType("text")
-                        .HasColumnName("bank_name");
+                        .HasColumnName("bankName");
 
                     b.Property<string>("BranchCode")
                         .HasColumnType("text")
-                        .HasColumnName("branch_code");
+                        .HasColumnName("branchCode");
 
                     b.Property<string>("BusinessName")
                         .IsRequired()
                         .HasMaxLength(20)
                         .HasColumnType("character varying(20)")
-                        .HasColumnName("business_name");
+                        .HasColumnName("businessName");
 
                     b.Property<string>("City")
                         .IsRequired()
@@ -124,11 +124,11 @@ namespace WebportSystem.Inventory.Infrastructure.Database.Migrations
                     b.Property<string>("CreatedBy")
                         .IsRequired()
                         .HasColumnType("text")
-                        .HasColumnName("created_by");
+                        .HasColumnName("createdBy");
 
                     b.Property<DateTime>("CreatedDt")
                         .HasColumnType("timestamp with time zone")
-                        .HasColumnName("created_dt");
+                        .HasColumnName("createdDt");
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -138,16 +138,16 @@ namespace WebportSystem.Inventory.Infrastructure.Database.Migrations
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("boolean")
-                        .HasColumnName("is_active");
+                        .HasColumnName("isActive");
 
                     b.Property<string>("LastModBy")
                         .IsRequired()
                         .HasColumnType("text")
-                        .HasColumnName("last_mod_by");
+                        .HasColumnName("lastModBy");
 
                     b.Property<DateTime>("LastModDt")
                         .HasColumnType("timestamp with time zone")
-                        .HasColumnName("last_mod_dt");
+                        .HasColumnName("lastModDt");
 
                     b.Property<string>("Phone")
                         .IsRequired()
@@ -157,25 +157,21 @@ namespace WebportSystem.Inventory.Infrastructure.Database.Migrations
                     b.Property<string>("PostalCode")
                         .IsRequired()
                         .HasColumnType("text")
-                        .HasColumnName("postal_code");
+                        .HasColumnName("postalCode");
 
                     b.Property<string>("Province")
                         .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("province");
 
-                    b.Property<int>("TenantId")
-                        .HasColumnType("integer")
-                        .HasColumnName("tenant_id");
-
                     b.HasKey("BusinessProfileId")
-                        .HasName("pk_business_profiles");
+                        .HasName("pK_businessProfiles");
 
                     b.HasIndex("BusinessName")
                         .IsUnique()
-                        .HasDatabaseName("ix_business_profiles_business_name");
+                        .HasDatabaseName("iX_businessProfiles_businessName");
 
-                    b.ToTable("business_profiles", "inventory");
+                    b.ToTable("businessProfiles", "inventory");
                 });
 
             modelBuilder.Entity("WebportSystem.Inventory.Domain.Entities.Category.CategoryM", b =>
@@ -183,7 +179,7 @@ namespace WebportSystem.Inventory.Infrastructure.Database.Migrations
                     b.Property<int>("CategoryId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
-                        .HasColumnName("category_id");
+                        .HasColumnName("categoryId");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("CategoryId"));
 
@@ -191,46 +187,42 @@ namespace WebportSystem.Inventory.Infrastructure.Database.Migrations
                         .IsRequired()
                         .HasMaxLength(20)
                         .HasColumnType("character varying(20)")
-                        .HasColumnName("category_code");
+                        .HasColumnName("categoryCode");
 
                     b.Property<string>("CategoryDesc")
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)")
-                        .HasColumnName("category_desc");
+                        .HasColumnName("categoryDesc");
 
                     b.Property<string>("CreatedBy")
                         .IsRequired()
                         .HasColumnType("text")
-                        .HasColumnName("created_by");
+                        .HasColumnName("createdBy");
 
                     b.Property<DateTime>("CreatedDt")
                         .HasColumnType("timestamp with time zone")
-                        .HasColumnName("created_dt");
+                        .HasColumnName("createdDt");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("boolean")
-                        .HasColumnName("is_active");
+                        .HasColumnName("isActive");
 
                     b.Property<string>("LastModBy")
                         .IsRequired()
                         .HasColumnType("text")
-                        .HasColumnName("last_mod_by");
+                        .HasColumnName("lastModBy");
 
                     b.Property<DateTime>("LastModDt")
                         .HasColumnType("timestamp with time zone")
-                        .HasColumnName("last_mod_dt");
-
-                    b.Property<int>("TenantId")
-                        .HasColumnType("integer")
-                        .HasColumnName("tenant_id");
+                        .HasColumnName("lastModDt");
 
                     b.HasKey("CategoryId")
-                        .HasName("pk_categories");
+                        .HasName("pK_categories");
 
-                    b.HasIndex("TenantId", "CategoryCode")
+                    b.HasIndex("CategoryCode")
                         .IsUnique()
-                        .HasDatabaseName("ix_categories_tenant_id_category_code");
+                        .HasDatabaseName("iX_categories_categoryCode");
 
                     b.ToTable("categories", "inventory");
                 });
@@ -240,14 +232,14 @@ namespace WebportSystem.Inventory.Infrastructure.Database.Migrations
                     b.Property<int>("CustomerId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
-                        .HasColumnName("customer_id");
+                        .HasColumnName("customerId");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("CustomerId"));
 
                     b.Property<string>("AddressLine1")
                         .IsRequired()
                         .HasColumnType("text")
-                        .HasColumnName("address_line1");
+                        .HasColumnName("addressLine1");
 
                     b.Property<string>("City")
                         .IsRequired()
@@ -257,16 +249,16 @@ namespace WebportSystem.Inventory.Infrastructure.Database.Migrations
                     b.Property<string>("CompanyName")
                         .IsRequired()
                         .HasColumnType("text")
-                        .HasColumnName("company_name");
+                        .HasColumnName("companyName");
 
                     b.Property<string>("CreatedBy")
                         .IsRequired()
                         .HasColumnType("text")
-                        .HasColumnName("created_by");
+                        .HasColumnName("createdBy");
 
                     b.Property<DateTime>("CreatedDt")
                         .HasColumnType("timestamp with time zone")
-                        .HasColumnName("created_dt");
+                        .HasColumnName("createdDt");
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -275,16 +267,16 @@ namespace WebportSystem.Inventory.Infrastructure.Database.Migrations
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("boolean")
-                        .HasColumnName("is_active");
+                        .HasColumnName("isActive");
 
                     b.Property<string>("LastModBy")
                         .IsRequired()
                         .HasColumnType("text")
-                        .HasColumnName("last_mod_by");
+                        .HasColumnName("lastModBy");
 
                     b.Property<DateTime>("LastModDt")
                         .HasColumnType("timestamp with time zone")
-                        .HasColumnName("last_mod_dt");
+                        .HasColumnName("lastModDt");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -299,25 +291,138 @@ namespace WebportSystem.Inventory.Infrastructure.Database.Migrations
                     b.Property<string>("PostalCode")
                         .IsRequired()
                         .HasColumnType("text")
-                        .HasColumnName("postal_code");
+                        .HasColumnName("postalCode");
 
                     b.Property<string>("Province")
                         .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("province");
 
-                    b.Property<int>("TenantId")
-                        .HasColumnType("integer")
-                        .HasColumnName("tenant_id");
-
                     b.HasKey("CustomerId")
-                        .HasName("pk_customers");
+                        .HasName("pK_customers");
 
                     b.HasIndex("Name")
                         .IsUnique()
-                        .HasDatabaseName("ix_customers_name");
+                        .HasDatabaseName("iX_customers_name");
 
                     b.ToTable("customers", "inventory");
+                });
+
+            modelBuilder.Entity("WebportSystem.Inventory.Domain.Entities.Invoice.InvoiceItemM", b =>
+                {
+                    b.Property<int>("InvoiceItemId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("invoiceItemId");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("InvoiceItemId"));
+
+                    b.Property<int>("InvoiceId")
+                        .HasColumnType("integer")
+                        .HasColumnName("invoiceId");
+
+                    b.Property<int>("ItemId")
+                        .HasColumnType("integer")
+                        .HasColumnName("itemId");
+
+                    b.Property<string>("ItemName")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("itemName");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("integer")
+                        .HasColumnName("quantity");
+
+                    b.Property<decimal>("Total")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)")
+                        .HasColumnName("total");
+
+                    b.Property<decimal>("UnitPrice")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)")
+                        .HasColumnName("unitPrice");
+
+                    b.HasKey("InvoiceItemId")
+                        .HasName("pK_InvoiceItems");
+
+                    b.HasIndex("InvoiceId")
+                        .HasDatabaseName("iX_InvoiceItems_invoiceId");
+
+                    b.ToTable("InvoiceItems", "inventory");
+                });
+
+            modelBuilder.Entity("WebportSystem.Inventory.Domain.Entities.Invoice.InvoiceM", b =>
+                {
+                    b.Property<int>("InvoiceId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("invoiceId");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("InvoiceId"));
+
+                    b.Property<int>("BusinessProfileId")
+                        .HasColumnType("integer")
+                        .HasColumnName("businessProfileId");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("createdBy");
+
+                    b.Property<DateTime>("CreatedDt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("createdDt");
+
+                    b.Property<int?>("CustomerId")
+                        .HasColumnType("integer")
+                        .HasColumnName("customerId");
+
+                    b.Property<string>("InvoiceNumber")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("invoiceNumber");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean")
+                        .HasColumnName("isActive");
+
+                    b.Property<string>("LastModBy")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("lastModBy");
+
+                    b.Property<DateTime>("LastModDt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("lastModDt");
+
+                    b.Property<decimal>("SubTotal")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)")
+                        .HasColumnName("subTotal");
+
+                    b.Property<decimal>("Total")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)")
+                        .HasColumnName("total");
+
+                    b.HasKey("InvoiceId")
+                        .HasName("pK_Invoices");
+
+                    b.HasIndex("BusinessProfileId")
+                        .HasDatabaseName("iX_Invoices_businessProfileId");
+
+                    b.HasIndex("CustomerId")
+                        .HasDatabaseName("iX_Invoices_customerId");
+
+                    b.HasIndex("InvoiceNumber")
+                        .IsUnique()
+                        .HasDatabaseName("iX_Invoices_invoiceNumber");
+
+                    b.ToTable("Invoices", "inventory");
                 });
 
             modelBuilder.Entity("WebportSystem.Inventory.Domain.Entities.Item.ItemM", b =>
@@ -325,63 +430,91 @@ namespace WebportSystem.Inventory.Infrastructure.Database.Migrations
                     b.Property<int>("ItemId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
-                        .HasColumnName("item_id");
+                        .HasColumnName("itemId");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("ItemId"));
 
                     b.Property<int>("CategoryId")
                         .HasColumnType("integer")
-                        .HasColumnName("category_id");
+                        .HasColumnName("categoryId");
 
                     b.Property<string>("CreatedBy")
                         .IsRequired()
                         .HasColumnType("text")
-                        .HasColumnName("created_by");
+                        .HasColumnName("createdBy");
 
                     b.Property<DateTime>("CreatedDt")
                         .HasColumnType("timestamp with time zone")
-                        .HasColumnName("created_dt");
+                        .HasColumnName("createdDt");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("boolean")
-                        .HasColumnName("is_active");
+                        .HasColumnName("isActive");
 
                     b.Property<string>("ItemCode")
                         .IsRequired()
                         .HasMaxLength(20)
                         .HasColumnType("character varying(20)")
-                        .HasColumnName("item_code");
+                        .HasColumnName("itemCode");
 
                     b.Property<string>("ItemDesc")
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)")
-                        .HasColumnName("item_desc");
+                        .HasColumnName("itemDesc");
 
                     b.Property<string>("LastModBy")
                         .IsRequired()
                         .HasColumnType("text")
-                        .HasColumnName("last_mod_by");
+                        .HasColumnName("lastModBy");
 
                     b.Property<DateTime>("LastModDt")
                         .HasColumnType("timestamp with time zone")
-                        .HasColumnName("last_mod_dt");
-
-                    b.Property<int>("TenantId")
-                        .HasColumnType("integer")
-                        .HasColumnName("tenant_id");
+                        .HasColumnName("lastModDt");
 
                     b.HasKey("ItemId")
-                        .HasName("pk_items");
+                        .HasName("pK_items");
 
                     b.HasIndex("CategoryId")
-                        .HasDatabaseName("ix_items_category_id");
+                        .HasDatabaseName("iX_items_categoryId");
 
-                    b.HasIndex("TenantId", "ItemCode")
+                    b.HasIndex("ItemCode")
                         .IsUnique()
-                        .HasDatabaseName("ix_items_tenant_id_item_code");
+                        .HasDatabaseName("iX_items_itemCode");
 
                     b.ToTable("items", "inventory");
+                });
+
+            modelBuilder.Entity("WebportSystem.Inventory.Domain.Entities.Invoice.InvoiceItemM", b =>
+                {
+                    b.HasOne("WebportSystem.Inventory.Domain.Entities.Invoice.InvoiceM", "Invoice")
+                        .WithMany("Items")
+                        .HasForeignKey("InvoiceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fK_InvoiceItems_Invoices_invoiceId");
+
+                    b.Navigation("Invoice");
+                });
+
+            modelBuilder.Entity("WebportSystem.Inventory.Domain.Entities.Invoice.InvoiceM", b =>
+                {
+                    b.HasOne("WebportSystem.Inventory.Domain.Entities.BusinessProfile.BusinessProfileM", "BusinessProfile")
+                        .WithMany()
+                        .HasForeignKey("BusinessProfileId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fK_Invoices_businessProfiles_businessProfileId");
+
+                    b.HasOne("WebportSystem.Inventory.Domain.Entities.Customer.CustomerM", "Customer")
+                        .WithMany()
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.SetNull)
+                        .HasConstraintName("fK_Invoices_customers_customerId");
+
+                    b.Navigation("BusinessProfile");
+
+                    b.Navigation("Customer");
                 });
 
             modelBuilder.Entity("WebportSystem.Inventory.Domain.Entities.Item.ItemM", b =>
@@ -391,9 +524,14 @@ namespace WebportSystem.Inventory.Infrastructure.Database.Migrations
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired()
-                        .HasConstraintName("fk_items_categories_category_id");
+                        .HasConstraintName("fK_items_categories_categoryId");
 
                     b.Navigation("Category");
+                });
+
+            modelBuilder.Entity("WebportSystem.Inventory.Domain.Entities.Invoice.InvoiceM", b =>
+                {
+                    b.Navigation("Items");
                 });
 #pragma warning restore 612, 618
         }

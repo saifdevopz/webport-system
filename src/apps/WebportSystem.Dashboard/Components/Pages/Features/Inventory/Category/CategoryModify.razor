@@ -48,6 +48,7 @@
 
 @code {
     [Parameter] public string? Id { get; set; }
+
     private CategoryDto model = new();
     private bool IsEditMode => !string.IsNullOrWhiteSpace(Id);
     private string ErrorMessage = string.Empty;
@@ -62,7 +63,7 @@
             }
             catch (Exception ex)
             {
-                ErrorMessage = $"Failed to load category: {ex.Message}";
+                ErrorMessage = $"Failed to load entity: {ex.Message}";
             }
         }
     }

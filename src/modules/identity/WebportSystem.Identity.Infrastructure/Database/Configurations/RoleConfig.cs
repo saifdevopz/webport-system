@@ -8,8 +8,6 @@ public class RoleConfig : IEntityTypeConfiguration<RoleM>
 {
     public void Configure(EntityTypeBuilder<RoleM> builder)
     {
-        builder.ToTable("roles");
-
         // Each Role can have many entries in the UserRole join table
         builder.HasMany(e => e.UserRoles)
             .WithOne(e => e.Role)

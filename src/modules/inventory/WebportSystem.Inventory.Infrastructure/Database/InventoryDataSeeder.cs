@@ -6,142 +6,136 @@ namespace WebportSystem.Inventory.Infrastructure.Database;
 
 public static class InventoryDataSeeder
 {
-    public static async Task SeedAsync(InventoryDbContext context)
+    public static async Task SeedAsync(InventoryDbContext context, string tenantName)
     {
-        await SeedBusinessProfilesAsync(context);
-        await SeedCustomersAsync(context);
+        await SeedBusinessProfilesAsync(context, tenantName);
+        await SeedCustomersAsync(context, tenantName);
     }
 
-    private static async Task SeedBusinessProfilesAsync(InventoryDbContext context)
+    private static async Task SeedBusinessProfilesAsync(InventoryDbContext context, string tenantName)
     {
         if (await context.BusinessProfiles.AnyAsync()) return;
 
-        BusinessProfileM[] businessProfiles =
-        [
-            new BusinessProfileM(
-                businessName: "Acme Corporation",
-                email: "info@acme.co.za",
-                phone: "021 123 4567",
-                addressLine1: "12 Long Street",
-                city: "Cape Town",
-                province: "Western Cape",
-                postalCode: "8001",
-                country: "South Africa",
-                bankName: "FNB",
-                accountNumber: "62012345678",
-                branchCode: "250655")
-            {
-                TenantId = 2
-            },
+        BusinessProfileM[] businessProfiles = tenantName switch
+        {
+            "Demo" =>
+            [
+                new BusinessProfileM(
+                    businessName: "Demo Store",
+                    email: "demo@store.com",
+                    phone: "080 000 0000",
+                    addressLine1: "1 Demo Street",
+                    city: "Cape Town",
+                    province: "Western Cape",
+                    postalCode: "8001",
+                    country: "South Africa",
+                    bankName: "FNB",
+                    accountNumber: "00000000000",
+                    branchCode: "250655")
+            ],
 
-            new BusinessProfileM(
-                businessName: "Webport Technologies",
-                email: "hello@webport.co.za",
-                phone: "011 987 6543",
-                addressLine1: "45 Sandton Drive",
-                city: "Johannesburg",
-                province: "Gauteng",
-                postalCode: "2196",
-                country: "South Africa",
-                bankName: "Standard Bank",
-                accountNumber: "00112233445",
-                branchCode: "051001")
-            {
-                TenantId = 3
-            },
+            "Acme" =>
+            [
+                new BusinessProfileM(
+                    businessName: "Acme Corporation",
+                    email: "info@acme.co.za",
+                    phone: "021 123 4567",
+                    addressLine1: "12 Long Street",
+                    city: "Cape Town",
+                    province: "Western Cape",
+                    postalCode: "8001",
+                    country: "South Africa",
+                    bankName: "FNB",
+                    accountNumber: "62012345678",
+                    branchCode: "250655")
+            ],
 
-            new BusinessProfileM(
-                businessName: "Blue Ocean Traders",
-                email: "contact@blueocean.co.za",
-                phone: "031 456 7890",
-                addressLine1: "8 Marine Parade",
-                city: "Durban",
-                province: "KwaZulu-Natal",
-                postalCode: "4001",
-                country: "South Africa",
-                bankName: "Absa",
-                accountNumber: "4072345678",
-                branchCode: "632005")
-            {
-                TenantId = 4
-            },
-        ];
+            _ => // Default (fallback)
+            [
+                new BusinessProfileM(
+                    businessName: $"{tenantName} Business",
+                    email: $"info@{tenantName.ToLower()}.co.za",
+                    phone: "081 000 0000",
+                    addressLine1: "Default Address",
+                    city: "Johannesburg",
+                    province: "Gauteng",
+                    postalCode: "2000",
+                    country: "South Africa",
+                    bankName: "Standard Bank",
+                    accountNumber: "1234567890",
+                    branchCode: "051001")
+            ]
+        };
 
         await context.BusinessProfiles.AddRangeAsync(businessProfiles);
         await context.SaveChangesAsync();
     }
 
-    private static async Task SeedCustomersAsync(InventoryDbContext context)
+    private static async Task SeedCustomersAsync(InventoryDbContext context, string tenantName)
     {
         if (await context.Customers.AnyAsync()) return;
 
-        CustomerM[] customers =
-        [
-            new CustomerM(
-                name: "John Hendricks",
-                email: "john.hendricks@gmail.com",
-                phone: "082 123 4567",
-                addressLine1: "15 Kloof Street",
-                city: "Cape Town",
-                province: "Western Cape",
-                postalCode: "8001",
-                companyName: "Hendricks Consulting")
-            {
-                TenantId = 2
-            },
+        CustomerM[] customers = tenantName switch
+        {
+            "Demo" =>
+            [
+                new CustomerM(
+                    name: "Demo Customer",
+                    email: "demo@customer.com",
+                    phone: "082 000 0000",
+                    addressLine1: "Demo Address",
+                    city: "Cape Town",
+                    province: "Western Cape",
+                    postalCode: "8001",
+                    companyName: "Demo Company")
+            ],
 
-            new CustomerM(
-                name: "Sarah Botha",
-                email: "sarah.botha@outlook.com",
-                phone: "083 234 5678",
-                addressLine1: "32 Commissioner Street",
-                city: "Johannesburg",
-                province: "Gauteng",
-                postalCode: "2001",
-                companyName: "Botha & Associates")
-            {
-                TenantId = 2
-            },
+            "Acme" =>
+            [
+                new CustomerM(
+                    name: "John Acme",
+                    email: "john@acme.co.za",
+                    phone: "082 111 1111",
+                    addressLine1: "Acme Street",
+                    city: "Cape Town",
+                    province: "Western Cape",
+                    postalCode: "8001",
+                    companyName: "Acme Corp"),
 
-            new CustomerM(
-                name: "Thabo Nkosi",
-                email: "thabo.nkosi@nkosi.co.za",
-                phone: "084 345 6789",
-                addressLine1: "10 West Street",
-                city: "Durban",
-                province: "KwaZulu-Natal",
-                postalCode: "4001",
-                companyName: "Nkosi Trading")
-            {
-                TenantId = 3
-            },
+                new CustomerM(
+                    name: "Sarah Acme",
+                    email: "sarah@acme.co.za",
+                    phone: "083 222 2222",
+                    addressLine1: "Acme Street",
+                    city: "Cape Town",
+                    province: "Western Cape",
+                    postalCode: "8001",
+                    companyName: "Acme Corp")
+            ],
 
-            new CustomerM(
-                name: "Anele Dlamini",
-                email: "anele.dlamini@dlamini.co.za",
-                phone: "071 456 7890",
-                addressLine1: "5 Church Square",
-                city: "Pretoria",
-                province: "Gauteng",
-                postalCode: "0002",
-                companyName: "Dlamini Enterprises")
-            {
-                TenantId = 4
-            },
+            _ => // Default
+            [
+                new CustomerM(
+                    name: $"{tenantName} Customer 1",
+                    email: $"customer1@{tenantName.ToLower()}.co.za",
+                    phone: "082 123 4567",
+                    addressLine1: "Default Address",
+                    city: "Durban",
+                    province: "KwaZulu-Natal",
+                    postalCode: "4001",
+                    companyName: $"{tenantName} Ltd"),
 
-            new CustomerM(
-                name: "Megan van der Merwe",
-                email: "megan.vdm@vandermerwe.co.za",
-                phone: "072 567 8901",
-                addressLine1: "88 Adderley Street",
-                city: "Cape Town",
-                province: "Western Cape",
-                postalCode: "8000",
-                companyName: "Van der Merwe Group")
-            {
-                TenantId = 4
-            },
-        ];
+                new CustomerM(
+                    name: $"{tenantName} Customer 2",
+                    email: $"customer2@{tenantName.ToLower()}.co.za",
+                    phone: "083 234 5678",
+                    addressLine1: "Default Address",
+                    city: "Johannesburg",
+                    province: "Gauteng",
+                    postalCode: "2001",
+                    companyName: $"{tenantName} Ltd")
+            ]
+        };
 
         await context.Customers.AddRangeAsync(customers);
         await context.SaveChangesAsync();

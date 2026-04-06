@@ -4,22 +4,20 @@ using WebportSystem.Inventory.Domain.Entities.Customer;
 
 namespace WebportSystem.Inventory.Application.Features.Customer;
 
-#region Create
-
-public sealed record CreateCustomerCommand(CustomerM Customer) : ICommand;
+public sealed record CreateCustomerCommand(CustomerDto Customer) : ICommand;
 
 public sealed class CreateCustomerCommandValidator : AbstractValidator<CreateCustomerCommand>
 {
     public CreateCustomerCommandValidator()
     {
-        RuleFor(_ => _.Customer.CompanyName).NotEmpty().MaximumLength(100);
-        RuleFor(_ => _.Customer.Name).MaximumLength(100);
+        RuleFor(_ => _.Customer.Name).MaximumLength(50);
         RuleFor(_ => _.Customer.Email).EmailAddress();
-        RuleFor(_ => _.Customer.Phone).MaximumLength(20);
-        RuleFor(_ => _.Customer.AddressLine1).NotEmpty().MaximumLength(200);
-        RuleFor(_ => _.Customer.City).NotEmpty().MaximumLength(100);
-        RuleFor(_ => _.Customer.Province).NotEmpty().MaximumLength(100);
+        RuleFor(_ => _.Customer.Phone).MaximumLength(15);
+        RuleFor(_ => _.Customer.CompanyName).NotEmpty().MaximumLength(100);
+        RuleFor(_ => _.Customer.AddressLine1).NotEmpty().MaximumLength(100);
         RuleFor(_ => _.Customer.PostalCode).NotEmpty().MaximumLength(10);
+        RuleFor(_ => _.Customer.City).NotEmpty().MaximumLength(50);
+        RuleFor(_ => _.Customer.Province).NotEmpty().MaximumLength(50);
     }
 }
 
@@ -43,11 +41,11 @@ public sealed class CreateCustomerCommandHandler(IInventoryDbContext dbContext)
             command.Customer.Name!,
             command.Customer.Email!,
             command.Customer.Phone!,
+            command.Customer.CompanyName,
             command.Customer.AddressLine1,
-            command.Customer.City,
-            command.Customer.Province,
             command.Customer.PostalCode,
-            command.Customer.CompanyName);
+            command.Customer.City,
+            command.Customer.Province);
 
         await dbContext.Customers.AddAsync(customer, cancellationToken);
         await dbContext.SaveChangesAsync(cancellationToken);
@@ -55,10 +53,6 @@ public sealed class CreateCustomerCommandHandler(IInventoryDbContext dbContext)
         return Result.Success();
     }
 }
-
-#endregion
-
-#region Update
 
 public sealed record UpdateCustomerCommand(
     int CustomerId,
@@ -109,5 +103,3 @@ public sealed class UpdateCustomerCommandHandler(IInventoryDbContext dbContext)
         return Result.Success();
     }
 }
-
-#endregion

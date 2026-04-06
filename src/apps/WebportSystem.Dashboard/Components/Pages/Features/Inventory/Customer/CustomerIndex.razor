@@ -2,7 +2,7 @@
 @attribute [Authorize(Roles = "User")]
 
 
-<MudText Typo="Typo.h5">Category List</MudText>
+<MudText Typo="Typo.h5">Customers</MudText>
 
 <MudDataGrid Items="@Customers"
              Filterable="true"
@@ -11,7 +11,7 @@
              Hover="true"
              Striped="true">
     <ToolBarContent>
-        <MudIconButton Href="@($"category/modify")" Icon="@Icons.Material.Filled.Add" />
+        <MudIconButton Href="@($"customer/modify")" Icon="@Icons.Material.Filled.Add" />
         <MudSpacer />
         <MudTextField @bind-Value="_searchString"
                       Placeholder="Search"
@@ -22,12 +22,12 @@
     </ToolBarContent>
     <Columns>
         <PropertyColumn Property="_ => _.CustomerId" Title="Id" />
-        <PropertyColumn Property="_ => _.CompanyName" Title="Code" />
-        <PropertyColumn Property="_ => _.Name" Title="Description" />
+        <PropertyColumn Property="_ => _.Name" Title="Name" />
+        <PropertyColumn Property="_ => _.CompanyName" Title="Company" />        
         <TemplateColumn CellClass="">
             <CellTemplate>
                 <MudStack Row>
-                    <MudIconButton Href="@($"category/modify/{context.Item.CustomerId}")" Icon="@Icons.Material.Filled.Edit" Color="Color.Success" />
+                    <MudIconButton Href="@($"customer/modify/{context.Item.CustomerId}")" Icon="@Icons.Material.Filled.Edit" Color="Color.Success" />
                     <MudIconButton OnClick="@(() => Delete(context.Item.CustomerId))" Icon="@Icons.Material.Filled.Delete" Color="Color.Error" />
                 </MudStack>
             </CellTemplate>
@@ -44,10 +44,10 @@
 
     protected override async Task OnInitializedAsync()
     {
-        await GetCategories();
+        await GetCustomers();
     }
 
-    private async Task GetCategories()
+    private async Task GetCustomers()
     {
         var response = await _DataService.GetAllAsync<CustomerDto>("customer");
 
@@ -73,8 +73,8 @@
         // Only proceed if user confirms deletion
         if (!result!.Canceled)
         {
-            await _DataService.DeleteByIdAsync("category", id);
-            await GetCategories();
+            await _DataService.DeleteByIdAsync("customer", id);
+            await GetCustomers();
             await DialogService.ShowMessageBox("Success", "Deleted Successfully");
         }
     }

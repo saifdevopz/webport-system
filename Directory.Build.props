@@ -7,6 +7,8 @@
         <AnalysisLevel>latest</AnalysisLevel>
         <CodeAnalysisTreatWarningsAsErrors>true</CodeAnalysisTreatWarningsAsErrors>
         <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+
+        <NoWarn>$(NoWarn);S125</NoWarn>
     </PropertyGroup>
 
     <ItemGroup Condition="'$(MSBuildProjectExtension)' != '.dcproj'">

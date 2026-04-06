@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.Text.Json;
 using WebportSystem.Common.Domain.Errors;
 using WebportSystem.Common.Domain.Results;
 using WebportSystem.Dashboard.Common.HttpClients;
@@ -105,7 +106,28 @@ public class DataService(BaseHttpClient BaseHttpClient)
                     .ConfigureAwait(false);
 
                 if (problemDetails is not null)
-                    return Result.Failure<T>(CustomError.Failure(problemDetails.Title!, problemDetails.Detail!));
+                {
+                    string errorMessage = string.Empty;
+
+                    if (problemDetails.Extensions.TryGetValue("errors", out var errorsElement)
+                        && errorsElement is JsonElement jsonElement
+                        && jsonElement.ValueKind == JsonValueKind.Array)
+                    {
+                        // Deserialize each item in the array
+                        var errors = jsonElement.EnumerateArray()
+                            .Select(e => e.GetProperty("description").GetString())
+                            .Where(d => !string.IsNullOrWhiteSpace(d));
+
+                        errorMessage = string.Join(Environment.NewLine, errors);
+                    }
+
+                    if (string.IsNullOrWhiteSpace(errorMessage))
+                    {
+                        errorMessage = $"{problemDetails.Title}: {problemDetails.Detail}";
+                    }
+
+                    return Result.Failure<T>(CustomError.Failure("Validation Failed", errorMessage));
+                }
 
                 return Result.Failure<T>(CustomError.Conflict("HTTP", $"Unexpected status: {httpResponse.StatusCode}"));
             }
@@ -134,7 +156,9 @@ public class DataService(BaseHttpClient BaseHttpClient)
         try
         {
             HttpClient client = _baseHttpClient.GetPrivateHttpClient();
-            HttpResponseMessage httpResponse = await client.PutAsJsonAsync(source, obj).ConfigureAwait(false);
+
+            var command = new { command = obj };
+            HttpResponseMessage httpResponse = await client.PutAsJsonAsync(source, command).ConfigureAwait(false);
 
             if (!httpResponse.IsSuccessStatusCode)
             {

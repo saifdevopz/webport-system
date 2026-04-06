@@ -15,7 +15,7 @@ internal sealed class TenantConfig : IEntityTypeConfiguration<TenantM>
             .IsRequired()
             .HasMaxLength(50);
 
-        builder.Property(_ => _.LicenceExpiryDate)
+        builder.Property(_ => _.LicenseExpiryDateUtc)
             .IsRequired();
 
         builder.HasIndex(_ => new { _.TenantName })

@@ -3,38 +3,25 @@ using WebportSystem.Inventory.Application.Data;
 using WebportSystem.Inventory.Domain.Entities.BusinessProfile;
 using WebportSystem.Inventory.Domain.Entities.Category;
 using WebportSystem.Inventory.Domain.Entities.Customer;
+using WebportSystem.Inventory.Domain.Entities.Invoice;
 using WebportSystem.Inventory.Domain.Entities.Item;
 using WebportSystem.Inventory.Infrastructure.Common;
 
 namespace WebportSystem.Inventory.Infrastructure.Database;
 
 public sealed class InventoryDbContext(
-    DbContextOptions<InventoryDbContext> options,
-    TenantProvider tenantProvider) : DbContext(options), IInventoryDbContext
+    DbContextOptions<InventoryDbContext> options) : DbContext(options), IInventoryDbContext
 {
-    private readonly int _tenantId = tenantProvider.TenantId;
-
     public DbSet<BusinessProfileM> BusinessProfiles => Set<BusinessProfileM>();
     public DbSet<CustomerM> Customers => Set<CustomerM>();
     public DbSet<CategoryM> Categories => Set<CategoryM>();
     public DbSet<ItemM> Items => Set<ItemM>();
+    public DbSet<InvoiceM> Invoices => Set<InvoiceM>();
+    public DbSet<InvoiceItemM> InvoiceItems => Set<InvoiceItemM>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         ArgumentNullException.ThrowIfNull(modelBuilder);
-
-        // Query Filters
-        modelBuilder.Entity<CategoryM>()
-            .HasQueryFilter(_ => _.TenantId == _tenantId);
-
-        modelBuilder.Entity<CategoryM>()
-            .HasQueryFilter(_ => _.TenantId == _tenantId);
-
-        modelBuilder.Entity<CategoryM>()
-            .HasQueryFilter(_ => _.TenantId == _tenantId);
-
-        modelBuilder.Entity<ItemM>()
-            .HasQueryFilter(_ => _.TenantId == _tenantId);
 
         // Schema
         modelBuilder.HasDefaultSchema(InventoryConstants.Schema);
@@ -52,37 +39,5 @@ public sealed class InventoryDbContext(
         // Interceptors
         optionsBuilder.AddInterceptors(new AuditableEntityInterceptor());
         optionsBuilder.AddInterceptors(new InsertOutboxMessagesInterceptor());
-    }
-
-    public override int SaveChanges()
-    {
-        foreach (var entry in ChangeTracker.Entries<IMustHaveTenant>().ToList())
-        {
-            switch (entry.State)
-            {
-                case EntityState.Added:
-                case EntityState.Modified:
-                    entry.Entity.TenantId = _tenantId;
-                    break;
-            }
-        }
-        var result = base.SaveChanges();
-        return result;
-    }
-
-    public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
-    {
-        foreach (var entry in ChangeTracker.Entries<IMustHaveTenant>().ToList())
-        {
-            switch (entry.State)
-            {
-                case EntityState.Added:
-                case EntityState.Modified:
-                    entry.Entity.TenantId = _tenantId;
-                    break;
-            }
-        }
-
-        return await base.SaveChangesAsync(cancellationToken);
     }
 }

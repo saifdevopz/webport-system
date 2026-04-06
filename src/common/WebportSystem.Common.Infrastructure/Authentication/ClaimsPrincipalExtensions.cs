@@ -11,7 +11,7 @@ public static class ClaimsPrincipalExtensions
         if (principal == null)
             throw new CustomException("Claims Principal Error");
 
-        var tenantValue = principal.FindFirst("TenantId")!.Value;
+        var tenantValue = principal.FindFirst(CustomClaims.TenantId)!.Value;
 
         return int.TryParse(tenantValue, out var tenantId)
             ? tenantId
@@ -20,12 +20,19 @@ public static class ClaimsPrincipalExtensions
 
     public static string GetUserEmail(this ClaimsPrincipal? principal)
     {
-        var email = principal?.FindFirst(ClaimTypes.Email)?.Value;
+        var email = principal?.FindFirst(CustomClaims.Email)?.Value;
 
         if (string.IsNullOrWhiteSpace(email))
             return "System Admin";
 
         return email;
+    }
+
+    public static string GetTenantDatabaseName(this ClaimsPrincipal? principal)
+    {
+        var databaseName = principal?.FindFirst(CustomClaims.DatabaseName)?.Value;
+
+        return databaseName!;
     }
 
 

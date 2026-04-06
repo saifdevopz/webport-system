@@ -6,7 +6,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using WebportSystem.Common.Application.Abstractions;
 using WebportSystem.Common.Application.Authorization;
-using WebportSystem.Common.Infrastructure.Database;
 using WebportSystem.Common.Infrastructure.Interceptors;
 using WebportSystem.Common.Presentation.Endpoints;
 using WebportSystem.Identity.Application.Data;
@@ -41,7 +40,6 @@ public static class IdentityModule
         this IServiceCollection services,
         string systemDatabaseString)
     {
-
         services.AddIdentityCore<UserM>(options =>
         {
             options.Password.RequireDigit = false;
@@ -55,7 +53,6 @@ public static class IdentityModule
             .AddSignInManager()
             .AddDefaultTokenProviders();
 
-        services.AddScoped<TenantProvider>();
         services.AddScoped<ITokenService, TokenService>();
         services.AddScoped<IPermissionService, PermissionService>();
 
@@ -70,7 +67,7 @@ public static class IdentityModule
 
                 npgsqlOptionsAction.MigrationsHistoryTable(HistoryRepository.DefaultTableName, ModuleConstants.Schema);
             })
-            .UseSnakeCaseNamingConvention()
+            .UseCamelCaseNamingConvention()
             .AddInterceptors(
                 sp.GetRequiredService<AuditableEntityInterceptor>(),
                 sp.GetRequiredService<InsertOutboxMessagesInterceptor>());

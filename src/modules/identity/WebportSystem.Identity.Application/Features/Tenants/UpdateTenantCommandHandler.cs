@@ -17,8 +17,6 @@ public class UpdateTenantCommandHandler(IUsersDbContext dbContext)
             return Result.Failure(CustomError.NotFound("Not Found", "Tenant not found"));
         }
 
-        model.TenantName = command.TenantName;
-
         dbContext.Tenants.Update(model);
         await dbContext.SaveChangesAsync(cancellationToken);
 

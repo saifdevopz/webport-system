@@ -66,16 +66,16 @@ public sealed class CreateBusinessProfileCommandHandler(IInventoryDbContext dbCo
 #endregion
 
 #region Update
-public sealed record UpdateBusinessProfileCommand(int BusinessProfileId, string BusinessProfileDesc) : ICommand<UpdateBusinessProfileResult>;
+public sealed record UpdateBusinessProfileCommand(BusinessProfileDto Record) : ICommand<UpdateBusinessProfileResult>;
 
 public sealed record UpdateBusinessProfileResult(BusinessProfileM Result);
 
-public class UpdateRoleCommandValidator : AbstractValidator<UpdateBusinessProfileCommand>
+public class UpdateBusinessProfileCommandValidator : AbstractValidator<UpdateBusinessProfileCommand>
 {
-    public UpdateRoleCommandValidator()
+    public UpdateBusinessProfileCommandValidator()
     {
-        RuleFor(_ => _.BusinessProfileId).NotEmpty();
-        RuleFor(_ => _.BusinessProfileDesc).NotEmpty();
+        RuleFor(_ => _.Record.BusinessName).NotEmpty();
+        RuleFor(_ => _.Record.Email).NotEmpty();
     }
 }
 public class UpdateBusinessProfileCommandHandler(IInventoryDbContext dbContext)
@@ -85,13 +85,27 @@ public class UpdateBusinessProfileCommandHandler(IInventoryDbContext dbContext)
         UpdateBusinessProfileCommand command,
         CancellationToken cancellationToken)
     {
-        var record = await dbContext.BusinessProfiles.FindAsync([command.BusinessProfileId], cancellationToken);
+        var record = await dbContext.BusinessProfiles.FindAsync([command.Record.BusinessProfileId], cancellationToken);
 
         if (record == null)
         {
             return Result.Failure<UpdateBusinessProfileResult>(
                 CustomError.NotFound(nameof(UpdateBusinessProfileCommandHandler), "Record not found."));
         }
+
+        record.Update(
+            command.Record.BusinessName,
+            command.Record.Email,
+            command.Record.Phone,
+            command.Record.AddressLine1,
+            command.Record.City,
+            command.Record.Province,
+            command.Record.PostalCode,
+            command.Record.Country,
+            command.Record.BankName,
+            command.Record.AccountNumber,
+            command.Record.BranchCode
+        );
 
         dbContext.BusinessProfiles.Update(record);
         await dbContext.SaveChangesAsync(cancellationToken);

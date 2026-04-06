@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using WebportSystem.Common.Infrastructure.Authentication;
 using WebportSystem.Inventory.Application.Data;
 using WebportSystem.Inventory.Infrastructure.Common;
 using WebportSystem.Inventory.Infrastructure.Database;
@@ -14,14 +15,13 @@ public static class InventoryModule
 {
     public static IServiceCollection AddInventoryModule(
         this IServiceCollection services,
-        IConfiguration configuration,
-        string inventoryDatabaseString)
+        IConfiguration configuration)
     {
         ArgumentNullException.ThrowIfNull(configuration);
 
         services.AddDomainEventHandlers();
 
-        services.AddInfrastructure(inventoryDatabaseString);
+        services.AddInfrastructure();
 
         services.AddEndpoints(Presentation.AssemblyReference.Assembly);
 
@@ -29,21 +29,23 @@ public static class InventoryModule
     }
 
     private static void AddInfrastructure(
-        this IServiceCollection services,
-        string inventoryDatabaseString)
+        this IServiceCollection services)
     {
         services.AddDbContext<IInventoryDbContext, InventoryDbContext>((sp, options) =>
         {
-            options.UseNpgsql(inventoryDatabaseString, npgsqlOptionsAction =>
+            var tenantContext = sp.GetRequiredService<TenantContext>();
+            string connectionString = tenantContext.GetTenantConnectionString();
+
+            options.UseNpgsql(connectionString, npgsqlOptionsAction =>
             {
                 npgsqlOptionsAction.EnableRetryOnFailure(
-                        maxRetryCount: 1,
-                        maxRetryDelay: TimeSpan.FromSeconds(2),
+                        maxRetryCount: 3,
+                        maxRetryDelay: TimeSpan.FromSeconds(5),
                         errorCodesToAdd: null);
 
                 npgsqlOptionsAction.MigrationsHistoryTable(HistoryRepository.DefaultTableName, InventoryConstants.Schema);
             })
-            .UseSnakeCaseNamingConvention()
+            .UseCamelCaseNamingConvention()
             .AddInterceptors(
                 sp.GetRequiredService<AuditableEntityInterceptor>(),
                 sp.GetRequiredService<InsertOutboxMessagesInterceptor>());

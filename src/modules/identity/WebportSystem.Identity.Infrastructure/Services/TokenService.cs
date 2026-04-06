@@ -106,10 +106,10 @@ public class TokenService(
         {
             new(CustomClaims.TenantId, customClaims.TenantId.ToString()),
             new(CustomClaims.UserId, customClaims.UserId.ToString()),
-            new(CustomClaims.Email, customClaims.Email)
+            new(CustomClaims.Email, customClaims.Email),
+            new(CustomClaims.DatabaseName, customClaims.DatabaseName)
         };
 
-        // Add ClaimTypes.Role for EACH role
         foreach (var role in customClaims.Roles)
         {
             claims.Add(new Claim(ClaimTypes.Role, role));
@@ -145,18 +145,19 @@ public class TokenService(
     private async Task<UserTokenClaims> GetAllUserDetails(string userId)
     {
         var userDto = await usersDbContext.Users
-            .Where(u => u.Id == userId)
-            .Include(u => u.UserRoles)
+            .Where(_ => _.Id == userId)
+            .Include(_ => _.UserRoles)
                 .ThenInclude(ur => ur.Role)
-            .Include(u => u.Tenant)
-            .Select(u => new UserTokenClaims
+            .Include(_ => _.Tenant)
+            .Select(_ => new UserTokenClaims
             {
-                UserId = u.Id,
-                Email = u.Email!,
-                TenantId = u.TenantId,
-                Roles = u.UserRoles
+                TenantId = _.TenantId,
+                UserId = _.Id,
+                Email = _.Email!,
+                DatabaseName = _.Tenant!.DatabaseName,
+                Roles = _.UserRoles
                     .Select(ur => ur.Role.Name!)
-                    .ToList()
+                    .ToList(),
             })
             .FirstOrDefaultAsync();
 

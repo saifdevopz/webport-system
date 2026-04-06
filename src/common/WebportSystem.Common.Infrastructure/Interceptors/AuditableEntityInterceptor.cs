@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using WebportSystem.Common.Domain.Abstractions;
-using WebportSystem.Common.Infrastructure.Database;
+using WebportSystem.Common.Infrastructure.Authentication;
 
 namespace WebportSystem.Common.Infrastructure.Interceptors;
 
@@ -29,19 +29,19 @@ public class AuditableEntityInterceptor : SaveChangesInterceptor
     {
         if (context != null)
         {
-            var tenantProvider = context.GetService<TenantProvider>();
+            var tenantProvider = context.GetService<TenantContext>();
 
             foreach (EntityEntry<IAuditable> entry in context.ChangeTracker.Entries<IAuditable>())
             {
                 if (entry.State == EntityState.Added)
                 {
-                    entry.Entity.CreatedBy = tenantProvider.UserEmail;
+                    entry.Entity.CreatedBy = tenantProvider.UserEmail! ?? "SuperAdmin";
                     entry.Entity.CreatedDt = TimeProvider.Now;
                 }
 
                 if (entry.State == EntityState.Added || entry.State == EntityState.Modified || entry.HasChangedOwnedEntities())
                 {
-                    entry.Entity.LastModBy = tenantProvider.UserEmail;
+                    entry.Entity.LastModBy = tenantProvider.UserEmail! ?? "SuperAdmin";
                     entry.Entity.LastModDt = TimeProvider.Now;
                 }
             }

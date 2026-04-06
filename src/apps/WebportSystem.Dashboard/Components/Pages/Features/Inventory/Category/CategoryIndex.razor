@@ -1,9 +1,7 @@
 ﻿@page "/category/index"
 @attribute [Authorize(Roles = "User")]
 
-<MudText Typo="Typo.h5">Customer List</MudText>
-
-<MudText Typo="Typo.h5">"ssss+ @_TenantContext.Email + "ss"</MudText>
+<MudText Typo="Typo.h5">Categories</MudText>
 
 <MudDataGrid Items="@Categories"
              Filterable="true"
@@ -81,13 +79,13 @@
         }
     }
 
-    private Func<CategoryDto, bool> _quickFilter => x =>
+    private Func<CategoryDto, bool> _quickFilter => _ =>
     {
         if (string.IsNullOrWhiteSpace(_searchString)) return true;
 
-        return x.CategoryCode.Contains(_searchString, StringComparison.OrdinalIgnoreCase)
-            || x.CategoryDesc.Contains(_searchString, StringComparison.OrdinalIgnoreCase)
-            || $"{x.CategoryCode} {x.CategoryDesc}".Contains(_searchString, StringComparison.OrdinalIgnoreCase);
+        return _.CategoryCode.Contains(_searchString, StringComparison.OrdinalIgnoreCase)
+            || _.CategoryDesc.Contains(_searchString, StringComparison.OrdinalIgnoreCase)
+            || $"{_.CategoryCode} {_.CategoryDesc}".Contains(_searchString, StringComparison.OrdinalIgnoreCase);
     };
 }
 

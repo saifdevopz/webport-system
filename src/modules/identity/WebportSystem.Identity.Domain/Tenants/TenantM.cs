@@ -5,20 +5,37 @@ namespace WebportSystem.Identity.Domain.Tenants;
 
 public sealed class TenantM : AggregateRoot
 {
-    public int TenantId { get; set; }
-    public required string TenantName { get; set; }
-    public DateTime LicenceExpiryDate { get; set; }
-    public string? DatabaseConnectionString { get; set; }
+    public Guid TenantId { get; private set; }
+    public string TenantName { get; private set; } = string.Empty;
+    public string DatabaseName { get; private set; } = string.Empty;
+    public string DatabaseConnectionString { get; private set; } = string.Empty;
+    public DateTime LicenseExpiryDateUtc { get; private set; }
+    public TenantStatus Status { get; private set; }
     public ICollection<UserM> Users { get; set; } = [];
-    public static TenantM Create(string tenantName, string databaseConnectionString = null!)
+
+    public static TenantM Create(
+        string tenantName,
+        string databaseName,
+        string databaseConnectionString)
     {
-        TenantM model = new()
+        TenantM tenant = new()
         {
+            TenantId = Guid.NewGuid(),
             TenantName = tenantName,
-            LicenceExpiryDate = DateTime.UtcNow.AddDays(30),
-            DatabaseConnectionString = databaseConnectionString
+            DatabaseName = databaseName,
+            DatabaseConnectionString = databaseConnectionString,
+            LicenseExpiryDateUtc = DateTime.UtcNow,
+            Status = TenantStatus.Trial
         };
 
-        return model;
+        return tenant;
     }
+}
+
+public enum TenantStatus
+{
+    Trial = 0,
+    Active = 1,
+    Suspended = 2,
+    Expired = 3
 }

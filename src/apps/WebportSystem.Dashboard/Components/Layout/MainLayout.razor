@@ -23,7 +23,8 @@
                     <header class="app-header">
                         <i @onclick="ToggleSidebar" class="fa-solid fa-bars menu-toggle" id="menu-toggle"></i>
                         <div class="div"><h1>Dashboard</h1></div>       
-                        <MudMenu Label="Open menu">                            
+                        <MudMenu Label="Open menu">     
+                            <MudMenuItem Href="@("businessprofile")" Label="Profile" />
                             <MudMenuItem Label="Toggle" @onclick="Test" />
                             <MudMenuItem Label="Logout" @onclick="LogoutClicked" />
                         </MudMenu>

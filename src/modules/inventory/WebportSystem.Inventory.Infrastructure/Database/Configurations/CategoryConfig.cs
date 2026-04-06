@@ -10,7 +10,7 @@ public sealed class CategoryConfig : IEntityTypeConfiguration<CategoryM>
     {
         builder.HasKey(_ => _.CategoryId);
 
-        builder.HasIndex(_ => new { _.TenantId, _.CategoryCode })
+        builder.HasIndex(_ => new { _.CategoryCode })
             .IsUnique();
 
         builder.Property(_ => _.CategoryCode)

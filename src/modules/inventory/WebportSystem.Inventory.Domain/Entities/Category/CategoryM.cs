@@ -1,8 +1,7 @@
 ﻿namespace WebportSystem.Inventory.Domain.Entities.Category;
 
-public sealed class CategoryM : AggregateRoot, IMustHaveTenant
+public sealed class CategoryM : AggregateRoot
 {
-    public int TenantId { get; set; }
     public int CategoryId { get; set; }
     public string CategoryCode { get; private set; } = string.Empty;
     public string CategoryDesc { get; set; } = string.Empty;

@@ -11,10 +11,10 @@ public class UserRoleConfig : IEntityTypeConfiguration<UserRoleM>
         builder.HasKey(x => new { x.UserId, x.RoleId });
 
         builder
-        .HasOne(ur => ur.User)
-        .WithMany(u => u.UserRoles)
-        .HasForeignKey(ur => ur.UserId)
-        .IsRequired();
+            .HasOne(ur => ur.User)
+            .WithMany(u => u.UserRoles)
+            .HasForeignKey(ur => ur.UserId)
+            .IsRequired();
 
         builder
             .HasOne(ur => ur.Role)

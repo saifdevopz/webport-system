@@ -27,5 +27,9 @@
   <ItemGroup>
     <Folder Include="wwwroot\images\" />
   </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Controllers\InvoiceController.cs" />
+  </ItemGroup>
     
 </Project>

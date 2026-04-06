@@ -3,15 +3,15 @@ using Microsoft.EntityFrameworkCore;
 
 namespace WebportSystem.Inventory.Application.Features.Item;
 
-public sealed record CreateItemCommand(int CategoryId, string ItemCode, string ItemDesc) : ICommand;
+public sealed record CreateItemCommand(ItemDto Command) : ICommand;
 
 public class CreateItemCommandValidator : AbstractValidator<CreateItemCommand>
 {
     public CreateItemCommandValidator()
     {
-        RuleFor(_ => _.CategoryId).NotEmpty().NotNull();
-        RuleFor(_ => _.ItemCode).NotEmpty();
-        RuleFor(_ => _.ItemDesc).NotEmpty();
+        RuleFor(_ => _.Command.CategoryId).NotEmpty().NotNull();
+        RuleFor(_ => _.Command.ItemCode).NotEmpty();
+        RuleFor(_ => _.Command.ItemDesc).NotEmpty();
     }
 }
 
@@ -23,7 +23,7 @@ public class CreateItemCommandHandler(IInventoryDbContext dbContext)
         CancellationToken cancellationToken)
     {
         var record = await dbContext.Items
-            .SingleOrDefaultAsync(_ => _.ItemCode == command.ItemCode, cancellationToken);
+            .SingleOrDefaultAsync(_ => _.ItemCode == command.Command.ItemCode, cancellationToken);
 
         if (record != null)
         {
@@ -31,9 +31,9 @@ public class CreateItemCommandHandler(IInventoryDbContext dbContext)
                 CustomError.Problem(nameof(CreateItemCommand), "Record already exist."));
         }
 
-        var item = ItemM.Create(command.CategoryId,
-                                command.ItemCode,
-                                command.ItemDesc);
+        var item = ItemM.Create(command.Command.CategoryId,
+                                command.Command.ItemCode,
+                                command.Command.ItemDesc);
 
         await dbContext.Items.AddAsync(item, cancellationToken);
         await dbContext.SaveChangesAsync(cancellationToken);
@@ -42,14 +42,15 @@ public class CreateItemCommandHandler(IInventoryDbContext dbContext)
     }
 }
 
-public sealed record UpdateItemCommand(int ItemId, string ItemDesc) : ICommand;
+public sealed record UpdateItemCommand(ItemDto Command) : ICommand;
 
 public class UpdateItemCommandValidator : AbstractValidator<UpdateItemCommand>
 {
     public UpdateItemCommandValidator()
     {
-        RuleFor(_ => _.ItemId).NotEmpty();
-        RuleFor(_ => _.ItemDesc).NotEmpty();
+        RuleFor(_ => _.Command.CategoryId).NotEmpty().NotNull();
+        RuleFor(_ => _.Command.ItemCode).NotEmpty();
+        RuleFor(_ => _.Command.ItemDesc).NotEmpty();
     }
 }
 
@@ -62,7 +63,7 @@ public class UpdateItemCommandHandler(IInventoryDbContext dbContext)
         UpdateItemCommand command,
         CancellationToken cancellationToken)
     {
-        var record = await dbContext.Items.FindAsync([command.ItemId], cancellationToken);
+        var record = await dbContext.Items.FindAsync([command.Command.ItemId], cancellationToken);
 
         if (record == null)
         {
@@ -70,7 +71,8 @@ public class UpdateItemCommandHandler(IInventoryDbContext dbContext)
                 CustomError.NotFound(nameof(UpdateItemCommand), "Record not found."));
         }
 
-        record.ItemDesc = command.ItemDesc;
+        record.CategoryId = command.Command.CategoryId;
+        record.ItemDesc = command.Command.ItemDesc;
 
         dbContext.Items.Update(record);
         await dbContext.SaveChangesAsync(cancellationToken);

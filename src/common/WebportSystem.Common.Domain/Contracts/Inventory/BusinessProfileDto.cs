@@ -3,6 +3,7 @@
 
 public sealed class BusinessProfileDto
 {
+    public int TenantId { get; set; }
     public int BusinessProfileId { get; set; }
     public string BusinessName { get; set; } = string.Empty;
     public string Email { get; set; } = string.Empty;

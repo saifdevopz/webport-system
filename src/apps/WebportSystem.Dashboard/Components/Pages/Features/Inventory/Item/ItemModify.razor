@@ -18,14 +18,15 @@
 
     <MudTabs Elevation="2" Rounded="true" ApplyEffectsToContainer="true" PanelClass="pa-6">
         <MudTabPanel Text="Description">
-            @Categories.Count
-
             <MudTextField @bind-Value="model.ItemCode"
+                          Required="true"
                           Variant="Variant.Outlined"
                           For="@(() => model.ItemCode)"
-                          Label="Item Code" />
+                          Label="Item Code" 
+                          ReadOnly="Id is not null" />
 
             <MudTextField @bind-Value="model.ItemDesc"
+                          Required="true"
                           Variant="Variant.Outlined"
                           For="@(() => model.ItemDesc)"
                           Label="Item Description" />
@@ -33,13 +34,12 @@
             <MudSelect T="CategoryDto" @bind-Value="_selectedValue" Label="Select Category">
                 @foreach (var category in Categories)
                 {
-                    <MudSelectItem T="CategoryDto" Value="category">@category.CategoryDesc</MudSelectItem>
+                    <MudSelectItem Value="category">@category.CategoryDesc</MudSelectItem>
                 }
             </MudSelect>
         </MudTabPanel>
         <MudTabPanel Text="Quantity">
             <MudText>Content Two @model.ItemDesc</MudText>
-
         </MudTabPanel>
     </MudTabs>
 
@@ -54,7 +54,6 @@
                 @ErrorMessage
             </MudAlert>
         }
-
 </EditForm>
 
 
@@ -63,11 +62,10 @@
     [Parameter] public string? Id { get; set; }
     private bool IsEditMode => !string.IsNullOrWhiteSpace(Id);
 
-    private ItemDto model = new();
     private List<CategoryDto> Categories = new();
+    private ItemDto model = new();
+    private CategoryDto?  _selectedValue;
 
-    private CategoryDto?
-    _selectedValue;
     private string ErrorMessage = string.Empty;
 
     protected override async Task OnInitializedAsync()
@@ -78,24 +76,6 @@
         {
             model = await GetItem();
             _selectedValue = Categories.FirstOrDefault(i => i.CategoryId == model.CategoryId);
-        }
-    }
-
-    private async Task OnValidSubmit(EditContext context)
-    {
-        model.CategoryId = _selectedValue!.CategoryId;
-
-        Result response = IsEditMode
-            ? await _DataService.PutAsync("item", model)
-            : await _DataService.PostAsync("item", model);
-
-        if (response.IsSuccess)
-        {
-            _NavigationManager.NavigateTo("/item/index");
-        }
-        else
-        {
-            ErrorMessage = response.Error?.Description ?? "An unexpected error occurred.";
         }
     }
 
@@ -114,5 +94,30 @@
         var response = await _DataService.GetByIdAsync<ItemDto>("item", Id!);
         return response.Data!;
     }
-    private void Cancel() => _NavigationManager.NavigateTo("/category/index");
+
+    private async Task OnValidSubmit(EditContext context)
+    {
+        if (_selectedValue == null)
+        {
+            ErrorMessage = "Please select a category";
+            return;
+        }
+
+        model.CategoryId = _selectedValue!.CategoryId;
+
+        Result response = IsEditMode
+            ? await _DataService.PutAsync("item", model)
+            : await _DataService.PostAsync("item", model);
+
+        if (response.IsSuccess)
+        {
+            _NavigationManager.NavigateTo("/item/index");
+        }
+        else
+        {
+            ErrorMessage = response.Error?.Description ?? "An unexpected error occurred.";
+        }
+    }
+
+    private void Cancel() => _NavigationManager.NavigateTo("/item/index");
 }

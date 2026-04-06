@@ -1,7 +1,8 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Microsoft.AspNetCore.Http.Json;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Quartz;
+using System.Text.Json.Serialization;
 using WebportSystem.Common.Application.Database;
 using WebportSystem.Common.Infrastructure.Authentication;
 using WebportSystem.Common.Infrastructure.Clock;
@@ -13,8 +14,7 @@ namespace WebportSystem.Common.Infrastructure;
 public static class InfrastructureConfiguration
 {
     public static IServiceCollection AddCommonInfrastructure(
-        this IServiceCollection services,
-        IConfiguration configuration)
+        this IServiceCollection services)
     {
         services.AddAuthenticationInternal();
 
@@ -37,6 +37,9 @@ public static class InfrastructureConfiguration
         });
 
         services.AddQuartzHostedService(options => options.WaitForJobsToComplete = true);
+
+        // JSON Serialization
+        services.Configure<JsonOptions>(options => options.SerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 
         return services;
     }

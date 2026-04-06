@@ -11,6 +11,7 @@ public static class AuthenticationExtensions
     public static IServiceCollection AddAuthenticationInternal(this IServiceCollection services)
     {
         services.AddHttpContextAccessor();
+        services.AddScoped<TenantContext>();
 
         services.AddOptions<JwtOptions>()
             .BindConfiguration("JwtOptions")

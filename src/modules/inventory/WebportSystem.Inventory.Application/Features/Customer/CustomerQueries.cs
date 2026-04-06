@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using WebportSystem.Inventory.Domain.Entities.Customer;
 
 namespace WebportSystem.Inventory.Application.Features.Customer;
 
@@ -7,7 +6,7 @@ namespace WebportSystem.Inventory.Application.Features.Customer;
 
 public sealed record GetCustomerByIdQuery(int Id) : IQuery<GetCustomerByIdQueryResult>;
 
-public sealed record GetCustomerByIdQueryResult(CustomerM Customer);
+public sealed record GetCustomerByIdQueryResult(CustomerDto Record);
 
 public sealed class GetCustomerByIdQueryHandler(IInventoryDbContext dbContext)
     : IQueryHandler<GetCustomerByIdQuery, GetCustomerByIdQueryResult>
@@ -17,8 +16,22 @@ public sealed class GetCustomerByIdQueryHandler(IInventoryDbContext dbContext)
         CancellationToken cancellationToken)
     {
         var entity = await dbContext.Customers
+            .AsNoTracking()
+            .Select(_ => new CustomerDto
+            {
+                CustomerId = _.CustomerId,
+                Name = _.Name,
+                Email = _.Email,
+                Phone = _.Phone,
+                CompanyName = _.CompanyName,
+                AddressLine1 = _.AddressLine1,
+                City = _.City,
+                Province = _.Province,
+                PostalCode = _.PostalCode
+            })
             .Where(x => x.CustomerId == query.Id)
             .SingleOrDefaultAsync(cancellationToken);
+
 
         return entity is not null
             ? Result.Success(new GetCustomerByIdQueryResult(entity))
@@ -44,16 +57,18 @@ public sealed class GetCustomersQueryHandler(IInventoryDbContext dbContext)
     {
         var records = await dbContext.Customers
             .AsNoTracking()
-            .Select(_ => new CustomerDto(
-                _.CustomerId,
-                _.Name,
-                _.Email,
-                _.Phone,
-                _.CompanyName,
-                _.AddressLine1,
-                _.City,
-                _.Province,
-                _.PostalCode))
+            .Select(_ => new CustomerDto
+            {
+                CustomerId = _.CustomerId,
+                Name = _.Name,
+                Email = _.Email,
+                Phone = _.Phone,
+                CompanyName = _.CompanyName,
+                AddressLine1 = _.AddressLine1,
+                City = _.City,
+                Province = _.Province,
+                PostalCode = _.PostalCode
+            })
             .ToListAsync(cancellationToken);
 
         return Result.Success(new GetCustomersQueryResult(records));

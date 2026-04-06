@@ -44,7 +44,7 @@ public class CreateUserCommandHandler(UserManager<UserM> userManager)
 }
 
 public sealed record CreateUserCommand(
-    int TenantId,
+    Guid TenantId,
     string Name,
     string Email,
     string Password,

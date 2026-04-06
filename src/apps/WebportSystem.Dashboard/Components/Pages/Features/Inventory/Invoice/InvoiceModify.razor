@@ -1,0 +1,112 @@
+﻿@page "/invoice/modify2"
+@attribute [Authorize(Roles = "User")]
+
+<MudDataGrid @ref="_elementGrid" T="InvoiceItemDto" Items="@_elements" ReadOnly="@_readOnly"
+             EditMode="@(_isCellEditMode ? DataGridEditMode.Cell : DataGridEditMode.Form)"
+             StartedEditingItem="@StartedEditingItem"
+             CanceledEditingItem="@CanceledEditingItem"
+             CommittedItemChanges="@CommittedItemChanges"
+             Bordered="true" Dense="true"
+             EditTrigger="@(_editTriggerRowClick ? DataGridEditTrigger.OnRowClick : DataGridEditTrigger.Manual)">
+
+    <ToolBarContent>
+        <MudText Typo="Typo.h6">Invoice Items</MudText>
+        <MudSpacer />
+        <MudButton Color="Color.Success" Variant="Variant.Filled" OnClick="NewItemAsync">
+            Add Item
+        </MudButton>
+    </ToolBarContent>
+
+    <Columns>
+        <PropertyColumn Property="x => x.ItemName" Title="Item" />
+
+        <PropertyColumn Property="x => x.UnitPrice" Title="Price" />
+
+        <PropertyColumn Property="x => x.Quantity" Title="Qty" />
+
+        <TemplateColumn Hidden="@_readOnly">
+            <CellTemplate>
+                <MudIconButton Icon="@Icons.Material.Outlined.Delete"
+                               Size="Size.Small"
+                               OnClick="@(() => DeleteItem(context.Item))" />
+            </CellTemplate>
+        </TemplateColumn>
+    </Columns>
+</MudDataGrid>
+
+@code {
+    private List<InvoiceItemDto> _elements = [];
+
+    private readonly bool _readOnly = false;
+    private readonly bool _isCellEditMode = false;
+    private readonly bool _editTriggerRowClick = false;
+    private MudDataGrid<InvoiceItemDto> _elementGrid = default!;
+    private readonly List<string> _events = new();
+
+    // 🔥 THIS is the important part for EDIT MODE
+    [Parameter]
+    public List<InvoiceItemDto>? InvoiceItems { get; set; }
+    protected override void OnInitialized()
+    {
+        // ✅ If editing existing invoice → load items
+        if (InvoiceItems != null && InvoiceItems.Any())
+        {
+            _elements = InvoiceItems.ToList();
+        }
+        else
+        {
+            _elements = new List<InvoiceItemDto>();
+        }
+    }
+
+    private async Task NewItemAsync()
+    {
+        var item = new InvoiceItemDto
+        {
+            ItemName = "",
+            Quantity = 0,
+            UnitPrice = 0            
+        };
+
+        if (_isCellEditMode)
+        {
+            _elements.Insert(0, item);
+        }
+        else
+        {
+            await _elementGrid.SetEditingItemAsync(item);
+        }
+    }
+
+    private void DeleteItem(InvoiceItemDto item)
+    {
+        _elements.Remove(item);
+    }
+
+    private void StartedEditingItem(InvoiceItemDto item)
+    {
+        _events.Insert(0, $"Started editing: {item.ItemName}");
+    }
+
+    private void CanceledEditingItem(InvoiceItemDto item)
+    {
+        _events.Insert(0, $"Canceled editing: {item.ItemName}");
+    }
+
+    private Task<DataGridEditMode> CommittedItemChanges(InvoiceItemDto item)
+    {
+
+        if (!_elements.Contains(item))
+            _elements.Add(item);
+
+        _events.Insert(0, $"Saved: {item.ItemName}");
+
+        return Task.FromResult(DataGridEditMode.Form);
+    }
+
+    // 🔥 expose to parent (important for saving invoice)
+    public List<InvoiceItemDto> GetItems()
+    {
+        return _elements;
+    }
+}

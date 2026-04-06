@@ -34,22 +34,22 @@ namespace WebportSystem.Identity.Infrastructure.Database.Migrations
 
                     b.Property<string>("ClaimType")
                         .HasColumnType("text")
-                        .HasColumnName("claim_type");
+                        .HasColumnName("claimType");
 
                     b.Property<string>("ClaimValue")
                         .HasColumnType("text")
-                        .HasColumnName("claim_value");
+                        .HasColumnName("claimValue");
 
                     b.Property<string>("UserId")
                         .IsRequired()
                         .HasColumnType("text")
-                        .HasColumnName("user_id");
+                        .HasColumnName("userId");
 
                     b.HasKey("Id")
-                        .HasName("pk_asp_net_user_claims");
+                        .HasName("pK_AspNetUserClaims");
 
                     b.HasIndex("UserId")
-                        .HasDatabaseName("ix_asp_net_user_claims_user_id");
+                        .HasDatabaseName("iX_AspNetUserClaims_userId");
 
                     b.ToTable("AspNetUserClaims", "identity");
                 });
@@ -58,26 +58,26 @@ namespace WebportSystem.Identity.Infrastructure.Database.Migrations
                 {
                     b.Property<string>("LoginProvider")
                         .HasColumnType("text")
-                        .HasColumnName("login_provider");
+                        .HasColumnName("loginProvider");
 
                     b.Property<string>("ProviderKey")
                         .HasColumnType("text")
-                        .HasColumnName("provider_key");
+                        .HasColumnName("providerKey");
 
                     b.Property<string>("ProviderDisplayName")
                         .HasColumnType("text")
-                        .HasColumnName("provider_display_name");
+                        .HasColumnName("providerDisplayName");
 
                     b.Property<string>("UserId")
                         .IsRequired()
                         .HasColumnType("text")
-                        .HasColumnName("user_id");
+                        .HasColumnName("userId");
 
                     b.HasKey("LoginProvider", "ProviderKey")
-                        .HasName("pk_asp_net_user_logins");
+                        .HasName("pK_AspNetUserLogins");
 
                     b.HasIndex("UserId")
-                        .HasDatabaseName("ix_asp_net_user_logins_user_id");
+                        .HasDatabaseName("iX_AspNetUserLogins_userId");
 
                     b.ToTable("AspNetUserLogins", "identity");
                 });
@@ -86,11 +86,11 @@ namespace WebportSystem.Identity.Infrastructure.Database.Migrations
                 {
                     b.Property<string>("UserId")
                         .HasColumnType("text")
-                        .HasColumnName("user_id");
+                        .HasColumnName("userId");
 
                     b.Property<string>("LoginProvider")
                         .HasColumnType("text")
-                        .HasColumnName("login_provider");
+                        .HasColumnName("loginProvider");
 
                     b.Property<string>("Name")
                         .HasColumnType("text")
@@ -101,7 +101,7 @@ namespace WebportSystem.Identity.Infrastructure.Database.Migrations
                         .HasColumnName("value");
 
                     b.HasKey("UserId", "LoginProvider", "Name")
-                        .HasName("pk_asp_net_user_tokens");
+                        .HasName("pK_AspNetUserTokens");
 
                     b.ToTable("AspNetUserTokens", "identity");
                 });
@@ -117,24 +117,24 @@ namespace WebportSystem.Identity.Infrastructure.Database.Migrations
 
                     b.Property<string>("ClaimType")
                         .HasColumnType("text")
-                        .HasColumnName("claim_type");
+                        .HasColumnName("claimType");
 
                     b.Property<string>("ClaimValue")
                         .HasColumnType("text")
-                        .HasColumnName("claim_value");
+                        .HasColumnName("claimValue");
 
                     b.Property<string>("RoleId")
                         .IsRequired()
                         .HasColumnType("text")
-                        .HasColumnName("role_id");
+                        .HasColumnName("roleId");
 
                     b.HasKey("Id")
-                        .HasName("pk_role_claims");
+                        .HasName("pK_AspNetRoleClaims");
 
                     b.HasIndex("RoleId")
-                        .HasDatabaseName("ix_role_claims_role_id");
+                        .HasDatabaseName("iX_AspNetRoleClaims_roleId");
 
-                    b.ToTable("role_claims", "identity");
+                    b.ToTable("AspNetRoleClaims", "identity");
                 });
 
             modelBuilder.Entity("WebportSystem.Identity.Domain.Roles.RoleM", b =>
@@ -146,7 +146,7 @@ namespace WebportSystem.Identity.Infrastructure.Database.Migrations
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
                         .HasColumnType("text")
-                        .HasColumnName("concurrency_stamp");
+                        .HasColumnName("concurrencyStamp");
 
                     b.Property<string>("Name")
                         .HasMaxLength(256)
@@ -156,88 +156,96 @@ namespace WebportSystem.Identity.Infrastructure.Database.Migrations
                     b.Property<string>("NormalizedName")
                         .HasMaxLength(256)
                         .HasColumnType("character varying(256)")
-                        .HasColumnName("normalized_name");
+                        .HasColumnName("normalizedName");
 
                     b.HasKey("Id")
-                        .HasName("pk_roles");
+                        .HasName("pK_AspNetRoles");
 
                     b.HasIndex("NormalizedName")
                         .IsUnique()
                         .HasDatabaseName("RoleNameIndex");
 
-                    b.ToTable("roles", "identity");
+                    b.ToTable("AspNetRoles", "identity");
                 });
 
             modelBuilder.Entity("WebportSystem.Identity.Domain.Roles.UserRoleM", b =>
                 {
                     b.Property<string>("UserId")
                         .HasColumnType("text")
-                        .HasColumnName("user_id");
+                        .HasColumnName("userId");
 
                     b.Property<string>("RoleId")
                         .HasColumnType("text")
-                        .HasColumnName("role_id");
+                        .HasColumnName("roleId");
 
                     b.HasKey("UserId", "RoleId")
-                        .HasName("pk_asp_net_user_roles");
+                        .HasName("pK_AspNetUserRoles");
 
                     b.HasIndex("RoleId")
-                        .HasDatabaseName("ix_asp_net_user_roles_role_id");
+                        .HasDatabaseName("iX_AspNetUserRoles_roleId");
 
                     b.ToTable("AspNetUserRoles", "identity");
                 });
 
             modelBuilder.Entity("WebportSystem.Identity.Domain.Tenants.TenantM", b =>
                 {
-                    b.Property<int>("TenantId")
+                    b.Property<Guid>("TenantId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasColumnName("tenant_id");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("TenantId"));
+                        .HasColumnType("uuid")
+                        .HasColumnName("tenantId");
 
                     b.Property<string>("CreatedBy")
                         .IsRequired()
                         .HasColumnType("text")
-                        .HasColumnName("created_by");
+                        .HasColumnName("createdBy");
 
                     b.Property<DateTime>("CreatedDt")
                         .HasColumnType("timestamp with time zone")
-                        .HasColumnName("created_dt");
+                        .HasColumnName("createdDt");
 
                     b.Property<string>("DatabaseConnectionString")
+                        .IsRequired()
                         .HasColumnType("text")
-                        .HasColumnName("database_connection_string");
+                        .HasColumnName("databaseConnectionString");
+
+                    b.Property<string>("DatabaseName")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("databaseName");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("boolean")
-                        .HasColumnName("is_active");
+                        .HasColumnName("isActive");
 
                     b.Property<string>("LastModBy")
                         .IsRequired()
                         .HasColumnType("text")
-                        .HasColumnName("last_mod_by");
+                        .HasColumnName("lastModBy");
 
                     b.Property<DateTime>("LastModDt")
                         .HasColumnType("timestamp with time zone")
-                        .HasColumnName("last_mod_dt");
+                        .HasColumnName("lastModDt");
 
-                    b.Property<DateTime>("LicenceExpiryDate")
+                    b.Property<DateTime>("LicenseExpiryDateUtc")
                         .HasColumnType("timestamp with time zone")
-                        .HasColumnName("licence_expiry_date");
+                        .HasColumnName("licenseExpiryDateUtc");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer")
+                        .HasColumnName("status");
 
                     b.Property<string>("TenantName")
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)")
-                        .HasColumnName("tenant_name");
+                        .HasColumnName("tenantName");
 
                     b.HasKey("TenantId")
-                        .HasName("pk_tenants");
+                        .HasName("pK_tenants");
 
                     b.HasIndex("TenantName")
                         .IsUnique()
-                        .HasDatabaseName("ix_tenants_tenant_name");
+                        .HasDatabaseName("iX_tenants_tenantName");
 
                     b.ToTable("tenants", "identity");
                 });
@@ -250,12 +258,12 @@ namespace WebportSystem.Identity.Infrastructure.Database.Migrations
 
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("integer")
-                        .HasColumnName("access_failed_count");
+                        .HasColumnName("accessFailedCount");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
                         .HasColumnType("text")
-                        .HasColumnName("concurrency_stamp");
+                        .HasColumnName("concurrencyStamp");
 
                     b.Property<string>("Email")
                         .HasMaxLength(256)
@@ -264,57 +272,57 @@ namespace WebportSystem.Identity.Infrastructure.Database.Migrations
 
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("boolean")
-                        .HasColumnName("email_confirmed");
+                        .HasColumnName("emailConfirmed");
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("boolean")
-                        .HasColumnName("lockout_enabled");
+                        .HasColumnName("lockoutEnabled");
 
                     b.Property<DateTimeOffset?>("LockoutEnd")
                         .HasColumnType("timestamp with time zone")
-                        .HasColumnName("lockout_end");
+                        .HasColumnName("lockoutEnd");
 
                     b.Property<string>("NormalizedEmail")
                         .HasMaxLength(256)
                         .HasColumnType("character varying(256)")
-                        .HasColumnName("normalized_email");
+                        .HasColumnName("normalizedEmail");
 
                     b.Property<string>("NormalizedUserName")
                         .HasMaxLength(256)
                         .HasColumnType("character varying(256)")
-                        .HasColumnName("normalized_user_name");
+                        .HasColumnName("normalizedUserName");
 
                     b.Property<string>("PasswordHash")
                         .HasColumnType("text")
-                        .HasColumnName("password_hash");
+                        .HasColumnName("passwordHash");
 
                     b.Property<string>("PhoneNumber")
                         .HasColumnType("text")
-                        .HasColumnName("phone_number");
+                        .HasColumnName("phoneNumber");
 
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("boolean")
-                        .HasColumnName("phone_number_confirmed");
+                        .HasColumnName("phoneNumberConfirmed");
 
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("text")
-                        .HasColumnName("security_stamp");
+                        .HasColumnName("securityStamp");
 
-                    b.Property<int>("TenantId")
-                        .HasColumnType("integer")
-                        .HasColumnName("tenant_id");
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("tenantId");
 
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("boolean")
-                        .HasColumnName("two_factor_enabled");
+                        .HasColumnName("twoFactorEnabled");
 
                     b.Property<string>("UserName")
                         .HasMaxLength(256)
                         .HasColumnType("character varying(256)")
-                        .HasColumnName("user_name");
+                        .HasColumnName("userName");
 
                     b.HasKey("Id")
-                        .HasName("pk_asp_net_users");
+                        .HasName("pK_AspNetUsers");
 
                     b.HasIndex("NormalizedEmail")
                         .HasDatabaseName("EmailIndex");
@@ -324,7 +332,7 @@ namespace WebportSystem.Identity.Infrastructure.Database.Migrations
                         .HasDatabaseName("UserNameIndex");
 
                     b.HasIndex("TenantId")
-                        .HasDatabaseName("ix_asp_net_users_tenant_id");
+                        .HasDatabaseName("iX_AspNetUsers_tenantId");
 
                     b.ToTable("AspNetUsers", "identity");
                 });
@@ -336,7 +344,7 @@ namespace WebportSystem.Identity.Infrastructure.Database.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("fk_asp_net_user_claims_asp_net_users_user_id");
+                        .HasConstraintName("fK_AspNetUserClaims_AspNetUsers_userId");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
@@ -346,7 +354,7 @@ namespace WebportSystem.Identity.Infrastructure.Database.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("fk_asp_net_user_logins_asp_net_users_user_id");
+                        .HasConstraintName("fK_AspNetUserLogins_AspNetUsers_userId");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
@@ -356,7 +364,7 @@ namespace WebportSystem.Identity.Infrastructure.Database.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("fk_asp_net_user_tokens_asp_net_users_user_id");
+                        .HasConstraintName("fK_AspNetUserTokens_AspNetUsers_userId");
                 });
 
             modelBuilder.Entity("WebportSystem.Identity.Domain.Roles.RoleClaimM", b =>
@@ -366,7 +374,7 @@ namespace WebportSystem.Identity.Infrastructure.Database.Migrations
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("fk_role_claims_asp_net_roles_role_id");
+                        .HasConstraintName("fK_AspNetRoleClaims_AspNetRoles_roleId");
 
                     b.Navigation("Role");
                 });
@@ -378,14 +386,14 @@ namespace WebportSystem.Identity.Infrastructure.Database.Migrations
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("fk_asp_net_user_roles_asp_net_roles_role_id");
+                        .HasConstraintName("fK_AspNetUserRoles_AspNetRoles_roleId");
 
                     b.HasOne("WebportSystem.Identity.Domain.Users.UserM", "User")
                         .WithMany("UserRoles")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("fk_asp_net_user_roles_asp_net_users_user_id");
+                        .HasConstraintName("fK_AspNetUserRoles_AspNetUsers_userId");
 
                     b.Navigation("Role");
 
@@ -399,7 +407,7 @@ namespace WebportSystem.Identity.Infrastructure.Database.Migrations
                         .HasForeignKey("TenantId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired()
-                        .HasConstraintName("fk_asp_net_users_tenants_tenant_id");
+                        .HasConstraintName("fK_AspNetUsers_tenants_tenantId");
 
                     b.Navigation("Tenant");
                 });

@@ -42,9 +42,6 @@ string basePath = $"Database:Providers:{activeProvider}";
 string identityDbString = config[$"{basePath}:IdentityConnection"]
     ?? throw new ArgumentException("Missing IdentityConnection in configuration.");
 
-string inventoryDbString = config[$"{basePath}:InventoryConnection"]
-    ?? throw new ArgumentException("Missing InventoryConnection in configuration.");
-
 // --- API ---
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
@@ -88,11 +85,11 @@ builder.Services.AddCommonApplication(
         (typeof(InventoryDbContext), typeof(CategoryM).Assembly),
     ]);
 
-builder.Services.AddCommonInfrastructure(builder.Configuration);
+builder.Services.AddCommonInfrastructure();
 
 // --- Infrastructure Modules ---
 builder.Services.AddIdentityModule(builder.Configuration, identityDbString);
-builder.Services.AddInventoryModule(builder.Configuration, inventoryDbString);
+builder.Services.AddInventoryModule(builder.Configuration);
 
 var app = builder.Build();
 
@@ -131,9 +128,9 @@ if (app.Environment.IsDevelopment())
 }
 
 // --- Database Initialization ---
-if (app.Environment.IsProduction())
-{
-    DatabaseInitializer.InitializeDatabases(app).Wait();
-}
+//if (app.Environment.IsDevelopment())
+//{
+//    DatabaseInitializer.InitializeDatabases(app).Wait();
+//}
 
 await app.RunAsync();

@@ -15,7 +15,7 @@ public sealed class ItemConfig : IEntityTypeConfiguration<ItemM>
             .HasForeignKey(i => i.CategoryId)
             .OnDelete(DeleteBehavior.Restrict);
 
-        builder.HasIndex(_ => new { _.TenantId, _.ItemCode })
+        builder.HasIndex(_ => new { _.ItemCode })
             .IsUnique();
 
         builder.Property(_ => _.ItemCode)

@@ -1,17 +1,24 @@
 ﻿@page "/item/index"
-@using WebportSystem.Dashboard.Common.HttpClients
 @attribute [Authorize(Roles = "User")]
 
-<MudText Typo="Typo.h6">Item Index</MudText>
+<MudText Typo="Typo.h5">Items</MudText>
 
-
-
-<MudDataGrid Items="@Items.Take(50)" Filterable="true" ColumnResizeMode="ResizeMode.Column" Dense="true" Hover="true" Striped="true" RowStyle="height: 5px;">
+<MudDataGrid Items="@Items" 
+             Filterable="true" 
+             ColumnResizeMode="ResizeMode.Column" 
+             Dense="true" 
+             Hover="true" 
+             Striped="true"
+             QuickFilter="@_quickFilter">
     <ToolBarContent>
         <MudIconButton Href="@($"item/modify")" Icon="@Icons.Material.Filled.Add" />
-        <MudIconButton OnClick="DownloadPdf" Icon="@Icons.Material.Filled.Adb" />
         <MudSpacer />
-        <MudTextField Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+        <MudTextField @bind-Value="_searchString" 
+                      Placeholder="Search" 
+                      Adornment="Adornment.Start" 
+                      Immediate="true"
+                      AdornmentIcon="@Icons.Material.Filled.Search" 
+                      IconSize="Size.Medium" />
     </ToolBarContent>
     <Columns>
         <PropertyColumn Property="_ => _.ItemId" Title="Id" />
@@ -34,30 +41,11 @@
 
 @code {
     private List<ItemDto> Items = new();
-
-    [Inject]
-    public BaseHttpClient? ss { get; set; } 
+    private string _searchString = "";
 
     protected override async Task OnInitializedAsync()
     {
         await GetItems();
-    }
-
-    private async Task DownloadPdf()
-    {
-        HttpClient client = ss!.GetPrivateHttpClient();
-        var response = await client.GetAsync("api/Invoice/pdf3");
-
-        if (response.IsSuccessStatusCode)
-        {
-            // Read the content as a stream and use JS interop for download
-            var stream = await response.Content.ReadAsStreamAsync();
-            var fileName = response.Content.Headers.ContentDisposition?.FileName ?? "invoice.pdf";
-
-            // This JSRuntime call initiates the download in the browser
-            using var streamRef = new DotNetStreamReference(stream);
-            await _IJSRuntime.InvokeVoidAsync("downloadFileFromStream", fileName, streamRef);
-        }
     }
 
     private async Task GetItems()
@@ -72,8 +60,33 @@
 
     private async Task Delete(int id)
     {
-        await _DataService.DeleteByIdAsync("role", id);
-        await GetItems();        
+        var parameters = new DialogParameters<Dialog>
+        {
+            { _ => _.ContentText, "Do you really want to delete this record? This process cannot be undone." },
+            { _ => _.ButtonText, "Delete" },
+            { _ => _.Color, Color.Error },
+        };
+
+        // Show the dialog and await user response
+        var dialog = await DialogService.ShowAsync<Dialog>("Delete", parameters);
+        var result = await dialog.Result;
+
+        // Only proceed if user confirms deletion
+        if (!result!.Canceled)
+        {
+            await _DataService.DeleteByIdAsync("item", id);
+            await GetItems();
+            await DialogService.ShowMessageBox("Success", "Deleted Successfully");
+        }
     }
+
+    private Func<ItemDto, bool> _quickFilter => _ =>
+    {
+        if (string.IsNullOrWhiteSpace(_searchString)) return true;
+
+        return _.ItemCode.Contains(_searchString, StringComparison.OrdinalIgnoreCase)
+            || _.ItemDesc.Contains(_searchString, StringComparison.OrdinalIgnoreCase)
+            || $"{_.ItemCode} {_.ItemDesc}".Contains(_searchString, StringComparison.OrdinalIgnoreCase);
+    };
 }
 

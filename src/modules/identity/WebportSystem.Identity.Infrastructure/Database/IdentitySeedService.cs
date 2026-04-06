@@ -26,10 +26,10 @@ public static class IdentitySeedService
     {
         TenantM[] tenants =
         [
-            TenantM.Create("Administrator"),
-            TenantM.Create("Customer1"),
-            TenantM.Create("Customer2"),
-            TenantM.Create("Customer3"),
+            TenantM.Create("SuperAdmin", "test-db", GetPostreSQLDatabaseConnectionString("test-db")),
+            TenantM.Create("Customer1", "customer1-db", GetPostreSQLDatabaseConnectionString("customer1-db")),
+            TenantM.Create("Customer2", "customer2-db", GetPostreSQLDatabaseConnectionString("customer2-db")),
+            TenantM.Create("Customer3", "customer3-db", GetPostreSQLDatabaseConnectionString("customer3-db")),
         ];
 
         await dbContext.Tenants.AddRangeAsync(tenants);
@@ -103,5 +103,11 @@ public static class IdentitySeedService
         await roleManager.AddClaimAsync(adminRole, new Claim("permission", "identity:global"));
         await roleManager.AddClaimAsync(adminRole, new Claim("permission", "inventory:global"));
         await roleManager.AddClaimAsync(userRole, new Claim("permission", "inventory:global"));
+    }
+
+    private static string GetPostreSQLDatabaseConnectionString(string databaseName)
+    {
+        //return $"Host=102.211.206.231;Port=5432;Database={databaseName};Username=sword;Password=25122000@Saif;Pooling=true;MinPoolSize=10;MaxPoolSize=100;Include Error Detail=true;GSS Encryption Mode=Disable;";
+        return $"Host=102.214.11.80; Database={databaseName}; Username=sword; Password=25122000@Saif; GSS Encryption Mode=Disable;";
     }
 }
