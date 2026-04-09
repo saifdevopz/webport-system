@@ -83,6 +83,35 @@
         ThemeConfig.IsDarkMode = !ThemeConfig.IsDarkMode;
     }
 
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender || _UserContext.IsInitialized)
+            return;
+
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();        
+        var user = authState.User;
+
+        if (!user.Identity?.IsAuthenticated ?? true)
+            return;
+
+        var userId = user.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+
+        if (string.IsNullOrEmpty(userId))
+            return;
+
+        // 🔥 Load everything in ONE query
+        var data = await _DataService.GetByIdAsync<UserDto>("usercontext", userId);
+
+        if (data != null)
+        {
+            _UserContext.BusinessProfileId = data.Data.UserName;
+        }
+
+        _UserContext.IsInitialized = true;
+
+        StateHasChanged(); // refresh UI
+    }
+
     private void LogoutClicked()
     {
         _NavigationManager.NavigateTo("/logout", forceLoad: true);

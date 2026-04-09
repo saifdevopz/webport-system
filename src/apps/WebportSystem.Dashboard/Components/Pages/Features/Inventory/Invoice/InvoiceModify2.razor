@@ -10,7 +10,9 @@
             <MudSelectItem Value="customer">@customer.Name</MudSelectItem>
         }
     </MudSelect>
+</div>
 
+<div class="input-container">
     <MudSelect T="ItemDto" @bind-Value="_selectedItem" Label="Select Item">
         @foreach (var item in Items)
         {
@@ -54,11 +56,11 @@
     .input-container {
         display: flex;
         gap: 20px;
+        margin-bottom: 15px;
     }
 </style>
 
-
-    @code {
+@code {
     [Parameter]
     public string? Id { get; set; }
     private bool IsEditMode => !string.IsNullOrWhiteSpace(Id);
@@ -89,6 +91,32 @@
 
             _selectedCustomer = Customers.FirstOrDefault(i => i.CustomerId == invoice.Data.CustomerId);
             StateHasChanged();
+        }
+    }
+
+    private async Task SaveInvoice()
+    {
+        if (_selectedCustomer == null)
+        {
+            await DialogService.ShowMessageBox("Error", "Please select a customer.");
+            return;
+        }
+
+        Invoice.CustomerId = _selectedCustomer.CustomerId;
+        Invoice.InvoiceNumber = GenerateInvoiceNumber();
+
+        Result response = IsEditMode
+            ? await _DataService.PutAsync("invoice", Invoice)
+            : await _DataService.PostAsync("invoice", Invoice);
+
+        if (response.IsSuccess)
+        {
+            await DialogService.ShowMessageBox("Success", "Invoice saved successfully!");
+            _NavigationManager.NavigateTo("/invoice/index");
+        }
+        else
+        {
+            await DialogService.ShowMessageBox("Error", response.Error?.Description ?? "Unknown error");
         }
     }
 
@@ -135,32 +163,6 @@
         Invoice.Total = Invoice.SubTotal; // Could add taxes later
     }
 
-    private async Task SaveInvoice()
-    {
-        if (_selectedCustomer == null)
-        {
-            await DialogService.ShowMessageBox("Error", "Please select a customer.");
-            return;
-        }
-
-        Invoice.CustomerId = _selectedCustomer.CustomerId;
-        Invoice.InvoiceNumber = GenerateInvoiceNumber();
-
-        Result response = IsEditMode
-            ? await _DataService.PutAsync("invoice", Invoice)
-            : await _DataService.PostAsync("invoice", Invoice);
-
-        if (response.IsSuccess)
-        {
-            await DialogService.ShowMessageBox("Success", "Invoice saved successfully!");
-            _NavigationManager.NavigateTo("/invoice/index");
-        }
-        else
-        {
-            await DialogService.ShowMessageBox("Error", response.Error?.Description ?? "Unknown error");
-        }
-    }
-
     private static string GenerateInvoiceNumber()
     {
         var random = new Random();
@@ -174,5 +176,4 @@
     }
 
     private void Cancel() => _NavigationManager.NavigateTo("/invoice/index");
-
 }

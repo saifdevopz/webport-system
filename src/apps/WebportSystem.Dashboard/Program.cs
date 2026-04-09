@@ -29,7 +29,9 @@ builder.Services.AddScoped<BaseHttpClient>();
 // Services
 builder.Services.AddScoped<DataService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
+
 builder.Services.AddScoped<ITenantContext, TenantContext>();
+builder.Services.AddScoped<UserContext>();
 
 // Authentication
 builder.Services.AddHttpContextAccessor();

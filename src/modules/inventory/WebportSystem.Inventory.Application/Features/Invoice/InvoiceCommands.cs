@@ -18,9 +18,6 @@ public class CreateInvoiceCommandValidator : AbstractValidator<CreateInvoiceComm
                    .NotEmpty().WithMessage("Invoice number is required.")
                    .MaximumLength(50);
 
-        RuleFor(x => x.BusinessProfileId)
-            .NotEmpty();
-
         RuleFor(x => x.Items)
             .NotEmpty().WithMessage("Invoice must have at least one item.");
 
