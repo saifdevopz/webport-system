@@ -100,12 +100,12 @@
             return;
 
         // 🔥 Load everything in ONE query
-        var data = await _DataService.GetByIdAsync<UserDto>("usercontext", userId);
+        // var data = await _DataService.GetByIdAsync<UserDto>("usercontext", userId);
 
-        if (data != null)
-        {
-            _UserContext.BusinessProfileId = data.Data.UserName;
-        }
+        // if (data != null)
+        // {
+        //     _UserContext.BusinessProfileId = data.Data.UserName;
+        // }
 
         _UserContext.IsInitialized = true;
 
