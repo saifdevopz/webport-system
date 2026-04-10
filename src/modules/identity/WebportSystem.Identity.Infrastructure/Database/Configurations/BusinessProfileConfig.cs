@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using WebportSystem.Inventory.Domain.Entities.BusinessProfile;
+using WebportSystem.Identity.Domain.BusinessProfile;
 
 namespace WebportSystem.Inventory.Infrastructure.Database.Configurations;
 
@@ -10,8 +10,12 @@ public sealed class BusinessProfileConfig : IEntityTypeConfiguration<BusinessPro
     {
         builder.HasKey(_ => _.BusinessProfileId);
 
-        builder.HasIndex(_ => new { _.BusinessName })
-            .IsUnique();
+        builder.HasKey(_ => _.TenantId);
+
+        builder.HasOne(_ => _.Tenant)
+            .WithOne()
+            .HasForeignKey<BusinessProfileM>(_ => _.TenantId)
+            .OnDelete(DeleteBehavior.Cascade);
 
         builder.Property(_ => _.BusinessName)
             .IsRequired()

@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using WebportSystem.Inventory.Domain.Entities.BusinessProfile;
 using WebportSystem.Inventory.Domain.Entities.Customer;
 using WebportSystem.Inventory.Domain.Entities.Invoice;
 

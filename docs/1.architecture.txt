@@ -10,8 +10,8 @@ Traefik Reverse Proxy
 ----------------------------------------------
 
 --- Frontend ---
-Angular
-Blazor Server-Side
+Angular Point of Sale
+Blazor Server Back Office
 
 ----------------------------------------------
 

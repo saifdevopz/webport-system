@@ -1,0 +1,1 @@
+﻿global using WebportSystem.Common.Domain.Abstractions;

@@ -1,4 +1,6 @@
-﻿namespace WebportSystem.Inventory.Domain.Entities.BusinessProfile;
+﻿using WebportSystem.Identity.Domain.Tenants;
+
+namespace WebportSystem.Identity.Domain.BusinessProfile;
 
 public sealed class BusinessProfileM(
     string businessName,
@@ -13,7 +15,8 @@ public sealed class BusinessProfileM(
     string? accountNumber = null,
     string? branchCode = null) : AggregateRoot
 {
-    public int BusinessProfileId { get; set; }
+    public Guid TenantId { get; set; }
+    public TenantM? Tenant { get; set; }
 
     // Main
     public string BusinessName { get; private set; } = businessName;

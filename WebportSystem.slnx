@@ -1,15 +1,14 @@
 <Solution>
   <Folder Name="/docs/">
     <File Path="ai.txt" />
+    <File Path="docs/1.architecture.txt" />
     <File Path="docs/applications.txt" />
-    <File Path="docs/architecture.txt" />
     <File Path="docs/blazor.txt" />
     <File Path="docs/deployment.txt" />
     <File Path="docs/docker-swarm.txt" />
     <File Path="docs/identity-module.txt" />
     <File Path="docs/migrations.txt" />
     <File Path="docs/project-setup.txt" />
-    <File Path="x.txt" />
   </Folder>
   <Folder Name="/solution-items/">
     <File Path=".editorconfig" />

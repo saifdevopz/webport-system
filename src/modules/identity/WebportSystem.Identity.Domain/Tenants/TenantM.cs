@@ -1,5 +1,4 @@
-﻿using WebportSystem.Common.Domain.Abstractions;
-using WebportSystem.Identity.Domain.Users;
+﻿using WebportSystem.Identity.Domain.Users;
 
 namespace WebportSystem.Identity.Domain.Tenants;
 
