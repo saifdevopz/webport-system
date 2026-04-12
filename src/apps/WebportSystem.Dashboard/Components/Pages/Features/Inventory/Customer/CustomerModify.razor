@@ -18,10 +18,10 @@
         </MudCardHeader>
 
         <MudCardContent>
-            <MudTextField @bind-Value="model.Name"
+            <MudTextField @bind-Value="model.CustomerName"
                           Required="true"
                           Variant="Variant.Outlined"
-                          For="@(() => model.Name)"
+                          For="@(() => model.CustomerName)"
                           Label="Name" />
 
             <MudTextField @bind-Value="model.Phone"
@@ -115,11 +115,9 @@
     {
         try
         {
-            var command = new { customer = model };  
-
             Result response = IsEditMode
-                ? await _DataService.PutAsync(FeatureName, command)
-                : await _DataService.PostAsync(FeatureName, command);
+                ? await _DataService.PutAsync(FeatureName, model)
+                : await _DataService.PostAsync(FeatureName, model);
 
             if (response.IsSuccess)
             {

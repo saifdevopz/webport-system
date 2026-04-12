@@ -5,16 +5,12 @@ using WebportSystem.Common.Contracts.Shared.Results;
 
 namespace WebportSystem.Inventory.Application.Features.Customer;
 
-#region Get By Id
-
-public sealed record GetCustomerByIdQuery(int Id) : IQuery<GetCustomerByIdQueryResult>;
-
-public sealed record GetCustomerByIdQueryResult(CustomerDto Record);
+public sealed record GetCustomerByIdQuery(int CustomerId) : IQuery<CustomerDto>;
 
 public sealed class GetCustomerByIdQueryHandler(IInventoryDbContext dbContext)
-    : IQueryHandler<GetCustomerByIdQuery, GetCustomerByIdQueryResult>
+    : IQueryHandler<GetCustomerByIdQuery, CustomerDto>
 {
-    public async Task<Result<GetCustomerByIdQueryResult>> Handle(
+    public async Task<Result<CustomerDto>> Handle(
         GetCustomerByIdQuery query,
         CancellationToken cancellationToken)
     {
@@ -23,7 +19,7 @@ public sealed class GetCustomerByIdQueryHandler(IInventoryDbContext dbContext)
             .Select(_ => new CustomerDto
             {
                 CustomerId = _.CustomerId,
-                Name = _.Name,
+                CustomerName = _.Name,
                 Email = _.Email,
                 Phone = _.Phone,
                 CompanyName = _.CompanyName,
@@ -32,29 +28,23 @@ public sealed class GetCustomerByIdQueryHandler(IInventoryDbContext dbContext)
                 Province = _.Province,
                 PostalCode = _.PostalCode
             })
-            .Where(x => x.CustomerId == query.Id)
+            .Where(x => x.CustomerId == query.CustomerId)
             .SingleOrDefaultAsync(cancellationToken);
 
 
         return entity is not null
-            ? Result.Success(new GetCustomerByIdQueryResult(entity))
-            : Result.Failure<GetCustomerByIdQueryResult>(
+            ? Result.Success(entity)
+            : Result.Failure<CustomerDto>(
                 CustomError.NotFound("Not Found", "Customer not found."));
     }
 }
 
-#endregion
-
-#region Get list
-
-public sealed record GetCustomersQuery : IQuery<GetCustomersQueryResult>;
-
-public sealed record GetCustomersQueryResult(IEnumerable<CustomerDto> Records);
+public sealed record GetCustomersQuery : IQuery<IEnumerable<CustomerDto>>;
 
 public sealed class GetCustomersQueryHandler(IInventoryDbContext dbContext)
-    : IQueryHandler<GetCustomersQuery, GetCustomersQueryResult>
+    : IQueryHandler<GetCustomersQuery, List<CustomerDto>>
 {
-    public async Task<Result<GetCustomersQueryResult>> Handle(
+    public async Task<Result<List<CustomerDto>>> Handle(
         GetCustomersQuery query,
         CancellationToken cancellationToken)
     {
@@ -63,7 +53,7 @@ public sealed class GetCustomersQueryHandler(IInventoryDbContext dbContext)
             .Select(_ => new CustomerDto
             {
                 CustomerId = _.CustomerId,
-                Name = _.Name,
+                CustomerName = _.Name,
                 Email = _.Email,
                 Phone = _.Phone,
                 CompanyName = _.CompanyName,
@@ -74,8 +64,6 @@ public sealed class GetCustomersQueryHandler(IInventoryDbContext dbContext)
             })
             .ToListAsync(cancellationToken);
 
-        return Result.Success(new GetCustomersQueryResult(records));
+        return Result.Success(records);
     }
 }
-
-#endregion

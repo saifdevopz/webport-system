@@ -54,7 +54,7 @@ public sealed class CreateBusinessProfileCommandHandler(IInventoryDbContext dbCo
         if (record)
         {
             return Result.Failure<int>(
-                CustomError.Problem(nameof(CreateBusinessProfileCommand),
+                CustomError.Problem(nameof(CreateBusinessProfileCommandHandler),
                 "Email already exists."));
         }
 
@@ -114,7 +114,7 @@ public class UpdateBusinessProfileCommandHandler(IInventoryDbContext dbContext)
         var record = await dbContext.BusinessProfiles
             .FindAsync([command.BusinessProfileId], cancellationToken);
 
-        if (record == null)
+        if (record is null)
         {
             return Result.Failure(
                 CustomError.NotFound(nameof(UpdateBusinessProfileCommandHandler),

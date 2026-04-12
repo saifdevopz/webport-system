@@ -1,4 +1,6 @@
-﻿namespace WebportSystem.Inventory.Presentation.Endpoints;
+﻿using WebportSystem.Common.Contracts.Inventory;
+
+namespace WebportSystem.Inventory.Presentation.Endpoints;
 
 internal sealed class ItemEndpoints : IEndpoint
 {
@@ -9,7 +11,7 @@ internal sealed class ItemEndpoints : IEndpoint
             .RequireAuthorization();
 
         group.MapGet("", async (
-            IQueryHandler<GetItemsQuery, GetItemsQueryResult> handler,
+            IQueryHandler<GetItemsQuery, List<ItemDto>> handler,
             CancellationToken cancellationToken) =>
         {
             return await handler
@@ -19,7 +21,7 @@ internal sealed class ItemEndpoints : IEndpoint
 
         group.MapGet("{id}", async (
             int id,
-            IQueryHandler<GetItemByIdQuery, GetItemByIdQueryResult> handler,
+            IQueryHandler<GetItemByIdQuery, ItemDto> handler,
             CancellationToken cancellationToken) =>
         {
             return await handler

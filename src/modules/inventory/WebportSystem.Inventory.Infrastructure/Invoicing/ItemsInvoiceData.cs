@@ -1,11 +1,12 @@
 ﻿using QuestPDF.Helpers;
+using WebportSystem.Common.Contracts.Inventory;
 using WebportSystem.Common.Infrastructure.QuestPDF;
 using WebportSystem.Inventory.Application.Features.Item;
 
 namespace WebportSystem.Inventory.Infrastructure.Invoicing;
 
 public class ItemsInvoiceData(
-    IQueryHandler<GetItemsQuery, GetItemsQueryResult> handler)
+    IQueryHandler<GetItemsQuery, List<ItemDto>> handler)
 {
     private static readonly Random Random = new();
 
@@ -15,7 +16,7 @@ public class ItemsInvoiceData(
         var result = await handler.Handle(new GetItemsQuery(), cancellationToken);
 
         var items = result.IsSuccess
-            ? result.Data.Records
+            ? result.Data
                 .Select(i => new OrderItem
                 {
                     Name = i.ItemDesc,
@@ -23,10 +24,9 @@ public class ItemsInvoiceData(
                     Quantity = Random.Next(1, 10)
                 })
                 .ToList()
-            : Enumerable
+            : [.. Enumerable
                 .Range(1, 25)
-                .Select(_ => GenerateRandomOrderItem())
-                .ToList();
+                .Select(_ => GenerateRandomOrderItem())];
 
         return new InvoiceModel
         {

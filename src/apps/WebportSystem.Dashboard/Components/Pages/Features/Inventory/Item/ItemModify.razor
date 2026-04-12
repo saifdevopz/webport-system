@@ -58,7 +58,7 @@
 
 
 
-@code {
+    @code {
     [Parameter] public string? Id { get; set; }
     private bool IsEditMode => !string.IsNullOrWhiteSpace(Id);
 
@@ -108,7 +108,6 @@
         Result response = IsEditMode
             ? await _DataService.PutAsync("item", model)
             : await _DataService.PostAsync("item", model);
-
         if (response.IsSuccess)
         {
             _NavigationManager.NavigateTo("/item/index");

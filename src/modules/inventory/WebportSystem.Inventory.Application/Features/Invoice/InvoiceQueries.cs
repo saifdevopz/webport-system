@@ -7,8 +7,6 @@ namespace WebportSystem.Inventory.Application.Features.Invoice;
 
 public sealed record GetInvoiceByIdQuery(int InvoiceId) : IQuery<InvoiceDto>;
 
-public sealed record GetInvoiceByIdQueryResult(InvoiceDto Record);
-
 public class GetInvoiceByIdQueryHandler(IInventoryDbContext dbContext)
     : IQueryHandler<GetInvoiceByIdQuery, InvoiceDto>
 {
@@ -50,14 +48,12 @@ public class GetInvoiceByIdQueryHandler(IInventoryDbContext dbContext)
     }
 }
 
-public sealed record GetInvoicesQuery : IQuery<GetInvoicesQueryResult>;
-
-public sealed record GetInvoicesQueryResult(IEnumerable<InvoiceDto> Records);
+public sealed record GetInvoicesQuery : IQuery<List<InvoiceDto>>;
 
 public class GetInvoicesQueryHandler(IInventoryDbContext dbContext)
-    : IQueryHandler<GetInvoicesQuery, GetInvoicesQueryResult>
+    : IQueryHandler<GetInvoicesQuery, List<InvoiceDto>>
 {
-    public async Task<Result<GetInvoicesQueryResult>> Handle(
+    public async Task<Result<List<InvoiceDto>>> Handle(
         GetInvoicesQuery query,
         CancellationToken cancellationToken)
     {
@@ -74,7 +70,7 @@ public class GetInvoicesQueryHandler(IInventoryDbContext dbContext)
             })
             .ToListAsync(cancellationToken: cancellationToken);
 
-        return Result.Success(new GetInvoicesQueryResult(records));
+        return Result.Success(records);
     }
 }
 

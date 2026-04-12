@@ -2,37 +2,46 @@
 using WebportSystem.Common.Contracts.Inventory;
 using WebportSystem.Common.Contracts.Shared.Errors;
 using WebportSystem.Common.Contracts.Shared.Results;
+using WebportSystem.Inventory.Application.Features.BusinessProfile;
 
 namespace WebportSystem.Inventory.Application.Features.Item;
 
-public sealed record GetItemByIdQuery(int ItemId) : IQuery<GetItemByIdQuery>;
-
-public sealed record GetItemByIdQueryResult(ItemM Record);
+public sealed record GetItemByIdQuery(int ItemId) : IQuery<ItemDto>;
 
 public class GetItemByIdQueryHandler(IInventoryDbContext dbContext)
-    : IQueryHandler<GetItemByIdQuery, GetItemByIdQueryResult>
+    : IQueryHandler<GetItemByIdQuery, ItemDto>
 {
-    public async Task<Result<GetItemByIdQueryResult>> Handle(
+    public async Task<Result<ItemDto>> Handle(
         GetItemByIdQuery query,
         CancellationToken cancellationToken)
     {
-        var record = await dbContext.Items.FindAsync([query.ItemId], cancellationToken);
+        var record = await dbContext.Items
+            .FindAsync([query.ItemId], cancellationToken);
 
-        return record is null
-            ? Result.Failure<GetItemByIdQueryResult>(CustomError.NotFound(nameof(GetItemByIdQueryHandler), "Record not found."))
-            : Result.Success(new GetItemByIdQueryResult(record));
+        if (record == null)
+        {
+            return Result.Failure<ItemDto>(
+                CustomError.NotFound(nameof(GetBusinessProfileByIdQueryHandler),
+                "Record not found."));
+        }
+
+        return Result.Success(new ItemDto
+        {
+            ItemCode = record.ItemCode,
+            ItemDesc = record.ItemDesc,
+            SellingPrice = record.SellingPrice,
+            CostPrice = record.CostPrice,
+            CategoryId = record.CategoryId
+        });
     }
 }
 
-
-public sealed record GetItemsQuery : IQuery<GetItemsQueryResult>;
-
-public sealed record GetItemsQueryResult(IEnumerable<ItemDto> Records);
+public sealed record GetItemsQuery : IQuery<List<ItemDto>>;
 
 public class GetItemsQueryHandler(IInventoryDbContext dbContext)
-    : IQueryHandler<GetItemsQuery, GetItemsQueryResult>
+    : IQueryHandler<GetItemsQuery, List<ItemDto>>
 {
-    public async Task<Result<GetItemsQueryResult>> Handle(
+    public async Task<Result<List<ItemDto>>> Handle(
         GetItemsQuery query,
         CancellationToken cancellationToken)
     {
@@ -54,6 +63,6 @@ public class GetItemsQueryHandler(IInventoryDbContext dbContext)
             })
             .ToListAsync(cancellationToken);
 
-        return Result.Success(new GetItemsQueryResult(records));
+        return Result.Success(records);
     }
 }

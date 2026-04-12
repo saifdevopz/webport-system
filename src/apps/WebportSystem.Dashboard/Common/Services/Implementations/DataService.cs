@@ -64,7 +64,7 @@ public class DataService(BaseHttpClient BaseHttpClient)
         }
     }
 
-    public async Task<Result> PostAsync<T>(string source, T obj)
+    public async Task<Result<int>> PostAsync<T>(string source, T obj)
     {
         try
         {
@@ -72,22 +72,23 @@ public class DataService(BaseHttpClient BaseHttpClient)
             HttpResponseMessage httpResponse = await client.PostAsJsonAsync(source, obj).ConfigureAwait(false);
 
             if (!httpResponse.IsSuccessStatusCode)
-                return await HandleErrorResponseAsync(httpResponse);
+                return await HandleErrorResponseAsync<int>(httpResponse);
 
             var result = await httpResponse.Content
-                .ReadFromJsonAsync<Result>()
+                .ReadFromJsonAsync<Result<int>>()
                 .ConfigureAwait(false);
 
             if (result is null)
-                return Result.Failure(CustomError.Conflict("Deserialization", "Response could not be parsed."));
+                return Result.Failure<int>(CustomError.Conflict("Deserialization",
+                    "Response could not be parsed."));
 
             return result.IsSuccess
-                ? Result.Success()
-                : Result.Failure(result.Error!);
+                ? Result.Success(result.Data)
+                : Result.Failure<int>(result.Error!);
         }
         catch (HttpRequestException ex)
         {
-            return Result.Failure(CustomError.Conflict("Exception Occurred", ex.Message));
+            return Result.Failure<int>(CustomError.Conflict("Exception Occurred", ex.Message));
         }
     }
 

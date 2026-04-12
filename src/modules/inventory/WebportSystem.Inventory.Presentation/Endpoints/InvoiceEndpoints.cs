@@ -1,5 +1,6 @@
 ﻿using WebportSystem.Common.Contracts.Inventory;
 using WebportSystem.Inventory.Application.Features.Invoice;
+using WebportSystem.Inventory.Domain.Entities.Invoice;
 
 namespace WebportSystem.Inventory.Presentation.Endpoints;
 
@@ -12,7 +13,7 @@ internal sealed class InvoiceEndpoints : IEndpoint
             .RequireAuthorization();
 
         group.MapGet("", async (
-            IQueryHandler<GetInvoicesQuery, GetInvoicesQueryResult> handler,
+            IQueryHandler<GetInvoicesQuery, List<InvoiceDto>> handler,
             CancellationToken cancellationToken) =>
         {
             return await handler
@@ -32,7 +33,7 @@ internal sealed class InvoiceEndpoints : IEndpoint
 
         group.MapPost("", async (
             CreateInvoiceCommand request,
-            ICommandHandler<CreateInvoiceCommand> handler,
+            ICommandHandler<CreateInvoiceCommand, int> handler,
             CancellationToken cancellationToken) =>
         {
             return await handler
@@ -42,7 +43,7 @@ internal sealed class InvoiceEndpoints : IEndpoint
 
         group.MapPut("", async (
             UpdateInvoiceCommand request,
-            ICommandHandler<UpdateInvoiceCommand, UpdateInvoiceResult> handler,
+            ICommandHandler<UpdateInvoiceCommand> handler,
             CancellationToken cancellationToken) =>
         {
             return await handler
@@ -52,11 +53,11 @@ internal sealed class InvoiceEndpoints : IEndpoint
 
         group.MapDelete("{id}", async (
             int id,
-            ICommandHandler<DeleteInvoiceCommand> handler,
+            ICommandHandler<GenericDeleteCommand<InvoiceM>> handler,
             CancellationToken cancellationToken) =>
         {
             return await handler
-                .Handle(new DeleteInvoiceCommand(id), cancellationToken)
+                .Handle(new GenericDeleteCommand<InvoiceM>(id), cancellationToken)
                 .MapResult();
         });
     }

@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using WebportSystem.Common.Contracts.Inventory;
 using WebportSystem.Inventory.Application.Features.Customer;
 using WebportSystem.Inventory.Domain.Entities.Customer;
 
@@ -12,10 +13,8 @@ internal sealed class CustomerEndpoints : IEndpoint
             .WithTags("Inventory.Customers")
             .RequireAuthorization();
 
-        #region Queries
-
         group.MapGet("", async (
-            IQueryHandler<GetCustomersQuery, GetCustomersQueryResult> handler,
+            IQueryHandler<GetCustomersQuery, List<CustomerDto>> handler,
             CancellationToken cancellationToken) =>
         {
             return await handler
@@ -25,7 +24,7 @@ internal sealed class CustomerEndpoints : IEndpoint
 
         group.MapGet("{id}", async (
             int id,
-            IQueryHandler<GetCustomerByIdQuery, GetCustomerByIdQueryResult> handler,
+            IQueryHandler<GetCustomerByIdQuery, CustomerDto> handler,
             CancellationToken cancellationToken) =>
         {
             return await handler
@@ -33,13 +32,9 @@ internal sealed class CustomerEndpoints : IEndpoint
                 .MapResult();
         });
 
-        #endregion
-
-        #region Commands
-
         group.MapPost("", async (
             CreateCustomerCommand request,
-            ICommandHandler<CreateCustomerCommand> handler,
+            ICommandHandler<CreateCustomerCommand, int> handler,
             CancellationToken cancellationToken) =>
         {
             return await handler
@@ -66,7 +61,5 @@ internal sealed class CustomerEndpoints : IEndpoint
                 .Handle(new GenericDeleteCommand<CustomerM>(id), cancellationToken)
                 .MapResult();
         });
-
-        #endregion
     }
 }

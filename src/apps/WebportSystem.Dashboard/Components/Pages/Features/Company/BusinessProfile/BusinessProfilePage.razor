@@ -60,19 +60,16 @@
                           Label="Country" />
 
             <MudTextField @bind-Value="model.BankName"
-                          Required="true"
                           Variant="Variant.Outlined"
                           For="@(() => model.BankName)"
                           Label="Bank Name" />
 
             <MudTextField @bind-Value="model.BranchCode"
-                          Required="true"
                           Variant="Variant.Outlined"
                           For="@(() => model.BranchCode)"
                           Label="Branch Code" />
 
             <MudTextField @bind-Value="model.AccountNumber"
-                          Required="true"
                           Variant="Variant.Outlined"
                           For="@(() => model.AccountNumber)"
                           Label="Account Number" />
@@ -98,18 +95,32 @@
 
     protected override async Task OnInitializedAsync()
     {
-        model = await GetBusinessProfile();      
+        await GetBusinessProfile();      
     }
 
-    private async Task<BusinessProfileDto> GetBusinessProfile()
+    private async Task GetBusinessProfile()
     {
         var response = await _DataService.GetByIdAsync<BusinessProfileDto>("businessprofile", "1");
-        return response.Data;
+
+        if (response.IsSuccess)
+        {
+            model = response.Data;            
+        }
     }
 
     private async Task OnValidSubmit(EditContext context)
-    {        
-        Result response = await _DataService.PutAsync("businessprofile", model);
+    {
+        Result response;
+
+        if (model.BusinessProfileId < 1)
+        {
+           response = await _DataService.PostAsync("businessprofile", model);
+        }
+        else
+        {
+             response = await _DataService.PutAsync("businessprofile", model);
+        }
+
 
         if (response.IsSuccess)
         {

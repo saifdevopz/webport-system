@@ -10,34 +10,33 @@ namespace WebportSystem.Inventory.Application.Features.Invoice;
 public sealed record CreateInvoiceCommand(
     string InvoiceNumber,
     int BusinessProfileId,
-    int? CustomerId,
-    List<CreateInvoiceItem> Items) : ICommand;
+    int CustomerId,
+    List<CreateInvoiceItem> Items)
+: ICommand<int>;
 
 public class CreateInvoiceCommandValidator : AbstractValidator<CreateInvoiceCommand>
 {
     public CreateInvoiceCommandValidator()
     {
-        RuleFor(x => x.InvoiceNumber)
+        RuleFor(_ => _.InvoiceNumber)
                    .NotEmpty().WithMessage("Invoice number is required.")
                    .MaximumLength(50);
 
-        RuleFor(x => x.Items)
+        RuleFor(_ => _.Items)
             .NotEmpty().WithMessage("Invoice must have at least one item.");
 
-        //RuleForEach(x => x.Items).ChildRules(item =>
-        //{
-        //    item.RuleFor(i => i.ItemId).NotEmpty();
-        //    item.RuleFor(i => i.ItemName).NotEmpty();
-        //    item.RuleFor(i => i.UnitPrice).GreaterThan(0);
-        //    item.RuleFor(i => i.Quantity).GreaterThan(0);
-        //});
+        RuleForEach(_ => _.Items).ChildRules(item =>
+        {
+            item.RuleFor(_ => _.ItemId).NotEmpty();
+            item.RuleFor(_ => _.Quantity).GreaterThan(0);
+        });
     }
 }
 
 public sealed class CreateInvoiceCommandHandler(IInventoryDbContext dbContext)
-    : ICommandHandler<CreateInvoiceCommand>
+    : ICommandHandler<CreateInvoiceCommand, int>
 {
-    public async Task<Result> Handle(
+    public async Task<Result<int>> Handle(
         CreateInvoiceCommand command,
         CancellationToken cancellationToken)
     {
@@ -46,13 +45,13 @@ public sealed class CreateInvoiceCommandHandler(IInventoryDbContext dbContext)
 
         if (exists)
         {
-            return Result.Failure(
+            return Result.Failure<int>(
                 CustomError.Problem(nameof(CreateInvoiceCommand), "Record already exists."));
         }
 
         var invoice = new InvoiceM(
             invoiceNumber: command.InvoiceNumber,
-            businessProfileId: command.BusinessProfileId,
+            businessProfileId: 1,
             customerId: command.CustomerId);
 
         var itemIds = command.Items.Select(x => x.ItemId).ToList();
@@ -65,7 +64,7 @@ public sealed class CreateInvoiceCommandHandler(IInventoryDbContext dbContext)
         {
             if (!dbItems.TryGetValue(item.ItemId, out var dbItem))
             {
-                return Result.Failure(
+                return Result.Failure<int>(
                     CustomError.NotFound("Item", $"Item with ID {item.ItemId} not found."));
             }
 
@@ -77,19 +76,19 @@ public sealed class CreateInvoiceCommandHandler(IInventoryDbContext dbContext)
             );
         }
 
+
         await dbContext.Invoices.AddAsync(invoice, cancellationToken);
         await dbContext.SaveChangesAsync(cancellationToken);
 
-        return Result.Success();
+        return Result.Success(invoice.InvoiceId);
     }
 }
 
 public sealed record UpdateInvoiceCommand(
     int InvoiceId,
     int? CustomerId,
-    List<InvoiceItemDto> Items) : ICommand<UpdateInvoiceResult>;
-
-public sealed record UpdateInvoiceResult(InvoiceM Result);
+    List<InvoiceItemDto> Items)
+: ICommand;
 
 public class UpdateInvoiceCommandValidator : AbstractValidator<UpdateInvoiceCommand>
 {
@@ -101,9 +100,9 @@ public class UpdateInvoiceCommandValidator : AbstractValidator<UpdateInvoiceComm
 }
 
 public class UpdateInvoiceCommandHandler(IInventoryDbContext dbContext)
-    : ICommandHandler<UpdateInvoiceCommand, UpdateInvoiceResult>
+    : ICommandHandler<UpdateInvoiceCommand>
 {
-    public async Task<Result<UpdateInvoiceResult>> Handle(
+    public async Task<Result> Handle(
         UpdateInvoiceCommand command,
         CancellationToken cancellationToken)
     {
@@ -113,52 +112,19 @@ public class UpdateInvoiceCommandHandler(IInventoryDbContext dbContext)
 
         if (record == null)
         {
-            return Result.Failure<UpdateInvoiceResult>(
-                CustomError.NotFound(nameof(UpdateInvoiceCommandHandler), "Record not found."));
+            return Result.Failure(
+                CustomError.NotFound(nameof(UpdateInvoiceCommandHandler),
+                "Record not found."));
         }
 
         // ✅ Replace items (clean + safe)
         record.ReplaceItems(
-            command.Items
-                .Select(x => (x.ItemId, x.ItemDesc, x.UnitPrice, x.Quantity))
-                .ToList()
+            [.. command.Items.Select(x => (x.ItemId, x.ItemDesc, x.UnitPrice, x.Quantity))]
         );
 
         await dbContext.SaveChangesAsync(cancellationToken);
 
-        return Result.Success(new UpdateInvoiceResult(record));
+        return Result.Success(record);
     }
 }
 
-public sealed record DeleteInvoiceCommand(int InvoiceId) : ICommand;
-
-public class DeleteInvoiceCommandValidator : AbstractValidator<DeleteInvoiceCommand>
-{
-    public DeleteInvoiceCommandValidator()
-    {
-        RuleFor(_ => _.InvoiceId).NotEmpty();
-    }
-}
-
-public class DeleteInvoiceCommandHandler(IInventoryDbContext dbContext)
-    : ICommandHandler<DeleteInvoiceCommand>
-{
-    public async Task<Result> Handle(
-        DeleteInvoiceCommand command,
-        CancellationToken cancellationToken)
-    {
-        var record = await dbContext.Invoices
-            .FindAsync([command.InvoiceId], cancellationToken);
-
-        if (record is null)
-        {
-            return Result.Failure(
-                CustomError.NotFound(nameof(DeleteInvoiceCommandHandler), "Record not found."));
-        }
-
-        dbContext.Invoices.Remove(record);
-        await dbContext.SaveChangesAsync(cancellationToken);
-
-        return Result.Success();
-    }
-}

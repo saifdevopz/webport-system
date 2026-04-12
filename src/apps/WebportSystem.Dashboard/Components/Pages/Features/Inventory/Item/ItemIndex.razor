@@ -20,10 +20,11 @@
                       AdornmentIcon="@Icons.Material.Filled.Search" 
                       IconSize="Size.Medium" />
     </ToolBarContent>
-    <Columns>
-        <PropertyColumn Property="_ => _.ItemId" Title="Id" />
+    <Columns>        
         <PropertyColumn Property="_ => _.ItemCode" Title="Code" />
         <PropertyColumn Property="_ => _.ItemDesc" Title="Description" />
+        <PropertyColumn Property="_ => _.SellingPrice" Title="SellingPrice" />
+        <PropertyColumn Property="_ => _.Category.CategoryDesc" Title="Category" />
         <TemplateColumn CellClass="">
             <CellTemplate>
                 <MudStack Row>
@@ -54,7 +55,7 @@
 
         if (response.IsSuccess && response.Data != null)
         {
-            Items = response.Data.ToList();
+            Items = response.Data;
         }
     }
 
