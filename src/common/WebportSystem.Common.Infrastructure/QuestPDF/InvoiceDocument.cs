@@ -6,7 +6,8 @@ namespace WebportSystem.Common.Infrastructure.QuestPDF;
 
 public class InvoiceDocument(InvoiceModel model) : IDocument
 {
-    public static Image LogoImage { get; } = Image.FromFile(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", "logo.png"));
+    public static Image LogoImage { get; } = Image.FromFile(
+        Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", "logo.png"));
 
     public InvoiceModel Model { get; } = model;
 

@@ -92,6 +92,7 @@ public class GetInvoicePrintQueryHandler(IInventoryDbContext dbContext)
                     BusinessName = x.BusinessProfile.BusinessName,
                     BusinessAddress = $"{x.BusinessProfile.AddressLine1}, {x.BusinessProfile.City}, {x.BusinessProfile.City}",
                     CustomerName = x.Customer!.Name,
+                    CustomerBusinessName = x.Customer.CompanyName,
                     CustomerAddress = $"{x.Customer.Province}, {x.Customer.City}, {x.Customer.City}",
                     SubTotal = x.SubTotal,
                     Total = x.Total,

@@ -16,7 +16,23 @@ public class GetItemByIdQueryHandler(IInventoryDbContext dbContext)
         CancellationToken cancellationToken)
     {
         var record = await dbContext.Items
-            .FindAsync([query.ItemId], cancellationToken);
+            .AsNoTracking()
+            .Select(_ => new ItemDto
+            {
+                ItemId = _.ItemId,
+                ItemCode = _.ItemCode,
+                ItemDesc = _.ItemDesc,
+                SellingPrice = _.SellingPrice,
+                CostPrice = _.CostPrice,
+                CategoryId = _.CategoryId,
+                Category = new CategoryDto
+                {
+                    CategoryId = _.CategoryId,
+                    CategoryCode = _.Category!.CategoryCode,
+                    CategoryDesc = _.Category.CategoryDesc
+                }
+            })
+            .FirstOrDefaultAsync(_ => _.ItemId == query.ItemId, cancellationToken);
 
         if (record == null)
         {
@@ -25,14 +41,7 @@ public class GetItemByIdQueryHandler(IInventoryDbContext dbContext)
                 "Record not found."));
         }
 
-        return Result.Success(new ItemDto
-        {
-            ItemCode = record.ItemCode,
-            ItemDesc = record.ItemDesc,
-            SellingPrice = record.SellingPrice,
-            CostPrice = record.CostPrice,
-            CategoryId = record.CategoryId
-        });
+        return Result.Success(record);
     }
 }
 

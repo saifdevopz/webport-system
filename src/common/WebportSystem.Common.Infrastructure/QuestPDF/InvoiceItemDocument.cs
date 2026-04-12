@@ -16,20 +16,20 @@ public class InvoiceItemDocument(InvoicePrintDto model) : IDocument
 
     public void Compose(IDocumentContainer container)
     {
-        container.Page(page =>
-        {
-            page.Margin(50);
-
-            page.Header().Element(ComposeHeader);
-            page.Content().Element(ComposeContent);
-
-            page.Footer().AlignCenter().Text(text =>
+        container
+            .Page(page =>
             {
-                text.CurrentPageNumber();
-                text.Span(" / ");
-                text.TotalPages();
+                page.Margin(50);
+
+                page.Header().Element(ComposeHeader);
+                page.Content().Element(ComposeContent);
+                page.Footer().AlignCenter().Text(text =>
+                {
+                    text.CurrentPageNumber();
+                    text.Span(" / ");
+                    text.TotalPages();
+                });
             });
-        });
     }
 
     private void ComposeHeader(IContainer container)
@@ -78,14 +78,43 @@ public class InvoiceItemDocument(InvoicePrintDto model) : IDocument
         container.PaddingVertical(40).Column(column =>
         {
             column.Spacing(10);
+
             column.Item().LineHorizontal(1);
 
+            // Bill To section with text underneath
+            column.Item().Row(row =>
+            {
+                row.RelativeItem().Column(col =>
+                {
+                    col.Item().Text("Bill To").SemiBold();
+                    col.Item().Text("").SemiBold();
+                    col.Spacing(2);
+                    // 👇 Add your extra text here
+                    col.Item().Text(Model.CustomerName);
+                    col.Item().Text(Model.CustomerBusinessName);
+                    col.Item().Text("Address Line 1");
+                    col.Item().Text("City, Postal Code");
+                    col.Item().Text("Phone: 0123456789");
+                });
 
+                row.ConstantItem(50);
+
+                row.RelativeItem().Text("ssss");
+            });
 
             column.Item().Element(ComposeTable);
 
+            var totalPrice = Model.Total.ToString();
+            column.Item()
+                .PaddingRight(5)
+                .AlignRight()
+                .Text($"Grand total: R {totalPrice}")
+                .SemiBold();
 
-
+            if (!string.IsNullOrWhiteSpace("COmments"))
+                column.Item()
+                    .PaddingTop(25)
+                    .Element(ComposeComments);
         });
     }
 
@@ -108,8 +137,8 @@ public class InvoiceItemDocument(InvoicePrintDto model) : IDocument
             {
                 header.Cell().Text("#");
                 header.Cell().Text("Items").Style(headerStyle);
-                header.Cell().AlignRight().Text("Unit price").Style(headerStyle);
                 header.Cell().AlignRight().Text("Quantity").Style(headerStyle);
+                header.Cell().AlignRight().Text("Unit Price").Style(headerStyle);
                 header.Cell().AlignRight().Text("Total").Style(headerStyle);
 
                 header.Cell().ColumnSpan(5).PaddingTop(5).BorderBottom(1).BorderColor(Colors.Black);
@@ -121,14 +150,22 @@ public class InvoiceItemDocument(InvoicePrintDto model) : IDocument
 
                 table.Cell().Element(CellStyle).Text($"{index}");
                 table.Cell().Element(CellStyle).Text(item.ItemDesc);
-                table.Cell().Element(CellStyle).AlignRight().Text($"{item.Quantity:C}");
                 table.Cell().Element(CellStyle).AlignRight().Text($"{item.Quantity}");
+                table.Cell().Element(CellStyle).AlignRight().Text($"{item.Total:C}");
                 table.Cell().Element(CellStyle).AlignRight().Text($"{item.Total * item.Quantity:C}");
 
                 static IContainer CellStyle(IContainer container) => container.BorderBottom(1).BorderColor(Colors.Grey.Lighten2).PaddingVertical(5);
             }
         });
     }
-
+    void ComposeComments(IContainer container)
+    {
+        container.ShowEntire().Background(Colors.Grey.Lighten3).Padding(10).Column(column =>
+        {
+            column.Spacing(5);
+            column.Item().Text("Comments").FontSize(14).SemiBold();
+            column.Item().Text(Model.BusinessName);
+        });
+    }
 }
 

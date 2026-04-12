@@ -10,7 +10,7 @@ namespace WebportSystem.Api.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-public sealed class InvoiceControllewr(
+public sealed class TestControllewr(
     ItemsInvoiceData invoiceData) : ControllerBase
 {
     [Authorize]

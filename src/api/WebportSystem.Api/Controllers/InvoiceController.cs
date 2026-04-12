@@ -12,8 +12,8 @@ namespace WebportSystem.Api.Controllers;
 public sealed class InvoiceController(
     IQueryHandler<GetInvoicePrintQuery, InvoicePrintDto> handler) : ControllerBase
 {
-    [HttpGet("pdf4")]
-    public async Task<ActionResult> GetInvoice4(int InvoiceId, CancellationToken cancellationToken)
+    [HttpGet("invoice")]
+    public async Task<ActionResult> GetItemsInvoice(int InvoiceId, CancellationToken cancellationToken)
     {
         var invoice = await handler.Handle(new GetInvoicePrintQuery(InvoiceId), cancellationToken);
 
@@ -23,6 +23,7 @@ public sealed class InvoiceController(
         }
 
         var document = new InvoiceItemDocument(invoice.Data);
+
         var pdf = document.GeneratePdf();
 
         return File(pdf, "application/pdf", "webport-invoice.pdf");

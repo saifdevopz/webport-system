@@ -39,6 +39,7 @@ public class InvoicePrintDto
     public string BusinessName { get; set; } = string.Empty;
     public string BusinessAddress { get; set; } = string.Empty;
     public string CustomerName { get; set; } = string.Empty;
+    public string CustomerBusinessName { get; set; } = string.Empty;
     public string CustomerAddress { get; set; } = string.Empty;
 
     public decimal SubTotal { get; set; }
