@@ -26,7 +26,6 @@ public static class IdentitySeedService
     {
         TenantM[] tenants =
         [
-            TenantM.Create("SuperAdmin", "test-db", GetPostreSQLDatabaseConnectionString("test-db")),
             TenantM.Create("Customer1", "customer1-db", GetPostreSQLDatabaseConnectionString("customer1-db")),
             TenantM.Create("Customer2", "customer2-db", GetPostreSQLDatabaseConnectionString("customer2-db")),
             TenantM.Create("Customer3", "customer3-db", GetPostreSQLDatabaseConnectionString("customer3-db")),

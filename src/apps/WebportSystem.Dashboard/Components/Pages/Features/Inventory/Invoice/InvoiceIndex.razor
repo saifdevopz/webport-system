@@ -27,6 +27,7 @@
         <TemplateColumn CellClass="">
             <CellTemplate>
                 <MudStack Row>
+                    <MudIconButton OnClick="@(() => DownloadInvoice(context.Item.InvoiceId))" Icon="@Icons.Material.Filled.Print" Color="Color.Dark" />
                     <MudIconButton Href="@($"invoice/modify/{context.Item.InvoiceId}")" Icon="@Icons.Material.Filled.Edit" Color="Color.Success" />
                     <MudIconButton OnClick="@(() => Delete(context.Item.InvoiceId))" Icon="@Icons.Material.Filled.Delete" Color="Color.Error" />
                 </MudStack>
@@ -55,6 +56,24 @@
         {
             Invoices = response.Data.ToList();
         }
+    }
+
+    private async Task DownloadInvoice(int invoiceId)
+    {
+        var result = await _DataService.GetFileAsync($"invoice/print?InvoiceId={invoiceId}");
+
+        if (!result.IsSuccess) return;
+
+        var response = result.Data!;
+
+        var stream = await response.Content.ReadAsStreamAsync();
+
+        var fileName = response.Content.Headers.ContentDisposition?.FileName?.Trim('"')
+                       ?? $"invoice-{invoiceId}.pdf";
+
+        using var streamRef = new DotNetStreamReference(stream);
+
+        await _IJSRuntime.InvokeVoidAsync("downloadFileFromStream", fileName, streamRef);
     }
 
     private async Task Delete(int id)

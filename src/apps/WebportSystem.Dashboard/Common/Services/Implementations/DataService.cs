@@ -148,6 +148,32 @@ public class DataService(BaseHttpClient BaseHttpClient)
         }
     }
 
+    public async Task<Result<HttpResponseMessage>> GetFileAsync(string source)
+    {
+        try
+        {
+            HttpClient client = _baseHttpClient.GetPrivateHttpClient();
+
+            var response = await client.GetAsync(
+                new Uri(source, UriKind.RelativeOrAbsolute),
+                HttpCompletionOption.ResponseHeadersRead
+            ).ConfigureAwait(false);
+
+            if (!response.IsSuccessStatusCode)
+                return Result.Failure<HttpResponseMessage>(
+                    CustomError.Conflict("Request Failed", $"Status: {response.StatusCode}")
+                );
+
+            return Result.Success(response);
+        }
+        catch (HttpRequestException ex)
+        {
+            return Result.Failure<HttpResponseMessage>(
+                CustomError.Conflict("Exception Occurred", ex.Message)
+            );
+        }
+    }
+
     // 🔥 CORE (single source of truth)
     private static async Task<CustomError> ExtractErrorAsync(HttpResponseMessage httpResponse)
     {

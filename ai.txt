@@ -12,19 +12,3 @@ I am creating small basic invoice module I need help with crud business logic. I
 now just show me how the commands work.
 
 
-    private async Task DownloadPdf()
-    {
-        HttpClient client = ss!.GetPrivateHttpClient();
-        var response = await client.GetAsync("api/Invoice/pdf3");
-
-        if (response.IsSuccessStatusCode)
-        {
-            // Read the content as a stream and use JS interop for download
-            var stream = await response.Content.ReadAsStreamAsync();
-            var fileName = response.Content.Headers.ContentDisposition?.FileName ?? "invoice.pdf";
-
-            // This JSRuntime call initiates the download in the browser
-            using var streamRef = new DotNetStreamReference(stream);
-            await _IJSRuntime.InvokeVoidAsync("downloadFileFromStream", fileName, streamRef);
-        }
-    }

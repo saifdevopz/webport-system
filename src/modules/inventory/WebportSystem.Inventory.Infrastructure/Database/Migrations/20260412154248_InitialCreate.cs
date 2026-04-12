@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
@@ -130,8 +131,8 @@ namespace WebportSystem.Inventory.Infrastructure.Database.Migrations
                     categoryId = table.Column<int>(type: "integer", nullable: false),
                     itemCode = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: false),
                     itemDesc = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
-                    sellingPrice = table.Column<decimal>(type: "numeric", nullable: true),
-                    costPrice = table.Column<decimal>(type: "numeric", nullable: true),
+                    sellingPrice = table.Column<decimal>(type: "numeric", nullable: false),
+                    costPrice = table.Column<decimal>(type: "numeric", nullable: false),
                     isActive = table.Column<bool>(type: "boolean", nullable: false),
                     lastModBy = table.Column<string>(type: "text", nullable: false),
                     lastModDt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),

@@ -12,7 +12,7 @@ using WebportSystem.Inventory.Infrastructure.Database;
 namespace WebportSystem.Inventory.Infrastructure.Database.Migrations
 {
     [DbContext(typeof(InventoryDbContext))]
-    [Migration("20260410170426_InitialCreate")]
+    [Migration("20260412154248_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -438,7 +438,7 @@ namespace WebportSystem.Inventory.Infrastructure.Database.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("categoryId");
 
-                    b.Property<decimal?>("CostPrice")
+                    b.Property<decimal>("CostPrice")
                         .HasColumnType("numeric")
                         .HasColumnName("costPrice");
 
@@ -476,7 +476,7 @@ namespace WebportSystem.Inventory.Infrastructure.Database.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("lastModDt");
 
-                    b.Property<decimal?>("SellingPrice")
+                    b.Property<decimal>("SellingPrice")
                         .HasColumnType("numeric")
                         .HasColumnName("sellingPrice");
 
