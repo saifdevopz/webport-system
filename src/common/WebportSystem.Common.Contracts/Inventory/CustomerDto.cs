@@ -1,4 +1,4 @@
-﻿namespace WebportSystem.Common.Domain.Contracts.Inventory;
+﻿namespace WebportSystem.Common.Contracts.Inventory;
 
 public sealed class CustomerDto
 {

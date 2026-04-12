@@ -51,11 +51,12 @@
     {
         var response = await _DataService.GetAllAsync<CategoryDto>("category");
 
-        if (response.IsSuccess && response.Data.Records != null)
+        if (response.IsSuccess && response.Data != null)
         {
-            Categories = response.Data.Records.ToList();
+            Categories = response.Data.ToList();
         }
     }
+   
 
     private async Task Delete(int id)
     {

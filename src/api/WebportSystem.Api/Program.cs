@@ -128,9 +128,9 @@ if (app.Environment.IsDevelopment())
 }
 
 // --- Database Initialization ---
-//if (app.Environment.IsDevelopment())
-//{
-//    DatabaseInitializer.InitializeDatabases(app).Wait();
-//}
+if (app.Environment.IsDevelopment())
+{
+    DatabaseInitializer.InitializeDatabases(app).Wait();
+}
 
 await app.RunAsync();

@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
-using WebportSystem.Common.Domain.Errors;
-using WebportSystem.Common.Domain.Results;
+using WebportSystem.Common.Contracts.Shared.Errors;
+using WebportSystem.Common.Contracts.Shared.Results;
 
 namespace WebportSystem.Common.Presentation.Responses;
 

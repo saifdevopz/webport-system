@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using WebportSystem.Inventory.Application.Data;
+using WebportSystem.Inventory.Domain.Entities.BusinessProfile;
 using WebportSystem.Inventory.Domain.Entities.Category;
 using WebportSystem.Inventory.Domain.Entities.Customer;
 using WebportSystem.Inventory.Domain.Entities.Invoice;
@@ -12,9 +13,9 @@ public sealed class InventoryDbContext(
     DbContextOptions<InventoryDbContext> options) : DbContext(options), IInventoryDbContext
 {
     public DbSet<BusinessProfileM> BusinessProfiles => Set<BusinessProfileM>();
-    public DbSet<CustomerM> Customers => Set<CustomerM>();
     public DbSet<CategoryM> Categories => Set<CategoryM>();
     public DbSet<ItemM> Items => Set<ItemM>();
+    public DbSet<CustomerM> Customers => Set<CustomerM>();
     public DbSet<InvoiceM> Invoices => Set<InvoiceM>();
     public DbSet<InvoiceItemM> InvoiceItems => Set<InvoiceItemM>();
 

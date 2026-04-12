@@ -146,6 +146,10 @@ namespace WebportSystem.Inventory.Infrastructure.Database.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("lastModDt");
 
+                    b.Property<string>("LogoUrl")
+                        .HasColumnType("text")
+                        .HasColumnName("logoUrl");
+
                     b.Property<string>("Phone")
                         .IsRequired()
                         .HasColumnType("text")
@@ -163,10 +167,6 @@ namespace WebportSystem.Inventory.Infrastructure.Database.Migrations
 
                     b.HasKey("BusinessProfileId")
                         .HasName("pK_businessProfiles");
-
-                    b.HasIndex("BusinessName")
-                        .IsUnique()
-                        .HasDatabaseName("iX_businessProfiles_businessName");
 
                     b.ToTable("businessProfiles", "inventory");
                 });
@@ -435,6 +435,10 @@ namespace WebportSystem.Inventory.Infrastructure.Database.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("categoryId");
 
+                    b.Property<decimal?>("CostPrice")
+                        .HasColumnType("numeric")
+                        .HasColumnName("costPrice");
+
                     b.Property<string>("CreatedBy")
                         .IsRequired()
                         .HasColumnType("text")
@@ -468,6 +472,10 @@ namespace WebportSystem.Inventory.Infrastructure.Database.Migrations
                     b.Property<DateTime>("LastModDt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("lastModDt");
+
+                    b.Property<decimal?>("SellingPrice")
+                        .HasColumnType("numeric")
+                        .HasColumnName("sellingPrice");
 
                     b.HasKey("ItemId")
                         .HasName("pK_items");

@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
-using WebportSystem.Common.Infrastructure.Exceptions;
+using WebportSystem.Common.Contracts.Shared.Exceptions;
 
 namespace WebportSystem.Api.Extensions;
 

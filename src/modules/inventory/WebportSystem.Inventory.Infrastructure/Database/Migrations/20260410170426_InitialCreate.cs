@@ -32,6 +32,7 @@ namespace WebportSystem.Inventory.Infrastructure.Database.Migrations
                     bankName = table.Column<string>(type: "text", nullable: true),
                     branchCode = table.Column<string>(type: "text", nullable: true),
                     accountNumber = table.Column<string>(type: "text", nullable: true),
+                    logoUrl = table.Column<string>(type: "text", nullable: true),
                     isActive = table.Column<bool>(type: "boolean", nullable: false),
                     lastModBy = table.Column<string>(type: "text", nullable: false),
                     lastModDt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
@@ -129,6 +130,8 @@ namespace WebportSystem.Inventory.Infrastructure.Database.Migrations
                     categoryId = table.Column<int>(type: "integer", nullable: false),
                     itemCode = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: false),
                     itemDesc = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
+                    sellingPrice = table.Column<decimal>(type: "numeric", nullable: true),
+                    costPrice = table.Column<decimal>(type: "numeric", nullable: true),
                     isActive = table.Column<bool>(type: "boolean", nullable: false),
                     lastModBy = table.Column<string>(type: "text", nullable: false),
                     lastModDt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
@@ -209,13 +212,6 @@ namespace WebportSystem.Inventory.Infrastructure.Database.Migrations
                         principalColumn: "invoiceId",
                         onDelete: ReferentialAction.Cascade);
                 });
-
-            migrationBuilder.CreateIndex(
-                name: "iX_businessProfiles_businessName",
-                schema: "inventory",
-                table: "businessProfiles",
-                column: "businessName",
-                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "iX_categories_categoryCode",

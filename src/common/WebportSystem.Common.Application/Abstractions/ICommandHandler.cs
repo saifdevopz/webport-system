@@ -1,4 +1,6 @@
-﻿namespace WebportSystem.Common.Application.Abstractions;
+﻿using WebportSystem.Common.Contracts.Shared.Results;
+
+namespace WebportSystem.Common.Application.Abstractions;
 
 public interface ICommandHandler<in TCommand>
     where TCommand : ICommand

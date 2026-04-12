@@ -1,6 +1,4 @@
-﻿using WebportSystem.Identity.Domain.Tenants;
-
-namespace WebportSystem.Identity.Domain.BusinessProfile;
+﻿namespace WebportSystem.Inventory.Domain.Entities.BusinessProfile;
 
 public sealed class BusinessProfileM(
     string businessName,
@@ -13,12 +11,10 @@ public sealed class BusinessProfileM(
     string country,
     string? bankName = null,
     string? accountNumber = null,
-    string? branchCode = null) : AggregateRoot
+    string? branchCode = null,
+    string? logoUrl = null) : AggregateRoot
 {
-    public Guid TenantId { get; set; }
-    public TenantM? Tenant { get; set; }
-
-    // Main
+    public int BusinessProfileId { get; set; }
     public string BusinessName { get; private set; } = businessName;
     public string Phone { get; private set; } = phone;
     public string Email { get; private set; } = email;
@@ -34,6 +30,7 @@ public sealed class BusinessProfileM(
     public string? BankName { get; private set; } = bankName;
     public string? BranchCode { get; private set; } = branchCode;
     public string? AccountNumber { get; private set; } = accountNumber;
+    public string? LogoUrl { get; private set; } = logoUrl;
 
     public void Update(
       string businessName,

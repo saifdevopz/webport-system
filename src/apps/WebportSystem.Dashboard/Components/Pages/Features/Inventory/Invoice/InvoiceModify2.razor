@@ -33,7 +33,7 @@
     </ToolBarContent>
     <Columns>
         <PropertyColumn Property="_ => _.ItemId" Title="Id" />
-        <PropertyColumn Property="_ => _.ItemName" Title="Name" />
+        <PropertyColumn Property="_ => _.ItemDesc" Title="Name" />
         <PropertyColumn Property="_ => _.Total" Title="Total" />
         <TemplateColumn>
             <CellTemplate Context="row">
@@ -79,10 +79,10 @@
     protected override async Task OnInitializedAsync()
     {
         var customers = await _DataService.GetAllAsync<CustomerDto>("customer");
-        Customers = customers.Data.Records.ToList();
+        Customers = customers.Data.ToList();
 
         var items = await _DataService.GetAllAsync<ItemDto>("item");
-        Items = items.Data.Records.ToList();
+        Items = items.Data.ToList();
 
         if (IsEditMode)
         {
@@ -137,7 +137,7 @@
             Invoice.Items.Add(new InvoiceItemDto
             {
                 ItemId = _selectedItem.ItemId,
-                ItemName = _selectedItem.ItemDesc,
+                ItemDesc = _selectedItem.ItemDesc,
                 Quantity = 1
             });
         }

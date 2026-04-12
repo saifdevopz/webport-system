@@ -29,6 +29,7 @@
   </Folder>
   <Folder Name="/src/common/">
     <Project Path="src/common/WebportSystem.Common.Application/WebportSystem.Common.Application.csproj" Id="d4c7a10d-cc83-4d17-8c6c-6b6ebf5c861f" />
+    <Project Path="src/common/WebportSystem.Common.Contracts/WebportSystem.Common.Contracts.csproj" Id="57f56e43-e0fe-4a41-8550-42a4608eceb3" />
     <Project Path="src/common/WebportSystem.Common.Domain/WebportSystem.Common.Domain.csproj" Id="e3e1599a-a90f-4b4b-8ac9-0350ff8c5b84" />
     <Project Path="src/common/WebportSystem.Common.Infrastructure/WebportSystem.Common.Infrastructure.csproj" Id="cfe2d74d-93af-4954-9984-b77e39291d2c" />
     <Project Path="src/common/WebportSystem.Common.Presentation/WebportSystem.Common.Presentation.csproj" Id="757f9b94-ea23-48db-91e0-36b62f3550fb" />

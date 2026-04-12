@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.DependencyInjection;
 using WebportSystem.Common.Application.Authorization;
-using WebportSystem.Common.Domain.Results;
+using WebportSystem.Common.Contracts.Shared.Exceptions;
+using WebportSystem.Common.Contracts.Shared.Results;
 using WebportSystem.Common.Infrastructure.Authentication;
-using WebportSystem.Common.Infrastructure.Exceptions;
 
 namespace WebportSystem.Common.Infrastructure.Authorization;
 

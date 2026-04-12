@@ -1,119 +1,86 @@
 ﻿using FluentValidation;
 using Microsoft.EntityFrameworkCore;
+using WebportSystem.Common.Contracts.Shared.Errors;
+using WebportSystem.Common.Contracts.Shared.Results;
 
 namespace WebportSystem.Inventory.Application.Features.Category;
 
-#region Create
-public sealed record CreateCategoryCommand(string CategoryCode, string CategoryDesc) : ICommand;
+public sealed record CreateCategoryCommand(
+    string CategoryCode,
+    string CategoryDesc
+) : ICommand<int>;
 
 public class CreateCategoryCommandValidator : AbstractValidator<CreateCategoryCommand>
 {
     public CreateCategoryCommandValidator()
     {
-        RuleFor(x => x.CategoryCode)
-            .NotEmpty().WithMessage("Category code is required.")
-            .MaximumLength(20).WithMessage("Category code must not exceed 20 characters.");
-
-        RuleFor(x => x.CategoryDesc)
-            .NotEmpty().WithMessage("Category description is required.")
-            .MaximumLength(255).WithMessage("Category description must not exceed 255 characters.");
+        RuleFor(_ => _.CategoryCode).NotEmpty().MaximumLength(20);
+        RuleFor(_ => _.CategoryDesc).NotEmpty().MaximumLength(255);
     }
-}
 
-public sealed class CreateCategoryCommandHandler(IInventoryDbContext dbContext)
-    : ICommandHandler<CreateCategoryCommand>
-{
-    public async Task<Result> Handle(
-        CreateCategoryCommand command,
-        CancellationToken cancellationToken)
+    public sealed class CreateCategoryCommandHandler(IInventoryDbContext dbContext)
+        : ICommandHandler<CreateCategoryCommand, int>
     {
-        var record = await dbContext.Categories
-            .SingleOrDefaultAsync(_ => _.CategoryCode == command.CategoryCode, cancellationToken);
-
-        if (record != null)
+        public async Task<Result<int>> Handle(
+            CreateCategoryCommand command,
+            CancellationToken cancellationToken)
         {
-            return Result.Failure<CreateCategoryCommand>(
-                CustomError.Problem(nameof(CreateCategoryCommand), "Record already exist."));
+            var record = await dbContext.Categories
+                .AnyAsync(_ => _.CategoryCode == command.CategoryCode, cancellationToken);
+
+            if (record)
+            {
+                return Result.Failure<int>(
+                    CustomError.Problem(nameof(CreateCategoryCommand),
+                    "Record already exist."));
+            }
+
+            var category = CategoryM.Create(
+                command.CategoryCode,
+                command.CategoryDesc);
+
+            await dbContext.Categories.AddAsync(category, cancellationToken);
+            await dbContext.SaveChangesAsync(cancellationToken);
+
+            return Result.Success(category.CategoryId);
         }
-
-
-        var category = CategoryM.Create(command.CategoryCode, command.CategoryDesc);
-
-        await dbContext.Categories.AddAsync(category, cancellationToken);
-        await dbContext.SaveChangesAsync(cancellationToken);
-
-        return Result.Success();
     }
-}
-#endregion
+    public sealed record UpdateCategoryCommand(
+        int CategoryId,
+        string CategoryDesc)
+    : ICommand;
 
-#region Update
-public sealed record UpdateCategoryCommand(int CategoryId, string CategoryDesc) : ICommand<UpdateCategoryResult>;
-
-public sealed record UpdateCategoryResult(CategoryM Result);
-
-public class UpdateRoleCommandValidator : AbstractValidator<UpdateCategoryCommand>
-{
-    public UpdateRoleCommandValidator()
+    public class UpdateCategoryCommandValidator : AbstractValidator<UpdateCategoryCommand>
     {
-        RuleFor(_ => _.CategoryId).NotEmpty();
-        RuleFor(_ => _.CategoryDesc).NotEmpty();
-    }
-}
-public class UpdateCategoryCommandHandler(IInventoryDbContext dbContext)
-    : ICommandHandler<UpdateCategoryCommand, UpdateCategoryResult>
-{
-    public async Task<Result<UpdateCategoryResult>> Handle(
-        UpdateCategoryCommand command,
-        CancellationToken cancellationToken)
-    {
-        var record = await dbContext.Categories.FindAsync([command.CategoryId], cancellationToken);
-
-        if (record == null)
+        public UpdateCategoryCommandValidator()
         {
-            return Result.Failure<UpdateCategoryResult>(
-                CustomError.NotFound(nameof(UpdateCategoryCommandHandler), "Record not found."));
+            RuleFor(_ => _.CategoryId).GreaterThan(0);
+            RuleFor(_ => _.CategoryDesc).NotEmpty();
         }
-
-        record.CategoryDesc = command.CategoryDesc;
-
-        dbContext.Categories.Update(record);
-        await dbContext.SaveChangesAsync(cancellationToken);
-
-        return Result.Success(new UpdateCategoryResult(record));
     }
-}
-#endregion
 
-#region Delete
-public sealed record DeleteCategoryCommand(int CategoryId) : ICommand;
-
-public class DeleteCategoryCommandValidator : AbstractValidator<DeleteCategoryCommand>
-{
-    public DeleteCategoryCommandValidator()
+    public class UpdateCategoryCommandHandler(IInventoryDbContext dbContext)
+        : ICommandHandler<UpdateCategoryCommand>
     {
-        RuleFor(_ => _.CategoryId).NotEmpty();
-    }
-}
-
-public class DeleteCategoryCommandHandler(IInventoryDbContext dbContext)
-    : ICommandHandler<DeleteCategoryCommand>
-{
-    public async Task<Result> Handle(
-        DeleteCategoryCommand command,
-        CancellationToken cancellationToken)
-    {
-        var record = await dbContext.Categories.FindAsync([command.CategoryId], cancellationToken);
-
-        if (record is null)
+        public async Task<Result> Handle(
+            UpdateCategoryCommand command,
+            CancellationToken cancellationToken)
         {
-            return Result.Failure(CustomError.NotFound(nameof(DeleteCategoryCommandHandler), "Record not found."));
+            var record = await dbContext.Categories
+                    .FindAsync([command.CategoryId], cancellationToken);
+
+            if (record == null)
+            {
+                return Result.Failure(
+                    CustomError.NotFound(nameof(UpdateCategoryCommandHandler),
+                    "Record not found."));
+            }
+
+            record.CategoryDesc = command.CategoryDesc;
+
+            await dbContext.SaveChangesAsync(cancellationToken);
+
+            return Result.Success();
         }
-
-        dbContext.Categories.Remove(record);
-        await dbContext.SaveChangesAsync(cancellationToken);
-
-        return Result.Success();
     }
 }
-#endregion

@@ -1,6 +1,6 @@
 ﻿using WebportSystem.Common.Application.Abstractions;
 using WebportSystem.Common.Application.Authorization;
-using WebportSystem.Common.Domain.Results;
+using WebportSystem.Common.Contracts.Shared.Results;
 using WebportSystem.Identity.Application.Features.Permissions;
 
 namespace WebportSystem.Identity.Infrastructure.Services;

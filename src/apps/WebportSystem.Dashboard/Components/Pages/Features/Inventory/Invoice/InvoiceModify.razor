@@ -18,7 +18,7 @@
     </ToolBarContent>
 
     <Columns>
-        <PropertyColumn Property="x => x.ItemName" Title="Item" />
+        <PropertyColumn Property="x => x.ItemDesc" Title="Item" />
 
         <PropertyColumn Property="x => x.UnitPrice" Title="Price" />
 
@@ -63,7 +63,7 @@
     {
         var item = new InvoiceItemDto
         {
-            ItemName = "",
+            ItemDesc = "",
             Quantity = 0,
             UnitPrice = 0            
         };
@@ -85,12 +85,12 @@
 
     private void StartedEditingItem(InvoiceItemDto item)
     {
-        _events.Insert(0, $"Started editing: {item.ItemName}");
+        _events.Insert(0, $"Started editing: {item.ItemDesc}");
     }
 
     private void CanceledEditingItem(InvoiceItemDto item)
     {
-        _events.Insert(0, $"Canceled editing: {item.ItemName}");
+        _events.Insert(0, $"Canceled editing: {item.ItemDesc}");
     }
 
     private Task<DataGridEditMode> CommittedItemChanges(InvoiceItemDto item)
@@ -99,7 +99,7 @@
         if (!_elements.Contains(item))
             _elements.Add(item);
 
-        _events.Insert(0, $"Saved: {item.ItemName}");
+        _events.Insert(0, $"Saved: {item.ItemDesc}");
 
         return Task.FromResult(DataGridEditMode.Form);
     }

@@ -1,5 +1,8 @@
 ﻿using FluentValidation;
 using Microsoft.EntityFrameworkCore;
+using WebportSystem.Common.Contracts.Inventory;
+using WebportSystem.Common.Contracts.Shared.Errors;
+using WebportSystem.Common.Contracts.Shared.Results;
 using WebportSystem.Inventory.Domain.Entities.Customer;
 
 namespace WebportSystem.Inventory.Application.Features.Customer;

@@ -1,4 +1,4 @@
-﻿namespace WebportSystem.Common.Domain.Results;
+﻿namespace WebportSystem.Common.Contracts.Shared.Results;
 
 public class ApiResponse<T>
 {

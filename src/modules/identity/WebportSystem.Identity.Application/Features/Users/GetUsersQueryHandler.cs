@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using WebportSystem.Common.Domain.Contracts.Identity;
+using WebportSystem.Common.Contracts.Identity;
+using WebportSystem.Common.Contracts.Shared.Results;
 using WebportSystem.Identity.Application.Data;
 
 namespace WebportSystem.Identity.Application.Features.Users;

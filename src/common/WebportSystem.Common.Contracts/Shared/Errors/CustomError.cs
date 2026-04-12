@@ -1,4 +1,4 @@
-﻿namespace WebportSystem.Common.Domain.Errors;
+﻿namespace WebportSystem.Common.Contracts.Shared.Errors;
 
 public record CustomError
 {

@@ -1,34 +1,53 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using WebportSystem.Common.Contracts.Inventory;
+using WebportSystem.Common.Contracts.Shared.Errors;
+using WebportSystem.Common.Contracts.Shared.Results;
 
 namespace WebportSystem.Inventory.Application.Features.BusinessProfile;
 
-public sealed record GetBusinessProfileByIdQuery(int BusinessProfileId) : IQuery<GetBusinessProfileByIdQuery>;
-
-public sealed record GetBusinessProfileByIdQueryResult(BusinessProfileM Record);
+public sealed record GetBusinessProfileByIdQuery(int BusinessProfileId) : IQuery<BusinessProfileDto>;
 
 public class GetBusinessProfileByIdQueryHandler(IInventoryDbContext dbContext)
-    : IQueryHandler<GetBusinessProfileByIdQuery, GetBusinessProfileByIdQueryResult>
+    : IQueryHandler<GetBusinessProfileByIdQuery, BusinessProfileDto>
 {
-    public async Task<Result<GetBusinessProfileByIdQueryResult>> Handle(
+    public async Task<Result<BusinessProfileDto>> Handle(
         GetBusinessProfileByIdQuery query,
         CancellationToken cancellationToken)
     {
-        var record = await dbContext.BusinessProfiles.FindAsync([query.BusinessProfileId], cancellationToken);
+        var record = await dbContext.BusinessProfiles
+            .FindAsync([query.BusinessProfileId], cancellationToken);
 
-        return record is null
-            ? Result.Failure<GetBusinessProfileByIdQueryResult>(CustomError.NotFound(nameof(GetBusinessProfileByIdQueryHandler), "Record not found."))
-            : Result.Success(new GetBusinessProfileByIdQueryResult(record));
+        if (record == null)
+        {
+            return Result.Failure<BusinessProfileDto>(
+                CustomError.NotFound(nameof(GetBusinessProfileByIdQueryHandler),
+                "Record not found."));
+        }
+
+        return Result.Success(new BusinessProfileDto
+        {
+            BusinessProfileId = record.BusinessProfileId,
+            BusinessName = record.BusinessName,
+            Email = record.Email,
+            Phone = record.Phone,
+            AddressLine1 = record.AddressLine1,
+            City = record.City,
+            Province = record.Province,
+            PostalCode = record.PostalCode,
+            Country = record.Country,
+            BankName = record.BankName,
+            AccountNumber = record.AccountNumber,
+            BranchCode = record.BranchCode
+        });
     }
 }
 
-public sealed record GetBusinessProfilesQuery : IQuery<GetBusinessProfilesQueryResult>;
-
-public sealed record GetBusinessProfilesQueryResult(IEnumerable<BusinessProfileDto> Records);
+public sealed record GetBusinessProfilesQuery : IQuery<List<BusinessProfileDto>>;
 
 public class GetBusinessProfilesQueryHandler(IInventoryDbContext dbContext)
-    : IQueryHandler<GetBusinessProfilesQuery, GetBusinessProfilesQueryResult>
+    : IQueryHandler<GetBusinessProfilesQuery, List<BusinessProfileDto>>
 {
-    public async Task<Result<GetBusinessProfilesQueryResult>> Handle(
+    public async Task<Result<List<BusinessProfileDto>>> Handle(
         GetBusinessProfilesQuery query,
         CancellationToken cancellationToken)
     {
@@ -51,6 +70,6 @@ public class GetBusinessProfilesQueryHandler(IInventoryDbContext dbContext)
             })
             .ToListAsync(cancellationToken);
 
-        return Result.Success(new GetBusinessProfilesQueryResult(records));
+        return Result.Success(records);
     }
 }

@@ -1,4 +1,5 @@
-﻿using WebportSystem.Inventory.Application.Features.Invoice;
+﻿using WebportSystem.Common.Contracts.Inventory;
+using WebportSystem.Inventory.Application.Features.Invoice;
 
 namespace WebportSystem.Inventory.Presentation.Endpoints;
 
@@ -21,7 +22,7 @@ internal sealed class InvoiceEndpoints : IEndpoint
 
         group.MapGet("{id}", async (
             int id,
-            IQueryHandler<GetInvoiceByIdQuery, GetInvoiceByIdQueryResult> handler,
+            IQueryHandler<GetInvoiceByIdQuery, InvoiceDto> handler,
             CancellationToken cancellationToken) =>
         {
             return await handler

@@ -51,9 +51,9 @@
     {
         var response = await _DataService.GetAllAsync<CustomerDto>("customer");
 
-        if (response.IsSuccess && response.Data.Records != null)
+        if (response.IsSuccess && response.Data != null)
         {
-            Customers = response.Data.Records.ToList();
+            Customers = response.Data.ToList();
         }
     }
 

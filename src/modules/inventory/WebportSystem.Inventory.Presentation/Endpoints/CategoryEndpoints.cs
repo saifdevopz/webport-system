@@ -1,4 +1,8 @@
-﻿namespace WebportSystem.Inventory.Presentation.Endpoints;
+﻿using WebportSystem.Common.Contracts.Inventory;
+using WebportSystem.Inventory.Domain.Entities.Category;
+using static WebportSystem.Inventory.Application.Features.Category.CreateCategoryCommandValidator;
+
+namespace WebportSystem.Inventory.Presentation.Endpoints;
 
 internal sealed class CategoryEndpoints : IEndpoint
 {
@@ -8,10 +12,8 @@ internal sealed class CategoryEndpoints : IEndpoint
             .WithTags("Inventory.Categories")
             .RequireAuthorization();
 
-        #region Queries
-
         group.MapGet("", async (
-            IQueryHandler<GetCategoriesQuery, GetCategoriesQueryResult> handler,
+            IQueryHandler<GetCategoriesQuery, List<CategoryDto>> handler,
             CancellationToken cancellationToken) =>
         {
             return await handler
@@ -21,7 +23,7 @@ internal sealed class CategoryEndpoints : IEndpoint
 
         group.MapGet("{id}", async (
             int id,
-            IQueryHandler<GetCategoryByIdQuery, GetCategoryByIdQueryResult> handler,
+            IQueryHandler<GetCategoryByIdQuery, CategoryDto> handler,
             CancellationToken cancellationToken) =>
         {
             return await handler
@@ -29,13 +31,9 @@ internal sealed class CategoryEndpoints : IEndpoint
                 .MapResult();
         });
 
-        #endregion
-
-        #region Commands
-
         group.MapPost("", async (
             CreateCategoryCommand request,
-            ICommandHandler<CreateCategoryCommand> handler,
+            ICommandHandler<CreateCategoryCommand, int> handler,
             CancellationToken cancellationToken) =>
         {
             return await handler
@@ -45,7 +43,7 @@ internal sealed class CategoryEndpoints : IEndpoint
 
         group.MapPut("", async (
             UpdateCategoryCommand request,
-            ICommandHandler<UpdateCategoryCommand, UpdateCategoryResult> handler,
+            ICommandHandler<UpdateCategoryCommand> handler,
             CancellationToken cancellationToken) =>
         {
             return await handler
@@ -55,14 +53,12 @@ internal sealed class CategoryEndpoints : IEndpoint
 
         group.MapDelete("{id}", async (
             int id,
-            ICommandHandler<DeleteCategoryCommand> handler,
+            ICommandHandler<GenericDeleteCommand<CategoryM>> handler,
             CancellationToken cancellationToken) =>
         {
             return await handler
-                .Handle(new DeleteCategoryCommand(id), cancellationToken)
+                .Handle(new GenericDeleteCommand<CategoryM>(id), cancellationToken)
                 .MapResult();
         });
-
-        #endregion
     }
 }

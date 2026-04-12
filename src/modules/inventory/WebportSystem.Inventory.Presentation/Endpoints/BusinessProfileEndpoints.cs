@@ -1,4 +1,6 @@
-﻿using WebportSystem.Inventory.Application.Features.BusinessProfile;
+﻿using WebportSystem.Common.Contracts.Inventory;
+using WebportSystem.Inventory.Application.Features.BusinessProfile;
+using WebportSystem.Inventory.Domain.Entities.BusinessProfile;
 
 namespace WebportSystem.Inventory.Presentation.Endpoints;
 
@@ -10,10 +12,8 @@ internal sealed class BusinessProfileEndpoints : IEndpoint
             .WithTags("Inventory.BusinessProfile")
             .RequireAuthorization();
 
-        #region Queries
-
         group.MapGet("", async (
-            IQueryHandler<GetBusinessProfilesQuery, GetBusinessProfilesQueryResult> handler,
+            IQueryHandler<GetBusinessProfilesQuery, List<BusinessProfileDto>> handler,
             CancellationToken cancellationToken) =>
         {
             return await handler
@@ -23,7 +23,7 @@ internal sealed class BusinessProfileEndpoints : IEndpoint
 
         group.MapGet("{id}", async (
             int id,
-            IQueryHandler<GetBusinessProfileByIdQuery, GetBusinessProfileByIdQueryResult> handler,
+            IQueryHandler<GetBusinessProfileByIdQuery, BusinessProfileDto> handler,
             CancellationToken cancellationToken) =>
         {
             return await handler
@@ -31,13 +31,9 @@ internal sealed class BusinessProfileEndpoints : IEndpoint
                 .MapResult();
         });
 
-        #endregion
-
-        #region Commands
-
         group.MapPost("", async (
             CreateBusinessProfileCommand request,
-            ICommandHandler<CreateBusinessProfileCommand> handler,
+            ICommandHandler<CreateBusinessProfileCommand, int> handler,
             CancellationToken cancellationToken) =>
         {
             return await handler
@@ -47,7 +43,7 @@ internal sealed class BusinessProfileEndpoints : IEndpoint
 
         group.MapPut("", async (
             UpdateBusinessProfileCommand request,
-            ICommandHandler<UpdateBusinessProfileCommand, UpdateBusinessProfileResult> handler,
+            ICommandHandler<UpdateBusinessProfileCommand> handler,
             CancellationToken cancellationToken) =>
         {
             return await handler
@@ -55,6 +51,14 @@ internal sealed class BusinessProfileEndpoints : IEndpoint
                 .MapResult();
         });
 
-        #endregion
+        group.MapDelete("{id}", async (
+            int id,
+            ICommandHandler<GenericDeleteCommand<BusinessProfileM>> handler,
+            CancellationToken cancellationToken) =>
+        {
+            return await handler
+                .Handle(new GenericDeleteCommand<BusinessProfileM>(id), cancellationToken)
+                .MapResult();
+        });
     }
 }

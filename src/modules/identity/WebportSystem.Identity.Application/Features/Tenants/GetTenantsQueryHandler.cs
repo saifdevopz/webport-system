@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using WebportSystem.Common.Contracts.Shared.Results;
 using WebportSystem.Identity.Application.Data;
 using WebportSystem.Identity.Domain.Tenants;
 

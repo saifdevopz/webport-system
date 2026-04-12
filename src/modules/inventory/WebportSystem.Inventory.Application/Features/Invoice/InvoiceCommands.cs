@@ -1,5 +1,8 @@
 ﻿using FluentValidation;
 using Microsoft.EntityFrameworkCore;
+using WebportSystem.Common.Contracts.Inventory;
+using WebportSystem.Common.Contracts.Shared.Errors;
+using WebportSystem.Common.Contracts.Shared.Results;
 using WebportSystem.Inventory.Domain.Entities.Invoice;
 
 namespace WebportSystem.Inventory.Application.Features.Invoice;
@@ -8,7 +11,7 @@ public sealed record CreateInvoiceCommand(
     string InvoiceNumber,
     int BusinessProfileId,
     int? CustomerId,
-    List<InvoiceItemDto> Items) : ICommand;
+    List<CreateInvoiceItem> Items) : ICommand;
 
 public class CreateInvoiceCommandValidator : AbstractValidator<CreateInvoiceCommand>
 {
@@ -38,13 +41,13 @@ public sealed class CreateInvoiceCommandHandler(IInventoryDbContext dbContext)
         CreateInvoiceCommand command,
         CancellationToken cancellationToken)
     {
-        var record = await dbContext.Invoices
-            .AnyAsync(_ => _.InvoiceNumber == command.InvoiceNumber, cancellationToken);
+        var exists = await dbContext.Invoices
+            .AnyAsync(x => x.InvoiceNumber == command.InvoiceNumber, cancellationToken);
 
-        if (record)
+        if (exists)
         {
-            return Result.Failure<CreateInvoiceCommand>(
-                CustomError.Problem(nameof(CreateInvoiceCommand), "Record already exist."));
+            return Result.Failure(
+                CustomError.Problem(nameof(CreateInvoiceCommand), "Record already exists."));
         }
 
         var invoice = new InvoiceM(
@@ -52,13 +55,26 @@ public sealed class CreateInvoiceCommandHandler(IInventoryDbContext dbContext)
             businessProfileId: command.BusinessProfileId,
             customerId: command.CustomerId);
 
+        var itemIds = command.Items.Select(x => x.ItemId).ToList();
+
+        var dbItems = await dbContext.Items
+            .Where(x => itemIds.Contains(x.ItemId))
+            .ToDictionaryAsync(x => x.ItemId, cancellationToken);
+
         foreach (var item in command.Items)
         {
+            if (!dbItems.TryGetValue(item.ItemId, out var dbItem))
+            {
+                return Result.Failure(
+                    CustomError.NotFound("Item", $"Item with ID {item.ItemId} not found."));
+            }
+
             invoice.AddItem(
-                item.ItemId,
-                item.ItemName,
-                item.UnitPrice,
-                item.Quantity);
+                dbItem.ItemId,
+                dbItem.ItemDesc,
+                dbItem.SellingPrice,
+                item.Quantity
+            );
         }
 
         await dbContext.Invoices.AddAsync(invoice, cancellationToken);
@@ -104,7 +120,7 @@ public class UpdateInvoiceCommandHandler(IInventoryDbContext dbContext)
         // ✅ Replace items (clean + safe)
         record.ReplaceItems(
             command.Items
-                .Select(x => (x.ItemId, x.ItemName, x.UnitPrice, x.Quantity))
+                .Select(x => (x.ItemId, x.ItemDesc, x.UnitPrice, x.Quantity))
                 .ToList()
         );
 

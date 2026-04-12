@@ -1,116 +1,143 @@
 ﻿using FluentValidation;
 using Microsoft.EntityFrameworkCore;
+using WebportSystem.Common.Contracts.Shared.Errors;
+using WebportSystem.Common.Contracts.Shared.Results;
+using WebportSystem.Inventory.Domain.Entities.BusinessProfile;
 
 namespace WebportSystem.Inventory.Application.Features.BusinessProfile;
 
-#region Create
-public sealed record CreateBusinessProfileCommand(BusinessProfileDto BusinessProfile) : ICommand;
+public sealed record CreateBusinessProfileCommand(
+    string BusinessName,
+    string Email,
+    string Phone,
+    string AddressLine1,
+    string City,
+    string Province,
+    string PostalCode,
+    string Country,
+    string? BankName,
+    string? AccountNumber,
+    string? BranchCode
+) : ICommand<int>;
 
 public class CreateBusinessProfileCommandValidator : AbstractValidator<CreateBusinessProfileCommand>
 {
     public CreateBusinessProfileCommandValidator()
     {
-        RuleFor(_ => _.BusinessProfile.BusinessName).NotEmpty().MaximumLength(100);
-        RuleFor(_ => _.BusinessProfile.Email).NotEmpty().EmailAddress();
-        RuleFor(_ => _.BusinessProfile.Phone).NotEmpty().MaximumLength(20);
-        RuleFor(_ => _.BusinessProfile.AddressLine1).NotEmpty().MaximumLength(200);
-        RuleFor(_ => _.BusinessProfile.City).NotEmpty().MaximumLength(100);
-        RuleFor(_ => _.BusinessProfile.Province).NotEmpty().MaximumLength(100);
-        RuleFor(_ => _.BusinessProfile.PostalCode).NotEmpty().MaximumLength(10);
-        RuleFor(_ => _.BusinessProfile.Country).NotEmpty().MaximumLength(100);
+        RuleFor(_ => _.BusinessName).NotEmpty().MaximumLength(100);
+        RuleFor(_ => _.Email).NotEmpty().EmailAddress();
+        RuleFor(_ => _.Phone).NotEmpty().MaximumLength(20);
+        RuleFor(_ => _.AddressLine1).NotEmpty().MaximumLength(200);
+        RuleFor(_ => _.City).NotEmpty().MaximumLength(100);
+        RuleFor(_ => _.Province).NotEmpty().MaximumLength(100);
+        RuleFor(_ => _.PostalCode).NotEmpty().MaximumLength(4);
+        RuleFor(_ => _.Country).NotEmpty().MaximumLength(100);
 
-        When(_ => _.BusinessProfile.BankName is not null, () =>
+        When(_ => _.BankName is not null, () =>
         {
-            RuleFor(_ => _.BusinessProfile.AccountNumber).NotEmpty();
-            RuleFor(_ => _.BusinessProfile.BranchCode).NotEmpty();
+            RuleFor(_ => _.AccountNumber).NotEmpty();
+            RuleFor(_ => _.BranchCode).NotEmpty();
         });
     }
 }
 
 public sealed class CreateBusinessProfileCommandHandler(IInventoryDbContext dbContext)
-    : ICommandHandler<CreateBusinessProfileCommand>
+    : ICommandHandler<CreateBusinessProfileCommand, int>
 {
-    public async Task<Result> Handle(
+    public async Task<Result<int>> Handle(
         CreateBusinessProfileCommand command,
         CancellationToken cancellationToken)
     {
-        var exists = await dbContext.BusinessProfiles
-            .AnyAsync(_ => _.BusinessName == command.BusinessProfile.BusinessName, cancellationToken);
+        var record = await dbContext.BusinessProfiles
+            .AnyAsync(_ => _.Email == command.Email, cancellationToken);
 
-        if (exists)
+        if (record)
         {
-            return Result.Failure(
-                CustomError.Problem(nameof(CreateBusinessProfileCommand), "A business profile with this name already exists."));
+            return Result.Failure<int>(
+                CustomError.Problem(nameof(CreateBusinessProfileCommand),
+                "Email already exists."));
         }
 
         var businessProfile = new BusinessProfileM(
-            command.BusinessProfile.BusinessName,
-            command.BusinessProfile.Email,
-            command.BusinessProfile.Phone,
-            command.BusinessProfile.AddressLine1,
-            command.BusinessProfile.City,
-            command.BusinessProfile.Province,
-            command.BusinessProfile.PostalCode,
-            command.BusinessProfile.Country,
-            command.BusinessProfile.BankName,
-            command.BusinessProfile.AccountNumber,
-            command.BusinessProfile.BranchCode);
+            command.BusinessName,
+            command.Email,
+            command.Phone,
+            command.AddressLine1,
+            command.City,
+            command.Province,
+            command.PostalCode,
+            command.Country,
+            command.BankName,
+            command.AccountNumber,
+            command.BranchCode);
 
         await dbContext.BusinessProfiles.AddAsync(businessProfile, cancellationToken);
         await dbContext.SaveChangesAsync(cancellationToken);
 
-        return Result.Success();
+        return Result.Success(businessProfile.BusinessProfileId);
     }
 }
-#endregion
 
-#region Update
-public sealed record UpdateBusinessProfileCommand(BusinessProfileDto Record) : ICommand<UpdateBusinessProfileResult>;
-
-public sealed record UpdateBusinessProfileResult(BusinessProfileM Result);
+public sealed record UpdateBusinessProfileCommand(
+    int BusinessProfileId,
+    string BusinessName,
+    string Email,
+    string Phone,
+    string AddressLine1,
+    string City,
+    string Province,
+    string PostalCode,
+    string Country,
+    string? BankName,
+    string? AccountNumber,
+    string? BranchCode
+) : ICommand;
 
 public class UpdateBusinessProfileCommandValidator : AbstractValidator<UpdateBusinessProfileCommand>
 {
     public UpdateBusinessProfileCommandValidator()
     {
-        RuleFor(_ => _.Record.BusinessName).NotEmpty();
-        RuleFor(_ => _.Record.Email).NotEmpty();
+        RuleFor(_ => _.BusinessProfileId).GreaterThan(0);
+        RuleFor(_ => _.BusinessName).NotEmpty();
+        RuleFor(_ => _.Email).NotEmpty();
+        RuleFor(_ => _.PostalCode).MaximumLength(4);
     }
 }
+
 public class UpdateBusinessProfileCommandHandler(IInventoryDbContext dbContext)
-    : ICommandHandler<UpdateBusinessProfileCommand, UpdateBusinessProfileResult>
+    : ICommandHandler<UpdateBusinessProfileCommand>
 {
-    public async Task<Result<UpdateBusinessProfileResult>> Handle(
+    public async Task<Result> Handle(
         UpdateBusinessProfileCommand command,
         CancellationToken cancellationToken)
     {
-        var record = await dbContext.BusinessProfiles.FindAsync([command.Record.BusinessProfileId], cancellationToken);
+        var record = await dbContext.BusinessProfiles
+            .FindAsync([command.BusinessProfileId], cancellationToken);
 
         if (record == null)
         {
-            return Result.Failure<UpdateBusinessProfileResult>(
-                CustomError.NotFound(nameof(UpdateBusinessProfileCommandHandler), "Record not found."));
+            return Result.Failure(
+                CustomError.NotFound(nameof(UpdateBusinessProfileCommandHandler),
+                "Record not found."));
         }
 
         record.Update(
-            command.Record.BusinessName,
-            command.Record.Email,
-            command.Record.Phone,
-            command.Record.AddressLine1,
-            command.Record.City,
-            command.Record.Province,
-            command.Record.PostalCode,
-            command.Record.Country,
-            command.Record.BankName,
-            command.Record.AccountNumber,
-            command.Record.BranchCode
+            command.BusinessName,
+            command.Email,
+            command.Phone,
+            command.AddressLine1,
+            command.City,
+            command.Province,
+            command.PostalCode,
+            command.Country,
+            command.BankName,
+            command.AccountNumber,
+            command.BranchCode
         );
 
-        dbContext.BusinessProfiles.Update(record);
         await dbContext.SaveChangesAsync(cancellationToken);
 
-        return Result.Success(new UpdateBusinessProfileResult(record));
+        return Result.Success();
     }
 }
-#endregion
 

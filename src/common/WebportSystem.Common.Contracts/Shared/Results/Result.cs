@@ -1,8 +1,8 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Text.Json.Serialization;
-using WebportSystem.Common.Domain.Errors;
+using WebportSystem.Common.Contracts.Shared.Errors;
 
-namespace WebportSystem.Common.Domain.Results;
+namespace WebportSystem.Common.Contracts.Shared.Results;
 
 public class Result(bool isSuccess, CustomError error, string? message = null)
 {

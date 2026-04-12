@@ -51,9 +51,9 @@
     {
         var response = await _DataService.GetAllAsync<InvoiceDto>("invoice");
 
-        if (response.IsSuccess && response.Data.Records != null)
+        if (response.IsSuccess && response.Data != null)
         {
-            Invoices = response.Data.Records.ToList();
+            Invoices = response.Data.ToList();
         }
     }
 

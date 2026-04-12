@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace WebportSystem.Common.Domain.Contracts.Identity;
+namespace WebportSystem.Common.Contracts.Identity;
 
 public class LoginDto
 {

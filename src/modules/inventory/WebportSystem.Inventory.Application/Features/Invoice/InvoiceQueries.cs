@@ -1,25 +1,30 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using WebportSystem.Common.Contracts.Inventory;
+using WebportSystem.Common.Contracts.Shared.Errors;
+using WebportSystem.Common.Contracts.Shared.Results;
 
 namespace WebportSystem.Inventory.Application.Features.Invoice;
 
-public sealed record GetInvoiceByIdQuery(int InvoiceId) : IQuery<GetInvoiceByIdQueryResult>;
+public sealed record GetInvoiceByIdQuery(int InvoiceId) : IQuery<InvoiceDto>;
 
 public sealed record GetInvoiceByIdQueryResult(InvoiceDto Record);
 
 public class GetInvoiceByIdQueryHandler(IInventoryDbContext dbContext)
-    : IQueryHandler<GetInvoiceByIdQuery, GetInvoiceByIdQueryResult>
+    : IQueryHandler<GetInvoiceByIdQuery, InvoiceDto>
 {
-    public async Task<Result<GetInvoiceByIdQueryResult>> Handle(
+    public async Task<Result<InvoiceDto>> Handle(
         GetInvoiceByIdQuery query,
         CancellationToken cancellationToken)
     {
         var record = await dbContext.Invoices
             .Include(_ => _.Items)
+            .Include(_ => _.BusinessProfile)
+            .Include(_ => _.Customer)
             .AsNoTracking()
             .SingleOrDefaultAsync(x => x.InvoiceId == query.InvoiceId, cancellationToken);
 
         if (record is null)
-            return Result.Failure<GetInvoiceByIdQueryResult>(
+            return Result.Failure<InvoiceDto>(
                 CustomError.NotFound(nameof(GetInvoiceByIdQueryHandler), "Record not found."));
 
         var dto = new InvoiceDto
@@ -27,20 +32,21 @@ public class GetInvoiceByIdQueryHandler(IInventoryDbContext dbContext)
             InvoiceId = record.InvoiceId,
             InvoiceNumber = record.InvoiceNumber,
             BusinessProfileId = record.BusinessProfileId,
+            BusinessName = record.BusinessProfile.BusinessName,
             CustomerId = record.CustomerId,
             SubTotal = record.SubTotal,
             Total = record.Total,
             Items = [.. record.Items.Select(_ => new InvoiceItemDto
             {
                 ItemId = _.ItemId,
-                ItemName = _.ItemName,
+                ItemDesc = _.ItemName,
                 UnitPrice = _.UnitPrice,
                 Quantity = _.Quantity,
                 Total = _.Total
             })]
         };
 
-        return Result.Success(new GetInvoiceByIdQueryResult(dto));
+        return Result.Success(dto);
     }
 }
 
@@ -72,14 +78,12 @@ public class GetInvoicesQueryHandler(IInventoryDbContext dbContext)
     }
 }
 
-public sealed record GetInvoicePrintQuery(int InvoiceId) : IQuery<GetInvoicePrintQueryResult>;
-
-public sealed record GetInvoicePrintQueryResult(InvoicePrintDto Records);
+public sealed record GetInvoicePrintQuery(int InvoiceId) : IQuery<InvoicePrintDto>;
 
 public class GetInvoicePrintQueryHandler(IInventoryDbContext dbContext)
-    : IQueryHandler<GetInvoicePrintQuery, GetInvoicePrintQueryResult>
+    : IQueryHandler<GetInvoicePrintQuery, InvoicePrintDto>
 {
-    public async Task<Result<GetInvoicePrintQueryResult>> Handle(
+    public async Task<Result<InvoicePrintDto>> Handle(
         GetInvoicePrintQuery query,
         CancellationToken cancellationToken)
     {
@@ -98,7 +102,7 @@ public class GetInvoicePrintQueryHandler(IInventoryDbContext dbContext)
                     Items = x.Items.Select(i => new InvoiceItemDto
                     {
                         ItemId = i.ItemId,
-                        ItemName = i.ItemName,
+                        ItemDesc = i.ItemName,
                         UnitPrice = i.UnitPrice,
                         Quantity = i.Quantity,
                         Total = i.Total
@@ -107,42 +111,8 @@ public class GetInvoicePrintQueryHandler(IInventoryDbContext dbContext)
                 .SingleOrDefaultAsync(cancellationToken);
 
         if (invoice == null)
-            return Result.Failure<GetInvoicePrintQueryResult>(CustomError.NotFound(nameof(GetInvoicePrintQueryResult), "Invoice not found."));
+            return Result.Failure<InvoicePrintDto>(CustomError.NotFound(nameof(InvoicePrintDto), "Invoice not found."));
 
-        return Result.Success(new GetInvoicePrintQueryResult(invoice));
+        return Result.Success(invoice);
     }
 }
-
-//public async Task<Result<InvoicePrintDto>> Handle(
-//    GetInvoicePrintQuery request,
-//    CancellationToken cancellationToken)
-//{
-//    var invoice = await dbContext.Invoices
-//            .AsNoTracking()
-//            .Where(x => x.InvoiceId == request.InvoiceId)
-//            .Select(x => new InvoicePrintDto
-//            {
-//                InvoiceNumber = x.InvoiceNumber,
-//                BusinessName = x.BusinessProfile.BusinessName,
-//                BusinessAddress = $"{x.BusinessProfile.AddressLine1}, {x.BusinessProfile.City}, {x.BusinessProfile.City}",
-//                CustomerName = x.Customer!.Name,
-//                CustomerAddress = $"{x.Customer.Province}, {x.Customer.City}, {x.Customer.City}",
-//                SubTotal = x.SubTotal,
-//                Total = x.Total,
-//                Items = x.Items.Select(i => new InvoiceItemDto
-//                {
-//                    ItemId = i.ItemId,
-//                    ItemName = i.ItemName,
-//                    UnitPrice = i.UnitPrice,
-//                    Quantity = i.Quantity,
-//                    Total = i.Total
-//                }).ToList()
-//            })
-//            .SingleOrDefaultAsync(cancellationToken);
-
-//    if (invoice == null)
-//        return Result.Failure<InvoicePrintDto>(CustomError.NotFound(nameof(GetInvoicePrintQuery), "Invoice not found."));
-
-//    return Result.Success(invoice);
-//}
-//}

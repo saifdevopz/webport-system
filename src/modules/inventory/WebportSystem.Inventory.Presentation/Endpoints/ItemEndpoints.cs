@@ -8,8 +8,6 @@ internal sealed class ItemEndpoints : IEndpoint
             .WithTags("Inventory.Items")
             .RequireAuthorization();
 
-        #region Queries
-
         group.MapGet("", async (
             IQueryHandler<GetItemsQuery, GetItemsQueryResult> handler,
             CancellationToken cancellationToken) =>
@@ -29,13 +27,9 @@ internal sealed class ItemEndpoints : IEndpoint
                 .MapResult();
         });
 
-        #endregion
-
-        #region Commands
-
         group.MapPost("", async (
             CreateItemCommand request,
-            ICommandHandler<CreateItemCommand> handler,
+            ICommandHandler<CreateItemCommand, int> handler,
             CancellationToken cancellationToken) =>
         {
             return await handler
@@ -62,7 +56,5 @@ internal sealed class ItemEndpoints : IEndpoint
                 .Handle(new DeleteItemCommand(id), cancellationToken)
                 .MapResult();
         });
-
-        #endregion
     }
 }

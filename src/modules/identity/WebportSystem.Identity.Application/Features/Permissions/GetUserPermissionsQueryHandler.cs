@@ -1,6 +1,8 @@
 ﻿using Dapper;
 using WebportSystem.Common.Application.Authorization;
 using WebportSystem.Common.Application.Database;
+using WebportSystem.Common.Contracts.Shared.Errors;
+using WebportSystem.Common.Contracts.Shared.Results;
 
 namespace WebportSystem.Identity.Application.Features.Permissions;
 

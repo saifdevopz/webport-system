@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using WebportSystem.Common.Domain.Contracts.Identity;
-using WebportSystem.Common.Domain.Errors;
-using WebportSystem.Common.Domain.Results;
+using WebportSystem.Common.Contracts.Identity;
+using WebportSystem.Common.Contracts.Shared.Errors;
+using WebportSystem.Common.Contracts.Shared.Results;
 using WebportSystem.Dashboard.Common.HttpClients;
 using WebportSystem.Dashboard.Common.Services.Interfaces;
 

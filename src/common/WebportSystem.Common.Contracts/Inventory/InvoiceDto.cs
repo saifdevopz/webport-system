@@ -1,10 +1,10 @@
-﻿namespace WebportSystem.Common.Domain.Contracts.Inventory;
+﻿namespace WebportSystem.Common.Contracts.Inventory;
 
 public class InvoiceItemDto
 {
     public int ItemId { get; set; }
 
-    public string ItemName { get; set; } = string.Empty;
+    public string ItemDesc { get; set; } = string.Empty;
 
     public decimal UnitPrice { get; set; }
 
@@ -18,6 +18,8 @@ public class InvoiceDto
     public int InvoiceId { get; set; }
 
     public string InvoiceNumber { get; set; } = string.Empty;
+
+    public string BusinessName { get; set; } = string.Empty;
 
     public int BusinessProfileId { get; set; }
 
@@ -45,4 +47,7 @@ public class InvoicePrintDto
     public List<InvoiceItemDto> Items { get; set; } = new();
 }
 
-
+public sealed record CreateInvoiceItem(
+    int ItemId,
+    int Quantity
+);

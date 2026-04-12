@@ -1,28 +1,12 @@
 ﻿using Microsoft.AspNetCore.Http;
-using WebportSystem.Common.Domain.Results;
+using WebportSystem.Common.Contracts.Shared.Results;
 
 namespace WebportSystem.Common.Presentation.Responses;
 
 public static class ResultExtensions
 {
-    public static TOut Match<TOut>(
-        this Result result,
-        Func<TOut> onSuccess,
-        Func<Result, TOut> onFailure)
-    {
-        return result.IsSuccess ? onSuccess() : onFailure(result);
-    }
-
-    public static TOut Match<TIn, TOut>(
-        this Result<TIn> result,
-        Func<TIn, TOut> onSuccess,
-        Func<Result<TIn>, TOut> onFailure)
-    {
-        return result.IsSuccess ? onSuccess(result.Data) : onFailure(result);
-    }
-
     public static async Task<IResult> MapResult<T>(
-       this Task<Result<T>> resultTask)
+        this Task<Result<T>> resultTask)
     {
         var result = await resultTask;
         return result.Match(
@@ -39,5 +23,20 @@ public static class ResultExtensions
             () => Results.Ok(result),
             _ => ApiResults.Problem(result)
         );
+    }
+    public static TOut Match<TOut>(
+        this Result result,
+        Func<TOut> onSuccess,
+        Func<Result, TOut> onFailure)
+    {
+        return result.IsSuccess ? onSuccess() : onFailure(result);
+    }
+
+    public static TOut Match<TIn, TOut>(
+        this Result<TIn> result,
+        Func<TIn, TOut> onSuccess,
+        Func<Result<TIn>, TOut> onFailure)
+    {
+        return result.IsSuccess ? onSuccess(result.Data) : onFailure(result);
     }
 }

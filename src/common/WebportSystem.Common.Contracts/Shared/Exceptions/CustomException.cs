@@ -1,7 +1,6 @@
-﻿
-using WebportSystem.Common.Domain.Errors;
+﻿using WebportSystem.Common.Contracts.Shared.Errors;
 
-namespace WebportSystem.Common.Infrastructure.Exceptions;
+namespace WebportSystem.Common.Contracts.Shared.Exceptions;
 
 public sealed class CustomException(string requestName,
                                     CustomError? error = default,

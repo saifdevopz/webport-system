@@ -19,7 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\common\WebportSystem.Common.Domain\WebportSystem.Common.Domain.csproj" />
+    <ProjectReference Include="..\..\common\WebportSystem.Common.Contracts\WebportSystem.Common.Contracts.csproj" />
   </ItemGroup>
 
 </Project>

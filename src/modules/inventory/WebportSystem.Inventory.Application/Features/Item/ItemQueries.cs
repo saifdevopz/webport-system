@@ -1,4 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using WebportSystem.Common.Contracts.Inventory;
+using WebportSystem.Common.Contracts.Shared.Errors;
+using WebportSystem.Common.Contracts.Shared.Results;
 
 namespace WebportSystem.Inventory.Application.Features.Item;
 
@@ -41,6 +44,8 @@ public class GetItemsQueryHandler(IInventoryDbContext dbContext)
                 ItemId = _.ItemId,
                 ItemCode = _.ItemCode,
                 ItemDesc = _.ItemDesc,
+                SellingPrice = _.SellingPrice,
+                CostPrice = _.CostPrice,
                 Category = new CategoryDto
                 {
                     CategoryCode = _.Category!.CategoryCode,

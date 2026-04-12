@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using WebportSystem.Common.Application.Abstractions;
+using WebportSystem.Common.Contracts.Shared.Results;
 
 namespace WebportSystem.Common.Application.Behaviors;
 

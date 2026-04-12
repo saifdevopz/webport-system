@@ -52,9 +52,9 @@
     {
         var response = await _DataService.GetAllAsync<ItemDto>("item");
 
-        if (response.IsSuccess && response.Data.Records != null)
+        if (response.IsSuccess && response.Data != null)
         {
-            Items = response.Data.Records.ToList();
+            Items = response.Data.ToList();
         }
     }
 

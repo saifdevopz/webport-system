@@ -98,41 +98,26 @@
 
     protected override async Task OnInitializedAsync()
     {
-        try
-        {
-            model = await GetBusinessProfile();
-        }
-        catch (Exception ex)
-        {
-            ErrorMessage = $"Failed to load records: {ex.Message}";
-        }        
+        model = await GetBusinessProfile();      
     }
 
     private async Task<BusinessProfileDto> GetBusinessProfile()
     {
-        var response = await _DataService.GetByIdAsync<BusinessProfileDto>("businessprofile", _TenantContext.TenantId!);
-        return response.Data!;
+        var response = await _DataService.GetByIdAsync<BusinessProfileDto>("businessprofile", "1");
+        return response.Data;
     }
 
     private async Task OnValidSubmit(EditContext context)
-    {
-        try
-        {
-            var command = new { record = model };  
-            Result response = await _DataService.PutAsync("businessprofile", command);
+    {        
+        Result response = await _DataService.PutAsync("businessprofile", model);
 
-            if (response.IsSuccess)
-            {
-                _NavigationManager.NavigateTo("/");
-            }
-            else
-            {
-                ErrorMessage = response.Error?.Description ?? "An unexpected error occurred.";
-            }
-        }
-        catch (Exception ex)
+        if (response.IsSuccess)
         {
-            ErrorMessage = $"Exception: {ex.Message}";
+            _NavigationManager.NavigateTo("/");
+        }
+        else
+        {
+            ErrorMessage = response.Error?.Description ?? "An unexpected error occurred.";
         }
     }
 

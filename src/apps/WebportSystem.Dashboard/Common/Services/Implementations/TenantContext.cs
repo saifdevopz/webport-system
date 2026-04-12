@@ -1,5 +1,5 @@
 ﻿using System.Security.Claims;
-using WebportSystem.Common.Domain.Contracts.Identity;
+using WebportSystem.Common.Contracts.Identity;
 using WebportSystem.Dashboard.Common.Services.Interfaces;
 
 namespace WebportSystem.Dashboard.Common.Services.Implementations;

@@ -1,5 +1,5 @@
-﻿using WebportSystem.Common.Domain.Contracts.Identity;
-using WebportSystem.Common.Domain.Results;
+﻿using WebportSystem.Common.Contracts.Identity;
+using WebportSystem.Common.Contracts.Shared.Results;
 
 namespace WebportSystem.Dashboard.Common.Services.Interfaces;
 

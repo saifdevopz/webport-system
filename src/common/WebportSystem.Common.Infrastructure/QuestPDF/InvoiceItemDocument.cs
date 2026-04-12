@@ -1,7 +1,7 @@
 ﻿using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
-using WebportSystem.Common.Domain.Contracts.Inventory;
+using WebportSystem.Common.Contracts.Inventory;
 
 namespace WebportSystem.Common.Infrastructure.QuestPDF;
 
@@ -16,41 +16,60 @@ public class InvoiceItemDocument(InvoicePrintDto model) : IDocument
 
     public void Compose(IDocumentContainer container)
     {
-        container
-            .Page(page =>
-            {
-                page.Margin(50);
+        container.Page(page =>
+        {
+            page.Margin(50);
 
-                page.Header().Element(ComposeHeader);
-                page.Content().Element(ComposeContent);
-                page.Footer().AlignCenter().Text(text =>
-                {
-                    text.CurrentPageNumber();
-                    text.Span(" / ");
-                    text.TotalPages();
-                });
+            page.Header().Element(ComposeHeader);
+            page.Content().Element(ComposeContent);
+
+            page.Footer().AlignCenter().Text(text =>
+            {
+                text.CurrentPageNumber();
+                text.Span(" / ");
+                text.TotalPages();
             });
+        });
     }
 
-    public void ComposeHeader(IContainer container)
+    private void ComposeHeader(IContainer container)
     {
         container.Row(row =>
         {
             row.ConstantItem(175).Image(LogoImage);
 
             row.RelativeItem()
-               .AlignRight()
-               .Column(column =>
-               {
-                   column.Item().Text("TAX INVOICE")
-                         .FontSize(25).SemiBold().FontColor(Colors.Black);
+                .AlignRight()
+                .Column(column =>
+                {
+                    column
+                        .Item().Text("TAX INVOICE")
+                        .FontSize(25).SemiBold().FontColor(Colors.Black);
 
-                   column.Item().Text(""); // Spacer
+                    column.Item().Text("");
 
-                   column.Item().AlignRight().Text(Model.BusinessName ?? "Business Name")
-                         .FontSize(10).Bold().FontColor(Colors.Black);
+                    column
+                        .Item().AlignRight().Text(Model.BusinessName)
+                        .FontSize(10).Bold().FontColor(Colors.Black);
 
-               });
+                    column
+                        .Item().AlignRight().Text(Model.BusinessAddress)
+                        .FontSize(10).FontColor(Colors.Black);
+
+                    column
+                        .Item().AlignRight().Text("Verulam, KwaZulu-Natal 4340")
+                        .FontSize(10).FontColor(Colors.Black);
+
+                    column
+                        .Item().AlignRight().Text(Model.CustomerAddress)
+                        .FontSize(10).FontColor(Colors.Black);
+
+                    column.Item().Text("");
+
+                    column
+                        .Item().AlignRight().Text("0668732375")
+                        .FontSize(10).FontColor(Colors.Black);
+                });
         });
     }
 
@@ -101,6 +120,10 @@ public class InvoiceItemDocument(InvoicePrintDto model) : IDocument
                 var index = Model.Items.ToList().IndexOf(item) + 1;
 
                 table.Cell().Element(CellStyle).Text($"{index}");
+                table.Cell().Element(CellStyle).Text(item.ItemDesc);
+                table.Cell().Element(CellStyle).AlignRight().Text($"{item.Quantity:C}");
+                table.Cell().Element(CellStyle).AlignRight().Text($"{item.Quantity}");
+                table.Cell().Element(CellStyle).AlignRight().Text($"{item.Total * item.Quantity:C}");
 
                 static IContainer CellStyle(IContainer container) => container.BorderBottom(1).BorderColor(Colors.Grey.Lighten2).PaddingVertical(5);
             }

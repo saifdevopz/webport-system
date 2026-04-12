@@ -1,6 +1,6 @@
-﻿using WebportSystem.Common.Domain.Results;
+﻿using WebportSystem.Common.Contracts.Shared.Results;
 
-namespace WebportSystem.Common.Domain.Errors;
+namespace WebportSystem.Common.Contracts.Shared.Errors;
 
 public sealed record ValidationError : CustomError
 {
