@@ -51,6 +51,14 @@ internal static class SidebarData
         [
             new MenuItem(href:"/customer/index", title:"Customers"),
             new MenuItem(href:"/invoice/index", title:"Sale Invoices"),
+            new MenuItem(href:"/invoice-creator", title:"Invoice UI"),
+        ]),
+
+        new MenuItem(title: "Components", icon: "ri-archive-2-fill", suffix: new("Hot", "primary"), childMenuItems:
+        [
+            new MenuItem(href:"/login2", title:"Login"),
+            new MenuItem(href:"/support", title:"Support"),
+            new MenuItem(href:"/dashboard2", title:"Dashbaord"),
         ]),
     ];
 

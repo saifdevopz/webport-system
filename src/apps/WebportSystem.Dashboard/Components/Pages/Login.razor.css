@@ -1,0 +1,9 @@
+.mud-theme-primary {
+    min-height: 640px;
+}
+
+@media (max-width: 959.98px) {
+    .mud-theme-primary {
+        min-height: auto;
+    }
+}

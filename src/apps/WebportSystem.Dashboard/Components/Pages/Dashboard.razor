@@ -1,0 +1,215 @@
+﻿@page "/dashboard2"
+
+<MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="py-6">
+    <MudAppBar Color="Color.Primary" Fixed="false" Elevation="1" Class="rounded-lg px-4 mb-6">
+        <MudText Typo="Typo.h6">Workspace Dashboard</MudText>
+        <MudSpacer />
+        <MudAvatar Variant="Variant.Filled" Color="Color.Secondary" Size="Size.Medium">
+            <MudText Typo="Typo.subtitle2">JD</MudText>
+        </MudAvatar>
+    </MudAppBar>
+
+    <MudGrid Spacing="3" Class="align-stretch">
+        <MudItem xs="12" md="8">
+            <MudPaper Class="pa-6 mud-theme-primary rounded-lg">
+                <MudText Typo="Typo.overline">WELCOME BACK</MudText>
+                <MudText Typo="Typo.h4" Class="mt-2">Good morning, Jordan</MudText>
+                <MudText Typo="Typo.body1" Class="mt-2">Here’s a quick view of your team, pipeline, and the work that needs attention today.</MudText>
+            </MudPaper>
+        </MudItem>
+        <MudItem xs="12" md="4">
+            <MudCard Class="rounded-lg">
+                <MudCardContent>
+                    <MudText Typo="Typo.subtitle2" Class="mud-text-secondary">Today’s focus</MudText>
+                    <MudText Typo="Typo.h6" Class="mt-2">3 approvals pending</MudText>
+                    <MudText Typo="Typo.body2" Class="mt-2">Review new signups, approve campaign budget, and confirm the weekly report.</MudText>
+                </MudCardContent>
+            </MudCard>
+        </MudItem>
+
+        @foreach (var stat in stats)
+        {
+            <MudItem xs="12" sm="6" lg="3">
+                <MudCard Class="rounded-lg mud-height-full">
+                    <MudCardContent>
+                        <div class="d-flex justify-space-between align-start gap-2">
+                            <div>
+                                <MudText Typo="Typo.body2" Class="mud-text-secondary">@stat.Title</MudText>
+                                <MudText Typo="Typo.h5" Class="mt-2">@stat.Value</MudText>
+                                <MudText Typo="Typo.caption" Class="mt-1 mud-text-secondary">@stat.Change</MudText>
+                            </div>
+                            <MudIcon Icon="@stat.Icon" Color="@stat.IconColor" Size="Size.Large" />
+                        </div>
+                    </MudCardContent>
+                </MudCard>
+            </MudItem>
+        }
+
+        <MudItem xs="12" lg="8">
+            <MudCard Class="rounded-lg">
+                <MudCardHeader>
+                    <CardHeaderContent>
+                        <MudText Typo="Typo.h6">Weekly performance</MudText>
+                        <MudText Typo="Typo.body2" Class="mud-text-secondary">Tasks completed vs. new work added</MudText>
+                    </CardHeaderContent>
+                </MudCardHeader>
+                <MudCardContent>
+                    <MudChart ChartType="ChartType.Line" ChartSeries="chartSeries" XAxisLabels="xAxisLabels" Width="100%" Height="320px" ChartOptions="chartOptions" AxisChartOptions="axisChartOptions" />
+                </MudCardContent>
+            </MudCard>
+        </MudItem>
+
+        <MudItem xs="12" lg="4">
+            <MudCard Class="rounded-lg mud-height-full">
+                <MudCardHeader>
+                    <CardHeaderContent>
+                        <MudText Typo="Typo.h6">Team snapshot</MudText>
+                    </CardHeaderContent>
+                </MudCardHeader>
+                <MudCardContent>
+                    <div class="d-flex flex-column gap-4">
+                        @foreach (var item in highlights)
+                        {
+                            <MudPaper Outlined="true" Class="pa-4 rounded-lg">
+                                <MudText Typo="Typo.body2" Class="mud-text-secondary">@item.Label</MudText>
+                                <MudText Typo="Typo.h6" Class="mt-1">@item.Value</MudText>
+                            </MudPaper>
+                        }
+                    </div>
+                </MudCardContent>
+            </MudCard>
+        </MudItem>
+
+        <MudItem xs="12" lg="7">
+            <MudCard Class="rounded-lg">
+                <MudCardHeader>
+                    <CardHeaderContent>
+                        <MudText Typo="Typo.h6">Recent activity</MudText>
+                    </CardHeaderContent>
+                </MudCardHeader>
+                <MudCardContent>
+                    <MudTable T="ActivityItemModel" Items="activities" Hover="true">
+                        <HeaderContent>
+                            <MudTh>Action</MudTh>
+                            <MudTh>Owner</MudTh>
+                            <MudTh>Time</MudTh>
+                        </HeaderContent>
+                        <RowTemplate>
+                            <MudTd DataLabel="Action">@context.Action</MudTd>
+                            <MudTd DataLabel="Owner">@context.Owner</MudTd>
+                            <MudTd DataLabel="Time">@context.TimeAgo</MudTd>
+                        </RowTemplate>
+                    </MudTable>
+                </MudCardContent>
+            </MudCard>
+        </MudItem>
+
+        <MudItem xs="12" lg="5">
+            <MudCard Class="rounded-lg mud-height-full">
+                <MudCardHeader>
+                    <CardHeaderContent>
+                        <MudText Typo="Typo.h6">Quick actions</MudText>
+                    </CardHeaderContent>
+                </MudCardHeader>
+                <MudCardContent>
+                    <MudGrid Spacing="2">
+                        @foreach (var action in quickActions)
+                        {
+                            <MudItem xs="12" sm="6">
+                                <MudPaper Outlined="true" Class="pa-4 rounded-lg mud-height-full">
+                                    <MudText Typo="Typo.subtitle2">@action.Title</MudText>
+                                    <MudText Typo="Typo.body2" Class="mt-1 mud-text-secondary">@action.Description</MudText>
+                                </MudPaper>
+                            </MudItem>
+                        }
+                    </MudGrid>
+                </MudCardContent>
+            </MudCard>
+        </MudItem>
+    </MudGrid>
+</MudContainer>
+
+@code {
+    private readonly List<DashboardStatModel> stats = new()
+    {
+        new DashboardStatModel { Title = "Revenue", Value = "$84.2K", Change = "+12% from last week", Icon = Icons.Material.Filled.TrendingUp, IconColor = Color.Success },
+        new DashboardStatModel { Title = "New customers", Value = "128", Change = "+18 today", Icon = Icons.Material.Filled.People, IconColor = Color.Primary },
+        new DashboardStatModel { Title = "Open tasks", Value = "23", Change = "7 due today", Icon = Icons.Material.Filled.AssignmentTurnedIn, IconColor = Color.Warning },
+        new DashboardStatModel { Title = "CSAT score", Value = "94%", Change = "+2% this month", Icon = Icons.Material.Filled.Star, IconColor = Color.Secondary }
+    };
+
+    private readonly List<DashboardHighlightModel> highlights = new()
+    {
+        new DashboardHighlightModel { Label = "Online team members", Value = "18 / 24" },
+        new DashboardHighlightModel { Label = "Projects on track", Value = "9 / 11" },
+        new DashboardHighlightModel { Label = "Meetings today", Value = "5 scheduled" }
+    };
+
+    private readonly List<ActivityItemModel> activities = new()
+    {
+        new ActivityItemModel { Action = "Quarterly report submitted", Owner = "Ava Patel", TimeAgo = "10 min ago" },
+        new ActivityItemModel { Action = "New enterprise lead assigned", Owner = "Noah Kim", TimeAgo = "24 min ago" },
+        new ActivityItemModel { Action = "Campaign budget approved", Owner = "Sofia Rivera", TimeAgo = "1 hr ago" },
+        new ActivityItemModel { Action = "Support backlog cleared", Owner = "Liam Chen", TimeAgo = "2 hrs ago" }
+    };
+
+    private readonly List<QuickActionModel> quickActions = new()
+    {
+        new QuickActionModel { Title = "Create report", Description = "Build a fresh snapshot for stakeholders." },
+        new QuickActionModel { Title = "Invite teammate", Description = "Add a new member to your workspace." },
+        new QuickActionModel { Title = "Review pipeline", Description = "Check deals that need follow-up today." },
+        new QuickActionModel { Title = "Open settings", Description = "Update workspace preferences and alerts." }
+    };
+
+    private readonly List<ChartSeries> chartSeries = new()
+    {
+        new ChartSeries { Name = "Completed", Data = new double[] { 18, 24, 21, 29, 31, 28, 34 } },
+        new ChartSeries { Name = "Created", Data = new double[] { 22, 20, 25, 23, 26, 24, 27 } }
+    };
+
+    private readonly string[] xAxisLabels = { "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun" };
+
+    private readonly ChartOptions chartOptions = new()
+    {
+        ShowLegend = true,
+        ShowToolTips = true,
+        LineStrokeWidth = 3,
+        YAxisLines = true,
+        XAxisLines = false
+    };
+
+    private readonly AxisChartOptions axisChartOptions = new()
+    {
+        MatchBoundsToSize = true,
+        XAxisLabelRotation = 0
+    };
+
+    
+    public class DashboardStatModel
+    {
+        public string Title { get; set; } = string.Empty;
+        public string Value { get; set; } = string.Empty;
+        public string Change { get; set; } = string.Empty;
+        public string Icon { get; set; } = string.Empty;
+        public Color IconColor { get; set; } = Color.Default;
+    }
+
+    public class QuickActionModel
+    {
+        public string Title { get; set; } = string.Empty;
+        public string Description { get; set; } = string.Empty;
+    }
+
+    public class DashboardHighlightModel
+    {
+        public string Label { get; set; } = string.Empty;
+        public string Value { get; set; } = string.Empty;
+    }
+
+    public class ActivityItemModel
+    {
+        public string Action { get; set; } = string.Empty;
+        public string Owner { get; set; } = string.Empty;
+        public string TimeAgo { get; set; } = string.Empty;
+    }
+}

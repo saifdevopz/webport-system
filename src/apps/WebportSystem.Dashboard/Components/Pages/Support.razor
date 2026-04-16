@@ -1,0 +1,235 @@
+﻿@page "/support"
+@using System.ComponentModel.DataAnnotations
+
+<MudContainer MaxWidth="MaxWidth.Large" Class="pa-4 pa-sm-6">
+    <MudStack Spacing="4">
+        <MudPaper Outlined="true" Class="pa-6 rounded-lg mud-theme-primary">
+            <MudGrid Spacing="3" Class="align-center">
+                <MudItem xs="12" md="8">
+                    <MudStack Spacing="2">
+                        <MudText Typo="Typo.h4">Support & Contact Center</MudText>
+                        <MudText Typo="Typo.body1">Get help with billing, access, integrations, reports, and day-to-day ERP operations from one place.</MudText>
+                        <MudStack Row="true" Spacing="2" Class="flex-wrap">
+                            <MudPaper Outlined="true" Class="pa-3 rounded-lg mud-surface">
+                                <MudText Typo="Typo.subtitle2">Average response</MudText>
+                                <MudText Typo="Typo.h6">Under 2 hours</MudText>
+                            </MudPaper>
+                            <MudPaper Outlined="true" Class="pa-3 rounded-lg mud-surface">
+                                <MudText Typo="Typo.subtitle2">Coverage</MudText>
+                                <MudText Typo="Typo.h6">24/7 critical support</MudText>
+                            </MudPaper>
+                            <MudPaper Outlined="true" Class="pa-3 rounded-lg mud-surface">
+                                <MudText Typo="Typo.subtitle2">Satisfaction</MudText>
+                                <MudText Typo="Typo.h6">98.4% CSAT</MudText>
+                            </MudPaper>
+                        </MudStack>
+                    </MudStack>
+                </MudItem>
+                <MudItem xs="12" md="4">
+                    <MudPaper Outlined="true" Class="pa-4 rounded-lg mud-surface">
+                        <MudStack Spacing="1">
+                            <MudText Typo="Typo.subtitle1">Need urgent help?</MudText>
+                            <MudText Typo="Typo.body2">Call the priority desk for system outages and blocked operational workflows.</MudText>
+                            <MudText Typo="Typo.h5" Color="Color.Primary">+1 (800) 555-0199</MudText>
+                            <MudText Typo="Typo.caption">Mon–Fri 8:00 AM–8:00 PM · Critical issues anytime</MudText>
+                        </MudStack>
+                    </MudPaper>
+                </MudItem>
+            </MudGrid>
+        </MudPaper>
+
+        <MudGrid Spacing="3">
+            @foreach (var contactMethod in contactMethods)
+            {
+                <MudItem xs="12" sm="6" lg="3">
+                    <MudCard Outlined="true" Class="mud-height-full">
+                        <MudCardContent>
+                            <MudStack Spacing="2">
+                                <MudText Typo="Typo.subtitle1">@contactMethod.Title</MudText>
+                                <MudText Typo="Typo.body2">@contactMethod.Description</MudText>
+                                <MudText Typo="Typo.h6" Color="Color.Primary">@contactMethod.Value</MudText>
+                                <MudText Typo="Typo.caption">@contactMethod.Note</MudText>
+                            </MudStack>
+                        </MudCardContent>
+                        <MudCardActions>
+                            <MudButton Variant="Variant.Text" Color="Color.Primary">@contactMethod.ActionText</MudButton>
+                        </MudCardActions>
+                    </MudCard>
+                </MudItem>
+            }
+        </MudGrid>
+
+        <MudGrid Spacing="3">
+            <MudItem xs="12" md="7">
+                <MudCard Outlined="true">
+                    <MudCardContent>
+                        <MudStack Spacing="3">
+                            <MudStack Spacing="1">
+                                <MudText Typo="Typo.h5">Send a support request</MudText>
+                                <MudText Typo="Typo.body2">Submit a ticket for your finance, inventory, HR, or operations workflows.</MudText>
+                            </MudStack>
+
+                            @if (isSubmitted)
+                            {
+                                <MudPaper Outlined="true" Class="pa-4 rounded-lg mud-theme-success">
+                                    <MudText Typo="Typo.subtitle1">Request submitted</MudText>
+                                    <MudText Typo="Typo.body2">Your support ticket has been logged. A specialist will contact you shortly.</MudText>
+                                </MudPaper>
+                            }
+
+                            <MudForm @ref="form" @bind-IsValid="isValid" Model="requestModel">
+                                <MudGrid Spacing="2">
+                                    <MudItem xs="12" sm="6">
+                                        <MudTextField T="string" Label="Full name" @bind-Value="requestModel.FullName" Required="true" RequiredError="Full name is required" Variant="Variant.Outlined" />
+                                    </MudItem>
+                                    <MudItem xs="12" sm="6">
+                                        <MudTextField T="string" Label="Work email" @bind-Value="requestModel.Email" Required="true" RequiredError="Email is required" Validation="@(new EmailAddressAttribute { ErrorMessage = "Enter a valid email" })" Variant="Variant.Outlined" />
+                                    </MudItem>
+                                    <MudItem xs="12" sm="6">
+                                        <MudTextField T="string" Label="Company" @bind-Value="requestModel.Company" Variant="Variant.Outlined" />
+                                    </MudItem>
+                                    <MudItem xs="12" sm="6">
+                                        <MudTextField T="string" Label="ERP module" @bind-Value="requestModel.Module" Variant="Variant.Outlined" />
+                                    </MudItem>
+                                    <MudItem xs="12" sm="6">
+                                        <MudTextField T="string" Label="Priority" @bind-Value="requestModel.Priority" Variant="Variant.Outlined" />
+                                    </MudItem>
+                                    <MudItem xs="12" sm="6">
+                                        <MudTextField T="string" Label="Phone" @bind-Value="requestModel.Phone" Variant="Variant.Outlined" />
+                                    </MudItem>
+                                    <MudItem xs="12">
+                                        <MudTextField T="string" Label="Subject" @bind-Value="requestModel.Subject" Required="true" RequiredError="Subject is required" Variant="Variant.Outlined" />
+                                    </MudItem>
+                                    <MudItem xs="12">
+                                        <MudTextField T="string" Label="How can we help?" @bind-Value="requestModel.Message" Required="true" RequiredError="Message is required" Variant="Variant.Outlined" Lines="6" />
+                                    </MudItem>
+                                </MudGrid>
+                            </MudForm>
+                        </MudStack>
+                    </MudCardContent>
+                    <MudCardActions>
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SubmitAsync">Submit ticket</MudButton>
+                        <MudButton Variant="Variant.Text" Color="Color.Secondary" OnClick="ResetAsync">Clear</MudButton>
+                    </MudCardActions>
+                </MudCard>
+            </MudItem>
+
+            <MudItem xs="12" md="5">
+                <MudStack Spacing="3">
+                    <MudCard Outlined="true">
+                        <MudCardContent>
+                            <MudStack Spacing="2">
+                                <MudText Typo="Typo.h6">Quick help</MudText>
+                                @foreach (var item in quickHelpItems)
+                                {
+                                    <MudPaper Outlined="true" Class="pa-3 rounded-lg">
+                                        <MudText Typo="Typo.subtitle2">@item.Title</MudText>
+                                        <MudText Typo="Typo.body2">@item.Description</MudText>
+                                    </MudPaper>
+                                }
+                            </MudStack>
+                        </MudCardContent>
+                    </MudCard>
+
+                    <MudCard Outlined="true">
+                        <MudCardContent>
+                            <MudStack Spacing="2">
+                                <MudText Typo="Typo.h6">Frequently asked questions</MudText>
+                                <MudExpansionPanels Outlined="false" Elevation="0">
+                                    @foreach (var faq in faqs)
+                                    {
+                                        <MudExpansionPanel Text="@faq.Question">
+                                            <MudText Typo="Typo.body2">@faq.Answer</MudText>
+                                        </MudExpansionPanel>
+                                    }
+                                </MudExpansionPanels>
+                            </MudStack>
+                        </MudCardContent>
+                    </MudCard>
+                </MudStack>
+            </MudItem>
+        </MudGrid>
+    </MudStack>
+</MudContainer>
+
+@code {
+    private MudForm? form;
+    private bool isValid;
+    private bool isSubmitted;
+    private SupportRequestModel requestModel = new();
+
+    private readonly List<ContactMethodModel> contactMethods = new()
+    {
+        new ContactMethodModel { Title = "Email support", Description = "Best for general product questions and non-urgent assistance.", Value = "support@erpdesk.com", Note = "Replies within one business day", ActionText = "Email us" },
+        new ContactMethodModel { Title = "Sales & account", Description = "Contact the account team for renewals, pricing, and workspace changes.", Value = "accounts@erpdesk.com", Note = "Dedicated account managers available", ActionText = "Contact sales" },
+        new ContactMethodModel { Title = "Call center", Description = "Speak directly with a product specialist for urgent operational questions.", Value = "+1 (800) 555-0147", Note = "Phone support during business hours", ActionText = "Call now" },
+        new ContactMethodModel { Title = "Live chat", Description = "Chat with support for quick guidance on navigation, settings, and reports.", Value = "Available in dashboard", Note = "Typical wait time under 5 minutes", ActionText = "Start chat" }
+    };
+
+    private readonly List<ContactMethodModel> quickHelpItems = new()
+    {
+        new ContactMethodModel { Title = "System status", Description = "Check maintenance windows, uptime, and service incidents before opening a ticket." },
+        new ContactMethodModel { Title = "Implementation help", Description = "Book onboarding assistance for data migration, role setup, and workflow mapping." },
+        new ContactMethodModel { Title = "Training resources", Description = "Request user training sessions for procurement, warehouse, finance, or HR teams." }
+    };
+
+    private readonly List<FaqItemModel> faqs = new()
+    {
+        new FaqItemModel { Question = "How quickly will I receive a response?", Answer = "Critical issues are prioritized immediately, while general requests typically receive a response within one business day." },
+        new FaqItemModel { Question = "What details should I include in a ticket?", Answer = "Include the affected ERP module, user impact, any error message, and the steps that caused the issue for faster resolution." },
+        new FaqItemModel { Question = "Can I request training for my team?", Answer = "Yes, use the support form and mention the module and team size so we can tailor a session to your workflow." },
+        new FaqItemModel { Question = "Do you support integrations and custom reports?", Answer = "Yes, the support team can guide troubleshooting for integrations, APIs, and report configuration requests." }
+    };
+
+    private async Task SubmitAsync()
+    {
+        if (form is null)
+            return;
+
+        await form.Validate();
+
+        if (!isValid)
+            return;
+
+        isSubmitted = true;
+    }
+
+    private async Task ResetAsync()
+    {
+        requestModel = new SupportRequestModel();
+        isSubmitted = false;
+
+        if (form is not null)
+        {
+            await form.ResetAsync();
+        }
+    }
+
+    public class ContactMethodModel
+    {
+        public string Title { get; set; } = string.Empty;
+        public string Description { get; set; } = string.Empty;
+        public string Value { get; set; } = string.Empty;
+        public string Note { get; set; } = string.Empty;
+        public string ActionText { get; set; } = string.Empty;
+    }
+
+    public class FaqItemModel
+    {
+        public string Question { get; set; } = string.Empty;
+        public string Answer { get; set; } = string.Empty;
+    }
+
+
+    public class SupportRequestModel
+    {
+        public string FullName { get; set; } = string.Empty;
+        public string Email { get; set; } = string.Empty;
+        public string Company { get; set; } = string.Empty;
+        public string Module { get; set; } = string.Empty;
+        public string Priority { get; set; } = string.Empty;
+        public string Phone { get; set; } = string.Empty;
+        public string Subject { get; set; } = string.Empty;
+        public string Message { get; set; } = string.Empty;
+    }
+}

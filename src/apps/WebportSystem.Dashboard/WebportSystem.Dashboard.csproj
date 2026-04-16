@@ -22,4 +22,8 @@
     <ProjectReference Include="..\..\common\WebportSystem.Common.Contracts\WebportSystem.Common.Contracts.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Components\NewFolder\" />
+  </ItemGroup>
+
 </Project>
