@@ -2,7 +2,7 @@
 
 public class InvoiceItemDto
 {
-    public int ItemId { get; set; }
+    public int? ItemId { get; set; }
 
     public string ItemDesc { get; set; } = string.Empty;
 

@@ -1,0 +1,137 @@
+﻿@page "/businessprofile"
+@layout TenantLayout
+@attribute [Authorize(Roles = "User")]
+
+<EditForm Model="@model" OnValidSubmit="OnValidSubmit">
+    <DataAnnotationsValidator />
+    <MudCard Elevation="1">
+        <MudCardHeader>
+            <CardHeaderContent>
+                <MudText Typo="Typo.h6">My Profile</MudText>
+            </CardHeaderContent>
+        </MudCardHeader>
+
+        <MudCardContent>
+            <MudTextField @bind-Value="model.BusinessName" 
+                          Required="true"
+                          Variant="Variant.Outlined" 
+                          For="@(() => model.BusinessName)"
+                          Label="Business Name" />
+
+            <MudTextField @bind-Value="model.Phone"
+                          Required="true"
+                          Variant="Variant.Outlined"
+                          For="@(() => model.Phone)"
+                          Label="Phone" />
+
+            <MudTextField @bind-Value="model.Email" 
+                          Required="true"
+                          Variant="Variant.Outlined" 
+                          For="@(() => model.Email)"
+                          Label="Email" />
+
+            <MudTextField @bind-Value="model.AddressLine1"
+                          Required="true"
+                          Variant="Variant.Outlined"
+                          For="@(() => model.AddressLine1)"
+                          Label="Address" />
+
+            <MudTextField @bind-Value="model.PostalCode"
+                          Required="true"
+                          Variant="Variant.Outlined"
+                          For="@(() => model.PostalCode)"
+                          Label="Postal Code" />
+
+            <MudTextField @bind-Value="model.City"
+                          Required="true"
+                          Variant="Variant.Outlined"
+                          For="@(() => model.City)"
+                          Label="City" />
+
+            <MudTextField @bind-Value="model.Province"
+                          Required="true"
+                          Variant="Variant.Outlined"
+                          For="@(() => model.Province)"
+                          Label="Province" />
+
+            <MudTextField @bind-Value="model.Country"
+                          Required="true"
+                          Variant="Variant.Outlined"
+                          For="@(() => model.Country)"
+                          Label="Country" />
+
+            <MudTextField @bind-Value="model.BankName"
+                          Variant="Variant.Outlined"
+                          For="@(() => model.BankName)"
+                          Label="Bank Name" />
+
+            <MudTextField @bind-Value="model.BranchCode"
+                          Variant="Variant.Outlined"
+                          For="@(() => model.BranchCode)"
+                          Label="Branch Code" />
+
+            <MudTextField @bind-Value="model.AccountNumber"
+                          Variant="Variant.Outlined"
+                          For="@(() => model.AccountNumber)"
+                          Label="Account Number" />
+        </MudCardContent>
+
+        <MudCardActions Style="display: flex; justify-content: end; gap: 10px">
+            <MudButton OnClick="Cancel" Variant="Variant.Outlined" Color="Color.Error">Cancel</MudButton>
+            <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Outlined" Color="Color.Primary">Save</MudButton>
+        </MudCardActions>
+
+        @if (!string.IsNullOrWhiteSpace(ErrorMessage))
+        {
+            <MudAlert Severity="Severity.Error" Elevation="0" Variant="Variant.Filled" Dense="true" Class="m-2">
+                @ErrorMessage
+            </MudAlert>
+        }
+    </MudCard>
+</EditForm>
+
+@code {
+    private BusinessProfileDto model = new();
+    private string ErrorMessage = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await GetBusinessProfile();      
+    }
+
+    private async Task GetBusinessProfile()
+    {
+        var response = await _DataService.GetByIdAsync<BusinessProfileDto>("businessprofile", "1");
+
+        if (response.IsSuccess)
+        {
+            model = response.Data;            
+        }
+    }
+
+    private async Task OnValidSubmit(EditContext context)
+    {
+        Result response;
+
+        if (model.BusinessProfileId < 1)
+        {
+           response = await _DataService.PostAsync("businessprofile", model);
+        }
+        else
+        {
+             response = await _DataService.PutAsync("businessprofile", model);
+        }
+
+
+        if (response.IsSuccess)
+        {
+            _NavigationManager.NavigateTo("/");
+        }
+        else
+        {
+            ErrorMessage = response.Error?.Description ?? "An unexpected error occurred.";
+        }
+    }
+
+    private void Cancel() => _NavigationManager.NavigateTo("/");
+}

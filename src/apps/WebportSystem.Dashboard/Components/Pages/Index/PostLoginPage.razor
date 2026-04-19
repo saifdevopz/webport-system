@@ -1,4 +1,5 @@
 ﻿@page "/account/postlogin"
+@layout AuthLayout
 @using WebportSystem.Dashboard.Common
 
 @attribute [AllowAnonymous]
@@ -7,23 +8,36 @@
     [SupplyParameterFromQuery]
     private string? Token { get; set; }
 
+    [Inject] AuthenticationStateProvider AuthProvider { get; set; } = default!;
+
     protected override void OnInitialized()
     {
         if (string.IsNullOrEmpty(Token))
         {
             _NavigationManager.NavigateTo("/account/login");
+            return;
         }
-        else
-        {
-            _HttpContextAccessor.HttpContext!.Response.Cookies
-            .Append(BlazorConstants.AuthCookieName, Token, new CookieOptions
+
+        // Store the token in a secure cookie
+        _HttpContextAccessor.HttpContext!.Response.Cookies.Append(
+            BlazorConstants.AuthCookieName, 
+            Token, 
+            new CookieOptions
             {
                 HttpOnly = true,
                 Expires = DateTimeOffset.Now.AddMinutes(30),
             });
 
-            _NavigationManager.NavigateTo("/home");
+        ((CustomAuthenticationStateProvider)AuthProvider).MarkUserAsAuthenticated(Token);
+
+        if (string.IsNullOrEmpty(_TenantContext.TenantId))
+        {
+            _NavigationManager.NavigateTo("/platform/dashboard", true);
         }
+        else
+        {
+            _NavigationManager.NavigateTo("/tenant/dashboard", true);
+        }        
     }
 }
 

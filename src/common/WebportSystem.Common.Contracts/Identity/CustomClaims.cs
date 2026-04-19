@@ -7,4 +7,5 @@ public static class CustomClaims
     public const string Email = "Email";
     public const string DatabaseName = "DatabaseName";
     public const string Permission = "Permission";
+    public const string Scope = "Scope";
 }

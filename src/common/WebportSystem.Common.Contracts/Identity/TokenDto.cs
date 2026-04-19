@@ -37,7 +37,7 @@ public sealed record CustomUserClaim
 
 public sealed class UserTokenClaims
 {
-    public required Guid TenantId { get; set; }
+    public Guid? TenantId { get; set; }
     public required string UserId { get; set; }
     public required string Email { get; set; }
     public required string DatabaseName { get; set; }

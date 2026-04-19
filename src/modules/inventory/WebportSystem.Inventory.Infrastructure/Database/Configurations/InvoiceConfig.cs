@@ -12,10 +12,6 @@ public class InvoiceConfig : IEntityTypeConfiguration<InvoiceM>
 
         builder.HasKey(x => x.InvoiceId);
 
-        builder.Property(x => x.InvoiceNumber)
-            .IsRequired()
-            .HasMaxLength(50);
-
         builder.Property(x => x.SubTotal)
             .HasPrecision(18, 2);
 
@@ -28,12 +24,6 @@ public class InvoiceConfig : IEntityTypeConfiguration<InvoiceM>
             .HasForeignKey(x => x.InvoiceId)
             .OnDelete(DeleteBehavior.Cascade);
 
-        // BusinessProfile FK
-        builder.HasOne(x => x.BusinessProfile)
-               .WithMany()
-               .HasForeignKey(x => x.BusinessProfileId)
-               .OnDelete(DeleteBehavior.Restrict);
-
         // Customer FK (optional)
         builder.HasOne(x => x.Customer)
                .WithMany()
@@ -44,9 +34,6 @@ public class InvoiceConfig : IEntityTypeConfiguration<InvoiceM>
         builder.Metadata
             .FindNavigation(nameof(InvoiceM.Items))!
             .SetPropertyAccessMode(PropertyAccessMode.Field);
-
-        builder.HasIndex(x => new { x.InvoiceNumber })
-            .IsUnique();
     }
 }
 

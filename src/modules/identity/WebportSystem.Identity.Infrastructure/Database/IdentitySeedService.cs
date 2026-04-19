@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
+using WebportSystem.Identity.Domain.Platform;
 using WebportSystem.Identity.Domain.Roles;
 using WebportSystem.Identity.Domain.Tenants;
 using WebportSystem.Identity.Domain.Users;
@@ -16,19 +17,33 @@ public static class IdentitySeedService
     {
         if (await dbContext.Tenants.AnyAsync()) return;
 
+        await SeedPlatformUserAsync(dbContext);
         var tenants = await SeedTenantsAsync(dbContext);
         var (adminRole, userRole) = await SeedRolesAsync(roleManager);
         await SeedUsersAsync(userManager, tenants);
         await SeedRoleClaimsAsync(roleManager, adminRole, userRole);
     }
 
+    private static async Task SeedPlatformUserAsync(UsersDbContext dbContext)
+    {
+        if (await dbContext.PlatformUsers.AnyAsync()) return;
+
+        PlatformUserM[] platformUsers =
+        [
+            PlatformUserM.Create("admin@gmail.com", "12345678", "admin"),
+        ];
+
+        await dbContext.PlatformUsers.AddRangeAsync(platformUsers);
+        await dbContext.SaveChangesAsync();
+    }
+
     private static async Task<TenantM[]> SeedTenantsAsync(UsersDbContext dbContext)
     {
         TenantM[] tenants =
         [
-            TenantM.Create("Customer1", "customer1-db", GetPostreSQLDatabaseConnectionString("customer1-db")),
-            TenantM.Create("Customer2", "customer2-db", GetPostreSQLDatabaseConnectionString("customer2-db")),
-            TenantM.Create("Customer3", "customer3-db", GetPostreSQLDatabaseConnectionString("customer3-db")),
+            TenantM.Create("Customer1", "customer1-db"),
+            TenantM.Create("Customer2", "customer2-db"),
+            TenantM.Create("Customer3", "customer3-db"),
         ];
 
         await dbContext.Tenants.AddRangeAsync(tenants);
@@ -40,9 +55,11 @@ public static class IdentitySeedService
     private static async Task<(RoleM adminRole, RoleM userRole)> SeedRolesAsync(
         RoleManager<RoleM> roleManager)
     {
+        var superAdminRole = new RoleM { Name = "SuperAdmin" };
         var adminRole = new RoleM { Name = "Admin" };
         var userRole = new RoleM { Name = "User" };
 
+        await roleManager.CreateAsync(superAdminRole);
         await roleManager.CreateAsync(adminRole);
         await roleManager.CreateAsync(userRole);
 
@@ -53,19 +70,19 @@ public static class IdentitySeedService
         UserManager<UserM> userManager,
         TenantM[] tenants)
     {
-        var adminUser = new UserM
+        var superUser = new UserM
         {
-            TenantId = tenants[0].TenantId,
+            TenantId = null,
             Email = "admin@gmail.com",
-            UserName = "Administrator"
+            UserName = "SuperAdmin"
         };
 
-        await userManager.CreateAsync(adminUser, "12345678");
-        await userManager.AddToRoleAsync(adminUser, "Admin");
+        await userManager.CreateAsync(superUser, "12345678");
+        await userManager.AddToRoleAsync(superUser, "SuperAdmin");
 
         var user1 = new UserM
         {
-            TenantId = tenants[1].TenantId,
+            TenantId = tenants[0].TenantId,
             Email = "customer1@gmail.com",
             UserName = "Customer1"
         };
@@ -75,7 +92,7 @@ public static class IdentitySeedService
 
         var user2 = new UserM
         {
-            TenantId = tenants[2].TenantId,
+            TenantId = tenants[1].TenantId,
             Email = "customer2@gmail.com",
             UserName = "Customer2"
         };
@@ -85,7 +102,7 @@ public static class IdentitySeedService
 
         var user3 = new UserM
         {
-            TenantId = tenants[3].TenantId,
+            TenantId = tenants[2].TenantId,
             Email = "customer3@gmail.com",
             UserName = "Customer3"
         };
@@ -102,11 +119,5 @@ public static class IdentitySeedService
         await roleManager.AddClaimAsync(adminRole, new Claim("permission", "identity:global"));
         await roleManager.AddClaimAsync(adminRole, new Claim("permission", "inventory:global"));
         await roleManager.AddClaimAsync(userRole, new Claim("permission", "inventory:global"));
-    }
-
-    private static string GetPostreSQLDatabaseConnectionString(string databaseName)
-    {
-        //return $"Host=102.211.206.231;Port=5432;Database={databaseName};Username=sword;Password=25122000@Saif;Pooling=true;MinPoolSize=10;MaxPoolSize=100;Include Error Detail=true;GSS Encryption Mode=Disable;";
-        return $"Host=102.214.11.80; Database={databaseName}; Username=sword; Password=25122000@Saif; GSS Encryption Mode=Disable;";
     }
 }

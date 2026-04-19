@@ -101,10 +101,17 @@
     private async Task CheckUserAuthentication()
     {
         var user = (await AuthenticationState!).User;
-
+        
         if (user?.Identity?.IsAuthenticated == true)
         {
-            _NavigationManager.NavigateTo("/home");
+            if (_TenantContext.IsPlatform)
+            {
+                _NavigationManager.NavigateTo("/platform/dashboard", true);
+            }
+            else
+            {
+                _NavigationManager.NavigateTo("/tenant/dashboard", true);
+            }
         }
     }
 

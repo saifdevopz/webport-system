@@ -1,35 +1,39 @@
 ﻿@page "/"
+@layout AuthLayout
 @using Microsoft.AspNetCore.Components.Authorization
 @using System.Security.Claims
 
-<CascadingAuthenticationState>
-    <Loader />
-</CascadingAuthenticationState>
+<Loader />
 
 @code {
     [CascadingParameter]
     public Task<AuthenticationState>? AuthenticationState { get; set; }
 
-    private ClaimsPrincipal? User;
-    private bool _navigated = false;
+    private bool hasNavigated = false;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (firstRender && !_navigated)
+        if (!firstRender || hasNavigated) return;
+
+        hasNavigated = true;
+        
+        var authState = await AuthenticationState!;
+        var user = authState.User;
+
+        if (user.Identity?.IsAuthenticated == true)
         {
-            var authState = await AuthenticationState!;
-            User = authState.User;
-
-            _navigated = true;
-
-            if (User.Identity?.IsAuthenticated == true && AuthenticationState is not null)
-            {               
-                _NavigationManager.NavigateTo("/home", forceLoad: false);
+            if (_TenantContext.IsPlatform)
+            {
+                _NavigationManager.NavigateTo("/platform/dashboard", true);
             }
             else
             {
-                _NavigationManager.NavigateTo("/account/login", forceLoad: false);
+                _NavigationManager.NavigateTo("/tenant/dashboard", true);
             }
+        }
+        else
+        {
+            _NavigationManager.NavigateTo("/account/login");
         }
     }
 }

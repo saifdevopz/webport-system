@@ -1,7 +1,6 @@
 ﻿@using WebportSystem.Dashboard.Components.Shared.Theme
 @inherits LayoutComponentBase
 
-
 <MudThemeProvider Theme="ThemeConfig.CurrentTheme" />
 
 <ErrorBoundary @ref="errorBoundary">
@@ -25,5 +24,13 @@
     protected override void OnParametersSet()
     {
         errorBoundary?.Recover();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await _IJSRuntime.InvokeVoidAsync("console.log", "🔥 PlatformLayout: First Render");
+        }
     }
 }

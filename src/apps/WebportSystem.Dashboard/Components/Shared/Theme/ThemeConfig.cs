@@ -24,6 +24,7 @@ public static class ThemeConfig
             {
                 Primary = Colors.Blue.Default,
                 Secondary = Colors.Orange.Default,
+                Tertiary = "#ffffff"
             },
             PaletteDark = new PaletteDark
             {

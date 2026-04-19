@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using WebportSystem.Identity.Application.Data;
+using WebportSystem.Identity.Domain.Platform;
 using WebportSystem.Identity.Domain.Roles;
 using WebportSystem.Identity.Domain.Tenants;
 using WebportSystem.Identity.Domain.Users;
@@ -19,6 +20,7 @@ public sealed class UsersDbContext(DbContextOptions<UsersDbContext> options)
                         RoleClaimM,
                         IdentityUserToken<string>>(options), IUsersDbContext
 {
+    public DbSet<PlatformUserM> PlatformUsers => Set<PlatformUserM>();
     public DbSet<TenantM> Tenants => Set<TenantM>();
 
     protected override void OnModelCreating(ModelBuilder builder)

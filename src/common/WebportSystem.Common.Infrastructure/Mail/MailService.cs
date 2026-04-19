@@ -82,8 +82,8 @@ public class MailService(IOptions<MailOptions> settings, ILogger<MailService> lo
         using SmtpClient client = new();
         try
         {
-            await client.ConnectAsync(_settings.Host, _settings.Port, SecureSocketOptions.Auto, ct);
-            await client.AuthenticateAsync(_settings.UserName, _settings.Password, ct);
+            await client.ConnectAsync(_settings.Host!, _settings.Port, SecureSocketOptions.Auto, ct);
+            await client.AuthenticateAsync(_settings.UserName!, _settings.Password!, ct);
             await client.SendAsync(email, ct);
         }
         catch (BadHttpRequestException ex)

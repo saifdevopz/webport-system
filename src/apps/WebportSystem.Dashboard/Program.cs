@@ -1,9 +1,9 @@
 using Microsoft.AspNetCore.Components.Authorization;
 using MudBlazor.Services;
+using WebportSystem.Common.Contracts.Identity;
 using WebportSystem.Dashboard.Common.Authentication;
 using WebportSystem.Dashboard.Common.HttpClients;
-using WebportSystem.Dashboard.Common.Services.Implementations;
-using WebportSystem.Dashboard.Common.Services.Interfaces;
+using WebportSystem.Dashboard.Common.Services;
 using WebportSystem.Dashboard.Components;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -36,6 +36,18 @@ builder.Services.AddScoped<UserContext>();
 // Authentication
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthenticationStateProvider>();
+
+// Authorization
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("PlatformOnly", policy =>
+        policy.RequireAssertion(ctx =>
+            !ctx.User.HasClaim(c => c.Type == CustomClaims.TenantId)));
+
+    options.AddPolicy("TenantOnly", policy =>
+        policy.RequireAssertion(ctx =>
+            ctx.User.HasClaim(c => c.Type == CustomClaims.TenantId)));
+});
 
 // @CUSTOM-END
 

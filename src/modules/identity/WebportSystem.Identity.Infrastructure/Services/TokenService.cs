@@ -104,11 +104,20 @@ public class TokenService(
     {
         var claims = new List<Claim>
         {
-            new(CustomClaims.TenantId, customClaims.TenantId.ToString()),
             new(CustomClaims.UserId, customClaims.UserId.ToString()),
             new(CustomClaims.Email, customClaims.Email),
-            new(CustomClaims.DatabaseName, customClaims.DatabaseName)
+            new(CustomClaims.Scope, customClaims.TenantId == null ? "Platform" : "Tenant")
         };
+
+        if (customClaims.TenantId.HasValue)
+        {
+            claims.Add(new Claim(CustomClaims.TenantId, customClaims.TenantId.Value.ToString()));
+        }
+
+        if (!string.IsNullOrEmpty(customClaims.DatabaseName))
+        {
+            claims.Add(new Claim(CustomClaims.DatabaseName, customClaims.DatabaseName));
+        }
 
         foreach (var role in customClaims.Roles)
         {

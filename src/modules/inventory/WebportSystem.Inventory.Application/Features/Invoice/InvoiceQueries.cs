@@ -16,7 +16,6 @@ public class GetInvoiceByIdQueryHandler(IInventoryDbContext dbContext)
     {
         var record = await dbContext.Invoices
             .Include(_ => _.Items)
-            .Include(_ => _.BusinessProfile)
             .Include(_ => _.Customer)
             .AsNoTracking()
             .SingleOrDefaultAsync(x => x.InvoiceId == query.InvoiceId, cancellationToken);
@@ -28,16 +27,13 @@ public class GetInvoiceByIdQueryHandler(IInventoryDbContext dbContext)
         var dto = new InvoiceDto
         {
             InvoiceId = record.InvoiceId,
-            InvoiceNumber = record.InvoiceNumber,
-            BusinessProfileId = record.BusinessProfileId,
-            BusinessName = record.BusinessProfile.BusinessName,
             CustomerId = record.CustomerId,
             SubTotal = record.SubTotal,
             Total = record.Total,
             Items = [.. record.Items.Select(_ => new InvoiceItemDto
             {
                 ItemId = _.ItemId,
-                ItemDesc = _.ItemName,
+                ItemDesc = _.ItemDesc,
                 UnitPrice = _.UnitPrice,
                 Quantity = _.Quantity,
                 Total = _.Total
@@ -62,8 +58,6 @@ public class GetInvoicesQueryHandler(IInventoryDbContext dbContext)
             .Select(_ => new InvoiceDto
             {
                 InvoiceId = _.InvoiceId,
-                InvoiceNumber = _.InvoiceNumber,
-                BusinessProfileId = _.BusinessProfileId,
                 CustomerId = _.CustomerId,
                 SubTotal = _.SubTotal,
                 Total = _.Total
@@ -88,9 +82,6 @@ public class GetInvoicePrintQueryHandler(IInventoryDbContext dbContext)
                 .Where(x => x.InvoiceId == query.InvoiceId)
                 .Select(x => new InvoicePrintDto
                 {
-                    InvoiceNumber = x.InvoiceNumber,
-                    BusinessName = x.BusinessProfile.BusinessName,
-                    BusinessAddress = $"{x.BusinessProfile.AddressLine1}, {x.BusinessProfile.City}, {x.BusinessProfile.City}",
                     CustomerName = x.Customer!.Name,
                     CustomerBusinessName = x.Customer.CompanyName,
                     CustomerAddress = $"{x.Customer.Province}, {x.Customer.City}, {x.Customer.City}",
@@ -99,7 +90,7 @@ public class GetInvoicePrintQueryHandler(IInventoryDbContext dbContext)
                     Items = x.Items.Select(i => new InvoiceItemDto
                     {
                         ItemId = i.ItemId,
-                        ItemDesc = i.ItemName,
+                        ItemDesc = i.ItemDesc,
                         UnitPrice = i.UnitPrice,
                         Quantity = i.Quantity,
                         Total = i.Total

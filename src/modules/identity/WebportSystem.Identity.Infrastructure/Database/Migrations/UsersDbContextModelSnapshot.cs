@@ -106,6 +106,66 @@ namespace WebportSystem.Identity.Infrastructure.Database.Migrations
                     b.ToTable("AspNetUserTokens", "identity");
                 });
 
+            modelBuilder.Entity("WebportSystem.Identity.Domain.Platform.PlatformUserM", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("createdBy");
+
+                    b.Property<DateTime>("CreatedDt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("createdDt");
+
+                    b.Property<string>("DisplayName")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("displayName");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .IsUnicode(false)
+                        .HasColumnType("character varying(256)")
+                        .HasColumnName("email");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean")
+                        .HasColumnName("isActive");
+
+                    b.Property<bool>("IsSuperAdmin")
+                        .HasColumnType("boolean")
+                        .HasColumnName("isSuperAdmin");
+
+                    b.Property<string>("LastModBy")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("lastModBy");
+
+                    b.Property<DateTime>("LastModDt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("lastModDt");
+
+                    b.Property<string>("Password")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("password");
+
+                    b.HasKey("Id")
+                        .HasName("pK_PlatformUsers");
+
+                    b.HasIndex("Email")
+                        .IsUnique()
+                        .HasDatabaseName("iX_PlatformUsers_email");
+
+                    b.ToTable("PlatformUsers", "identity");
+                });
+
             modelBuilder.Entity("WebportSystem.Identity.Domain.Roles.RoleClaimM", b =>
                 {
                     b.Property<int>("Id")
@@ -241,13 +301,13 @@ namespace WebportSystem.Identity.Infrastructure.Database.Migrations
                         .HasColumnName("tenantName");
 
                     b.HasKey("TenantId")
-                        .HasName("pK_tenants");
+                        .HasName("pK_Tenants");
 
                     b.HasIndex("TenantName")
                         .IsUnique()
-                        .HasDatabaseName("iX_tenants_tenantName");
+                        .HasDatabaseName("iX_Tenants_tenantName");
 
-                    b.ToTable("tenants", "identity");
+                    b.ToTable("Tenants", "identity");
                 });
 
             modelBuilder.Entity("WebportSystem.Identity.Domain.Users.UserM", b =>
@@ -308,7 +368,7 @@ namespace WebportSystem.Identity.Infrastructure.Database.Migrations
                         .HasColumnType("text")
                         .HasColumnName("securityStamp");
 
-                    b.Property<Guid>("TenantId")
+                    b.Property<Guid?>("TenantId")
                         .HasColumnType("uuid")
                         .HasColumnName("tenantId");
 
@@ -406,8 +466,7 @@ namespace WebportSystem.Identity.Infrastructure.Database.Migrations
                         .WithMany("Users")
                         .HasForeignKey("TenantId")
                         .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired()
-                        .HasConstraintName("fK_AspNetUsers_tenants_tenantId");
+                        .HasConstraintName("fK_AspNetUsers_Tenants_tenantId");
 
                     b.Navigation("Tenant");
                 });

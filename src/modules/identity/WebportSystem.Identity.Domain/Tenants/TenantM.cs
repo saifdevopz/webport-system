@@ -14,22 +14,29 @@ public sealed class TenantM : AggregateRoot
 
     public static TenantM Create(
         string tenantName,
-        string databaseName,
-        string databaseConnectionString)
+        string databaseName)
     {
         TenantM tenant = new()
         {
             TenantId = Guid.NewGuid(),
             TenantName = tenantName,
             DatabaseName = databaseName,
-            DatabaseConnectionString = databaseConnectionString,
+            DatabaseConnectionString = GetPostreSQLDatabaseConnectionString(databaseName),
             LicenseExpiryDateUtc = DateTime.UtcNow,
             Status = TenantStatus.Trial
         };
 
         return tenant;
     }
+
+    private static string GetPostreSQLDatabaseConnectionString(string databaseName)
+    {
+        //return $"Host=102.211.206.231;Port=5432;Database={databaseName};Username=sword;Password=25122000@Saif;Pooling=true;MinPoolSize=10;MaxPoolSize=100;Include Error Detail=true;GSS Encryption Mode=Disable;";
+        return $"Host=102.214.11.80; Database={databaseName}; Username=sword; Password=25122000@Saif; GSS Encryption Mode=Disable;";
+    }
 }
+
+
 
 public enum TenantStatus
 {

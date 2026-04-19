@@ -1,36 +1,42 @@
-﻿using WebportSystem.Inventory.Domain.Entities.BusinessProfile;
-using WebportSystem.Inventory.Domain.Entities.Customer;
+﻿using WebportSystem.Inventory.Domain.Entities.Customer;
 
 namespace WebportSystem.Inventory.Domain.Entities.Invoice;
 
 public sealed class InvoiceM : AggregateRoot
 {
     public int InvoiceId { get; set; }
-    public string InvoiceNumber { get; private set; } = string.Empty;
-    public int BusinessProfileId { get; private set; }
-    public int? CustomerId { get; private set; }
+
+    // Customer
+    public int? CustomerId { get; set; }
+    public required string CustomerName { get; set; }
+    public CustomerM Customer { get; private set; } = default!;
+
+    // Totals
     public decimal SubTotal { get; private set; }
     public decimal Total { get; private set; }
-
-    // 🔗 Navigation properties
-    public BusinessProfileM BusinessProfile { get; private set; } = default!;
-    public CustomerM Customer { get; private set; } = default!;
 
     private readonly List<InvoiceItemM> _items = [];
     public IReadOnlyCollection<InvoiceItemM> Items => _items;
 
-    private InvoiceM() { } // EF
-
-    public InvoiceM(
-        string invoiceNumber,
-        int businessProfileId,
-        int? customerId)
+    public static InvoiceM Create(int? customerId, string customerName)
     {
-        InvoiceNumber = invoiceNumber;
-        BusinessProfileId = businessProfileId;
-        CustomerId = customerId;
+        InvoiceM model = new()
+        {
+            CustomerId = customerId,
+            CustomerName = customerName
+        };
+
+        return model;
     }
 
+    public void RemoveItem(int itemId)
+    {
+        var item = _items.FirstOrDefault(x => x.ItemId == itemId);
+        if (item == null) return;
+
+        _items.Remove(item);
+        Recalculate();
+    }
     public void AddItem(
         int itemId,
         string itemName,
@@ -58,9 +64,9 @@ public sealed class InvoiceM : AggregateRoot
     {
         _items.Clear();
 
-        foreach (var item in items)
+        foreach (var (itemId, name, price, qty) in items)
         {
-            AddItem(item.itemId, item.name, item.price, item.qty);
+            AddItem(itemId, name, price, qty);
         }
 
         Recalculate();

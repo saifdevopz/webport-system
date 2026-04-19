@@ -1,0 +1,14 @@
+﻿@page "/platform/dashboard"
+@layout PlatformLayout
+
+<h3>PlatformIndex</h3>
+
+@code {
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await _IJSRuntime.InvokeVoidAsync("console.log", "🔥 PlatformLayout: First Render");
+        }
+    }
+}

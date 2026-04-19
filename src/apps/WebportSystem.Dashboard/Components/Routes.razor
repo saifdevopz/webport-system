@@ -1,8 +1,9 @@
 ﻿@using WebportSystem.Dashboard.Components.Pages.Index
 
+<CascadingAuthenticationState>
 <Router AppAssembly="typeof(Program).Assembly" NotFoundPage="typeof(Pages.NotFound)">
     <Found Context="routeData">
-        <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)">
+        <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(AuthLayout)">
             <NotAuthorized>
                 @if (context.User.Identity?.IsAuthenticated != true)
                 {
@@ -12,9 +13,11 @@
                 {
                     <p>You are not authorized to access this resource.</p>
                     <h3>App.Razor</h3>  
+                    <LoginPage />
                 }
             </NotAuthorized>
         </AuthorizeRouteView>
         <FocusOnNavigate RouteData="routeData" Selector="h1" />
     </Found>
 </Router>
+</CascadingAuthenticationState>

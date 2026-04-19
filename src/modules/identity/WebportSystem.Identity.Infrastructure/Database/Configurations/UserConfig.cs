@@ -8,9 +8,6 @@ public class UserConfig : IEntityTypeConfiguration<UserM>
 {
     public void Configure(EntityTypeBuilder<UserM> builder)
     {
-        builder.Property(u => u.TenantId)
-            .IsRequired();
-
         builder.HasOne(u => u.Tenant)
             .WithMany(t => t.Users)
             .HasForeignKey(u => u.TenantId)

@@ -76,6 +76,7 @@
 </style>
 
 @code {
+    [Inject] AuthenticationStateProvider AuthProvider { get; set; } = default!;
     private ErrorBoundary? errorBoundary;
 
     private static void Test()
@@ -88,7 +89,7 @@
         if (!firstRender || _UserContext.IsInitialized)
             return;
 
-        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();        
+        var authState = await AuthProvider.GetAuthenticationStateAsync();
         var user = authState.User;
 
         if (!user.Identity?.IsAuthenticated ?? true)
@@ -130,3 +131,4 @@
         
     }
 }
+

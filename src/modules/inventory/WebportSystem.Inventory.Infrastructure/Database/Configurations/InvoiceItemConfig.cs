@@ -20,7 +20,7 @@ public class InvoiceItemConfig : IEntityTypeConfiguration<InvoiceItemM>
         builder.HasIndex(x => x.InvoiceId);
 
         // 🧾 Snapshot
-        builder.Property(x => x.ItemName)
+        builder.Property(x => x.ItemDesc)
             .IsRequired()
             .HasMaxLength(200);
 

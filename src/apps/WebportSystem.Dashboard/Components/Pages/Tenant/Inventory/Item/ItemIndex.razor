@@ -1,0 +1,94 @@
+﻿@page "/item/index"
+@layout TenantLayout
+@attribute [Authorize(Roles = "User")]
+
+<MudText Typo="Typo.h5">Items</MudText>
+
+<MudDataGrid Items="@Items" 
+             Filterable="true" 
+             ColumnResizeMode="ResizeMode.Column" 
+             Dense="true" 
+             Hover="true" 
+             Striped="true"
+             QuickFilter="@_quickFilter">
+    <ToolBarContent>
+        <MudIconButton Href="@($"item/modify")" Icon="@Icons.Material.Filled.Add" />
+        <MudSpacer />
+        <MudTextField @bind-Value="_searchString" 
+                      Placeholder="Search" 
+                      Adornment="Adornment.Start" 
+                      Immediate="true"
+                      AdornmentIcon="@Icons.Material.Filled.Search" 
+                      IconSize="Size.Medium" />
+    </ToolBarContent>
+    <Columns>        
+        <PropertyColumn Property="_ => _.ItemCode" Title="Code" />
+        <PropertyColumn Property="_ => _.ItemDesc" Title="Description" />
+        <PropertyColumn Property="_ => _.SellingPrice" Title="SellingPrice" />
+        <PropertyColumn Property="_ => _.Category.CategoryDesc" Title="Category" />
+        <TemplateColumn CellClass="">
+            <CellTemplate>
+                <MudStack Row>
+                    <MudIconButton Href="@($"item/modify/{context.Item.ItemId}")" Icon="@Icons.Material.Filled.Edit" Color="Color.Success" />
+                    <MudIconButton OnClick="@(() => Delete(context.Item.ItemId))" Icon="@Icons.Material.Filled.Delete" Color="Color.Error" />
+                </MudStack>
+            </CellTemplate>
+        </TemplateColumn>
+    </Columns>
+    <PagerContent>
+        <MudDataGridPager T="ItemDto" />
+    </PagerContent>
+</MudDataGrid>
+
+
+@code {
+    private List<ItemDto> Items = new();
+    private string _searchString = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        await GetItems();
+    }
+
+    private async Task GetItems()
+    {
+        var response = await _DataService.GetAllAsync<ItemDto>("item");
+
+        if (response.IsSuccess && response.Data != null)
+        {
+            Items = response.Data;
+        }
+    }
+
+    private async Task Delete(int id)
+    {
+        var parameters = new DialogParameters<Dialog>
+        {
+            { _ => _.ContentText, "Do you really want to delete this record? This process cannot be undone." },
+            { _ => _.ButtonText, "Delete" },
+            { _ => _.Color, Color.Error },
+        };
+
+        // Show the dialog and await user response
+        var dialog = await DialogService.ShowAsync<Dialog>("Delete", parameters);
+        var result = await dialog.Result;
+
+        // Only proceed if user confirms deletion
+        if (!result!.Canceled)
+        {
+            await _DataService.DeleteByIdAsync("item", id);
+            await GetItems();
+            await DialogService.ShowMessageBox("Success", "Deleted Successfully");
+        }
+    }
+
+    private Func<ItemDto, bool> _quickFilter => _ =>
+    {
+        if (string.IsNullOrWhiteSpace(_searchString)) return true;
+
+        return _.ItemCode.Contains(_searchString, StringComparison.OrdinalIgnoreCase)
+            || _.ItemDesc.Contains(_searchString, StringComparison.OrdinalIgnoreCase)
+            || $"{_.ItemCode} {_.ItemDesc}".Contains(_searchString, StringComparison.OrdinalIgnoreCase);
+    };
+}
+

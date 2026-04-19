@@ -318,15 +318,15 @@ namespace WebportSystem.Inventory.Infrastructure.Database.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("invoiceId");
 
-                    b.Property<int>("ItemId")
-                        .HasColumnType("integer")
-                        .HasColumnName("itemId");
-
-                    b.Property<string>("ItemName")
+                    b.Property<string>("ItemDesc")
                         .IsRequired()
                         .HasMaxLength(200)
                         .HasColumnType("character varying(200)")
-                        .HasColumnName("itemName");
+                        .HasColumnName("itemDesc");
+
+                    b.Property<int>("ItemId")
+                        .HasColumnType("integer")
+                        .HasColumnName("itemId");
 
                     b.Property<int>("Quantity")
                         .HasColumnType("integer")
@@ -360,10 +360,6 @@ namespace WebportSystem.Inventory.Infrastructure.Database.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("InvoiceId"));
 
-                    b.Property<int>("BusinessProfileId")
-                        .HasColumnType("integer")
-                        .HasColumnName("businessProfileId");
-
                     b.Property<string>("CreatedBy")
                         .IsRequired()
                         .HasColumnType("text")
@@ -377,11 +373,10 @@ namespace WebportSystem.Inventory.Infrastructure.Database.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("customerId");
 
-                    b.Property<string>("InvoiceNumber")
+                    b.Property<string>("CustomerName")
                         .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
-                        .HasColumnName("invoiceNumber");
+                        .HasColumnType("text")
+                        .HasColumnName("customerName");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("boolean")
@@ -409,15 +404,8 @@ namespace WebportSystem.Inventory.Infrastructure.Database.Migrations
                     b.HasKey("InvoiceId")
                         .HasName("pK_Invoices");
 
-                    b.HasIndex("BusinessProfileId")
-                        .HasDatabaseName("iX_Invoices_businessProfileId");
-
                     b.HasIndex("CustomerId")
                         .HasDatabaseName("iX_Invoices_customerId");
-
-                    b.HasIndex("InvoiceNumber")
-                        .IsUnique()
-                        .HasDatabaseName("iX_Invoices_invoiceNumber");
 
                     b.ToTable("Invoices", "inventory");
                 });
@@ -504,20 +492,11 @@ namespace WebportSystem.Inventory.Infrastructure.Database.Migrations
 
             modelBuilder.Entity("WebportSystem.Inventory.Domain.Entities.Invoice.InvoiceM", b =>
                 {
-                    b.HasOne("WebportSystem.Inventory.Domain.Entities.BusinessProfile.BusinessProfileM", "BusinessProfile")
-                        .WithMany()
-                        .HasForeignKey("BusinessProfileId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired()
-                        .HasConstraintName("fK_Invoices_businessProfiles_businessProfileId");
-
                     b.HasOne("WebportSystem.Inventory.Domain.Entities.Customer.CustomerM", "Customer")
                         .WithMany()
                         .HasForeignKey("CustomerId")
                         .OnDelete(DeleteBehavior.SetNull)
                         .HasConstraintName("fK_Invoices_customers_customerId");
-
-                    b.Navigation("BusinessProfile");
 
                     b.Navigation("Customer");
                 });

@@ -1,0 +1,231 @@
+@page "/invoice-creator"
+@using MudBlazor
+
+<MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="py-8">
+    <MudGrid Spacing="4" Class="align-start">
+        <MudItem xs="12">
+            <div class="d-flex flex-column flex-sm-row justify-space-between align-start align-sm-center gap-3 mb-6">
+                <div>
+                    <MudText Typo="Typo.h4">Create Invoice</MudText>
+                    <MudText Typo="Typo.body2" Color="Color.Secondary">Professional invoice drafting with instant totals and polished layout.</MudText>
+                </div>
+                <div class="d-flex flex-wrap gap-2">
+                    <MudButton Variant="Variant.Outlined" Color="Color.Secondary" OnClick="ResetForm">Reset</MudButton>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SaveDraft">Save Draft</MudButton>
+                </div>
+            </div>
+        </MudItem>
+
+        <MudItem xs="12" lg="8">
+            <MudCard Class="pa-2">
+                <MudCardContent>
+                    <MudForm Model="invoiceViewModel" @ref="form">
+                        <MudText Typo="Typo.h6">Invoice Details</MudText>
+                        <MudDivider DividerType="DividerType.Middle" Class="my-4" />
+
+                        <MudGrid Spacing="3">
+                            <MudItem xs="12" sm="6">
+                                <MudTextField @bind-Value="invoiceViewModel.InvoiceNumber" Label="Invoice Number" Variant="Variant.Outlined" Required="true" HelperText="Unique billing reference" />
+                            </MudItem>
+                            <MudItem xs="12" sm="6">
+                                <MudDatePicker @bind-Date="invoiceViewModel.InvoiceDate" Label="Invoice Date" Variant="Variant.Outlined" PickerVariant="PickerVariant.Dialog" />
+                            </MudItem>
+                            <MudItem xs="12" sm="6">
+                                <MudDatePicker @bind-Date="invoiceViewModel.DueDate" Label="Due Date" Variant="Variant.Outlined" PickerVariant="PickerVariant.Dialog" />
+                            </MudItem>
+                            <MudItem xs="12" sm="6">
+                                <MudTextField @bind-Value="invoiceViewModel.Currency" Label="Currency" Variant="Variant.Outlined" HelperText="Example: USD" />
+                            </MudItem>
+                        </MudGrid>
+
+                        <MudDivider DividerType="DividerType.Middle" Class="my-6" />
+                        <MudText Typo="Typo.h6">From</MudText>
+                        <MudGrid Spacing="3" Class="mt-1">
+                            <MudItem xs="12" sm="6">
+                                <MudTextField @bind-Value="invoiceViewModel.FromCompany" Label="Company Name" Variant="Variant.Outlined" Required="true" />
+                            </MudItem>
+                            <MudItem xs="12" sm="6">
+                                <MudTextField @bind-Value="invoiceViewModel.FromEmail" Label="Email" Variant="Variant.Outlined" />
+                            </MudItem>
+                            <MudItem xs="12">
+                                <MudTextField @bind-Value="invoiceViewModel.FromAddress" Label="Business Address" Variant="Variant.Outlined" Lines="3" />
+                            </MudItem>
+                        </MudGrid>
+
+                        <MudDivider DividerType="DividerType.Middle" Class="my-6" />
+                        <MudText Typo="Typo.h6">Bill To</MudText>
+                        <MudGrid Spacing="3" Class="mt-1">
+                            <MudSelect T="CustomerDto" @bind-Value="_selectedCustomer" Label="Select Customer">
+                                @foreach (var customer in Customers)
+                                {
+                                    <MudSelectItem Value="customer">@customer.CustomerName</MudSelectItem>
+                                }
+                            </MudSelect>
+                        </MudGrid>
+
+                        <MudDivider DividerType="DividerType.Middle" Class="my-6" />
+                        <MudGrid Spacing="3" Class="mt-1">
+                            <MudSelect T="ItemDto" @bind-Value="_selectedItem" Label="Select Item">
+                                @foreach (var item in Items)
+                                {
+                                    <MudSelectItem T="ItemDto" Value="item">@item.ItemDesc</MudSelectItem>
+                                }
+                            </MudSelect>
+                        </MudGrid>
+                        <div class="d-flex flex-column flex-sm-row justify-space-between align-start align-sm-center gap-3 mb-3">
+                            <MudText Typo="Typo.h6">Line Items</MudText>
+                            <MudButton Variant="Variant.Outlined" Color="Color.Primary" OnClick="AddItem">Add Item</MudButton>
+                        </div>
+
+                        <MudTable T="InvoiceLineItemModel" Items="invoiceViewModel.Items" Dense="true" Hover="true" Elevation="0">
+                            <HeaderContent>
+                                <MudTh>Description</MudTh>
+                                <MudTh>Qty</MudTh>
+                                <MudTh>Rate</MudTh>
+                                <MudTh>Amount</MudTh>
+                                <MudTh></MudTh>
+                            </HeaderContent>
+                            <RowTemplate>
+                                <MudTd DataLabel="Description">
+                                    <MudTextField @bind-Value="context.Description" Label="Description" Variant="Variant.Outlined" Immediate="true" />
+                                </MudTd>
+                                <MudTd DataLabel="Qty">
+                                    <MudNumericField T="decimal" @bind-Value="context.Quantity" Label="Qty" Variant="Variant.Outlined" Min="0" Immediate="true" />
+                                </MudTd>
+                                <MudTd DataLabel="Rate">
+                                    <MudNumericField T="decimal" @bind-Value="context.Rate" Label="Rate" Variant="Variant.Outlined" Min="0" Immediate="true" />
+                                </MudTd>
+                                <MudTd DataLabel="Amount">
+                                    <MudText Typo="Typo.body1">@FormatCurrency(GetLineTotal(context))</MudText>
+                                </MudTd>
+                                <MudTd DataLabel="Remove">
+                                    <MudButton Variant="Variant.Text" Color="Color.Error" OnClick="@(() => RemoveItem(context))">Remove</MudButton>
+                                </MudTd>
+                            </RowTemplate>
+                        </MudTable>
+
+                        <MudGrid Spacing="3" Class="mt-4">
+                            <MudItem xs="12" sm="6">
+                                <MudNumericField T="decimal" @bind-Value="invoiceViewModel.TaxPercent" Label="Tax %" Variant="Variant.Outlined" Min="0" Max="100" Immediate="true" />
+                            </MudItem>
+                            <MudItem xs="12" sm="6">
+                                <MudNumericField T="decimal" @bind-Value="invoiceViewModel.Discount" Label="Discount" Variant="Variant.Outlined" Min="0" Immediate="true" />
+                            </MudItem>
+                            <MudItem xs="12">
+                                <MudTextField @bind-Value="invoiceViewModel.Notes" Label="Notes / Payment Terms" Variant="Variant.Outlined" Lines="4" HelperText="Visible on the final invoice" />
+                            </MudItem>
+                        </MudGrid>
+                    </MudForm>
+                </MudCardContent>
+            </MudCard>
+        </MudItem>
+
+        <MudItem xs="12" lg="4">
+            <MudPaper Class="pa-5 rounded-lg" Elevation="1">
+                <MudText Typo="Typo.h6">Invoice Summary</MudText>
+                <MudText Typo="Typo.body2" Color="Color.Secondary" Class="mb-4">Live preview of invoice totals.</MudText>
+
+                <div class="d-flex justify-space-between mb-2">
+                    <MudText Typo="Typo.body1">Subtotal</MudText>
+                    <MudText Typo="Typo.body1">@FormatCurrency(Subtotal)</MudText>
+                </div>
+                <div class="d-flex justify-space-between mb-2">
+                    <MudText Typo="Typo.body1">Tax</MudText>
+                    <MudText Typo="Typo.body1">@FormatCurrency(TaxAmount)</MudText>
+                </div>
+                <div class="d-flex justify-space-between mb-4">
+                    <MudText Typo="Typo.body1">Discount</MudText>
+                    <MudText Typo="Typo.body1">- @FormatCurrency(invoiceViewModel.Discount)</MudText>
+                </div>
+
+                <MudDivider DividerType="DividerType.Middle" Class="my-4" />
+
+                <div class="d-flex justify-space-between align-center mb-4">
+                    <MudText Typo="Typo.h6">Total Due</MudText>
+                    <MudText Typo="Typo.h5" Color="Color.Primary">@FormatCurrency(Total)</MudText>
+                </div>
+
+                <MudPaper Class="pa-4 mud-theme-primary rounded-lg mb-4" Elevation="0">
+                    <MudText Typo="Typo.body2">Client</MudText>
+                    <MudText Typo="Typo.h6">@(string.IsNullOrWhiteSpace(invoiceViewModel.ClientName) ? "Client name" : invoiceViewModel.ClientName)</MudText>
+                    <MudText Typo="Typo.body2">Due @(invoiceViewModel.DueDate?.ToString("dd MMM yyyy") ?? "not set")</MudText>
+                </MudPaper>
+
+                <div class="d-flex flex-column gap-2">
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" FullWidth="true" OnClick="GenerateInvoice">Generate Invoice</MudButton>
+                    <MudButton Variant="Variant.Outlined" Color="Color.Secondary" FullWidth="true" OnClick="LoadSample">Load Sample Data</MudButton>
+                </div>
+            </MudPaper>
+        </MudItem>
+    </MudGrid>
+</MudContainer>
+
+@code {
+    private MudForm? form;
+    private InvoiceViewModel invoiceViewModel = InvoiceViewModel.CreateDefault();
+
+    private decimal Subtotal => invoiceViewModel.Items.Sum(GetLineTotal);
+    private decimal TaxAmount => Math.Max(0, Subtotal * (invoiceViewModel.TaxPercent / 100m));
+    private decimal Total => Math.Max(0, Subtotal + TaxAmount - invoiceViewModel.Discount);
+
+    private CustomerDto? _selectedCustomer;
+    private ItemDto? _selectedItem;
+
+    private List<CustomerDto> Customers = new();
+    private List<ItemDto> Items = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        var customers = await _DataService.GetAllAsync<CustomerDto>("customer");
+        Customers = customers.Data.ToList();
+
+        var items = await _DataService.GetAllAsync<ItemDto>("item");
+        Items = items.Data.ToList();
+    }
+
+    private static decimal GetLineTotal(InvoiceLineItemModel item)
+    {
+        return Math.Max(0, item.Quantity * item.Rate);
+    }
+
+    private string FormatCurrency(decimal amount)
+    {
+        var currency = string.IsNullOrWhiteSpace(invoiceViewModel.Currency) ? "USD" : invoiceViewModel.Currency.Trim().ToUpperInvariant();
+        return $"{currency} {amount:0.00}";
+    }
+
+    private void AddItem()
+    {
+        invoiceViewModel.Items.Add(new InvoiceLineItemModel());
+    }
+
+    private void RemoveItem(InvoiceLineItemModel item)
+    {
+        if (invoiceViewModel.Items.Count <= 1)
+            return;
+
+        invoiceViewModel.Items.Remove(item);
+    }
+
+    private void ResetForm()
+    {
+        invoiceViewModel = InvoiceViewModel.CreateDefault();
+    }
+
+    private void LoadSample()
+    {
+        invoiceViewModel = InvoiceViewModel.CreateSample();
+    }
+
+    private async Task SaveDraft()
+    {
+        if (form is not null)
+            await form.Validate();
+    }
+
+    private async Task GenerateInvoice()
+    {
+        if (form is not null)
+            await form.Validate();
+    }
+}

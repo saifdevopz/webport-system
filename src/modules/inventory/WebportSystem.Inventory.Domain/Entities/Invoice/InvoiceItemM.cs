@@ -5,9 +5,8 @@ public class InvoiceItemM
     public int InvoiceItemId { get; set; }
     public int InvoiceId { get; set; }
     public InvoiceM Invoice { get; private set; } = default!;
-    public int ItemId { get; private set; }
-
-    public string ItemName { get; private set; } = default!;
+    public int? ItemId { get; private set; }
+    public string ItemDesc { get; private set; } = default!;
     public decimal UnitPrice { get; private set; }
     public int Quantity { get; private set; }
     public decimal Total { get; private set; }
@@ -16,13 +15,12 @@ public class InvoiceItemM
 
     internal InvoiceItemM(
         int itemId,
-        string itemName,
+        string itemDesc,
         decimal unitPrice,
         int quantity)
     {
         ItemId = itemId;
-
-        ItemName = itemName;
+        ItemDesc = itemDesc;
         UnitPrice = unitPrice;
 
         SetQuantity(quantity);

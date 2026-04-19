@@ -1,0 +1,101 @@
+﻿@using WebportSystem.Dashboard.Components.Pages.Index
+@inherits LayoutComponentBase
+
+<MudThemeProvider Theme="ThemeConfig.CurrentTheme" />
+<MudPopoverProvider />
+<MudDialogProvider FullWidth="true"
+                   MaxWidth="MaxWidth.ExtraSmall"
+                   CloseButton="true"
+                   BackdropClick="false"
+                   Position="DialogPosition.Center"
+                   CloseOnEscapeKey="true" />
+
+<AuthorizeView Policy="TenantOnly">
+    <Authorized>
+        <MudLayout>
+            <MudAppBar Elevation="1" Color="Color.Primary">
+                <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
+                <MudSpacer />                
+                <MudMenu Label="@_TenantContext.Email"
+                         Variant="Variant.Text" 
+                         StartIcon="@Icons.Material.Filled.House" 
+                         EndIcon="@Icons.Material.Filled.KeyboardArrowDown"
+                         Color="Color.Tertiary">
+                    <MudMenuItem Href="@("businessprofile")" Label="Profile" />
+                    <MudMenuItem Label="Logout" @onclick="LogoutClicked" />
+                </MudMenu>
+            </MudAppBar>
+            <MudDrawer @bind-Open="_drawerOpen" Elevation="2">
+                <MudDrawerHeader>
+                    <MudText Typo="Typo.h5" Class="mt-1">Menu</MudText>
+                </MudDrawerHeader>
+                @*NavMenu*@
+                <MudPaper Width="250px" Class="d-inline-flex py-3" Elevation="0">
+                    <MudNavMenu Class="mud-width-full">
+                        <MudText Typo="Typo.h6" Class="px-4">@_TenantContext.Role</MudText>
+                        <MudText Typo="Typo.body2" Class="px-4 mud-text-secondary">@_TenantContext.Email</MudText>
+                        <MudDivider Class="my-2" />
+                        <MudNavLink Href="/tenant/dashboard" Icon="@Icons.Material.Filled.Dashboard">Dashboard</MudNavLink>
+                        <MudNavGroup Title="Inventory" Icon="@Icons.Material.Filled.Inventory" Expanded="false">
+                            <MudNavLink Href="/category/index" Icon="@Icons.Material.Filled.Category">Categories</MudNavLink>
+                            <MudNavLink Href="/item/index" Icon="@Icons.Material.Filled.FoodBank">Items</MudNavLink>
+                        </MudNavGroup>
+                        <MudNavGroup Title="Invoice" Icon="@Icons.Material.Filled.FileCopy" Expanded="false">
+                            <MudNavLink Href="/customer/index" Icon="@Icons.Material.Filled.Category">Customers</MudNavLink>
+                            <MudNavLink Href="/invoice/index" Icon="@Icons.Material.Filled.FoodBank">Tax Invoice</MudNavLink>
+                        </MudNavGroup>                        
+                        <MudNavLink OnClick="LogoutClicked" Icon="@Icons.Material.Filled.Logout">Logout</MudNavLink>
+                    </MudNavMenu>
+                </MudPaper>
+            </MudDrawer>
+            <MudMainContent>
+                <ErrorBoundary @ref="errorBoundary">
+                    <ChildContent>
+                        @Body
+                    </ChildContent>
+
+                    <ErrorContent Context="exception">
+                        <p>Platform Layout - Error Boundary</p>
+                        <p>@exception.GetType()</p>
+                        <p>@exception.Message</p>
+                        <p>@exception.StackTrace</p>
+                        <button @onclick="() => errorBoundary?.Recover()">Try Again</button>
+                    </ErrorContent>
+                </ErrorBoundary>
+            </MudMainContent>
+        </MudLayout>
+    </Authorized>
+    <NotAuthorized>
+        <IndexPage />
+    </NotAuthorized>
+</AuthorizeView>
+
+@code {
+    private ErrorBoundary? errorBoundary;
+
+    protected override void OnParametersSet()
+    {
+        errorBoundary?.Recover();
+    }
+
+    
+    private void LogoutClicked()
+    {
+        _NavigationManager.NavigateTo("/logout", forceLoad: true);
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await _IJSRuntime.InvokeVoidAsync("console.log", "🔥 TenantLayout: First Render");
+        }
+    }
+
+    bool _drawerOpen = true;
+
+    void DrawerToggle()
+    {
+        _drawerOpen = !_drawerOpen;
+    }
+}

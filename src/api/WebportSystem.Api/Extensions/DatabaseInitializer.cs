@@ -13,10 +13,10 @@ internal static class DatabaseInitializer
     public static async Task InitializeDatabases(this IApplicationBuilder app)
 #pragma warning disable S125 // Sections of code should not be commented out
     {
-        //await app.ApplyIdentityMigrations();
-        //await app.ApplyIdentityDataSeeder();
+        await app.ApplyIdentityMigrations();
+        await app.ApplyIdentityDataSeeder();
 
-        await app.ApplyInventoryMigrations();
+        //await app.ApplyInventoryMigrations();
 
         //await app.ApplyInventoryDataSeeder();
     }

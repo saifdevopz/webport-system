@@ -11,8 +11,8 @@
 
 @* Blazor *@
 @using WebportSystem.Dashboard
-@using WebportSystem.Dashboard.Common.Services.Implementations
-@using WebportSystem.Dashboard.Common.Services.Interfaces
+@using WebportSystem.Dashboard.Common.Authentication
+@using WebportSystem.Dashboard.Common.Services
 @using WebportSystem.Dashboard.Components
 @using WebportSystem.Dashboard.Components.Layout
 
@@ -35,7 +35,6 @@
 @attribute [Authorize]
 @inject NavigationManager _NavigationManager
 @inject IJSRuntime _IJSRuntime
-@inject AuthenticationStateProvider AuthenticationStateProvider
 @inject IHttpContextAccessor _HttpContextAccessor
 
 @* Services *@

@@ -8,6 +8,9 @@ internal sealed class TenantConfig : IEntityTypeConfiguration<TenantM>
 {
     public void Configure(EntityTypeBuilder<TenantM> builder)
     {
+        // Table
+        builder.ToTable("Tenants");
+
         builder
             .HasKey(_ => _.TenantId);
 

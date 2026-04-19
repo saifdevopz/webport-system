@@ -1,0 +1,85 @@
+﻿@page "/customer/index"
+@layout TenantLayout
+@attribute [Authorize(Roles = "User")]
+
+
+<PageTitle>Weather</PageTitle>
+
+<MudText Typo="Typo.h5">Customers</MudText>
+
+<MudDataGrid Items="@Customers"
+             Filterable="true"
+             ColumnResizeMode="ResizeMode.Column"
+             Dense="true"
+             Hover="true"
+             Striped="true">
+    <ToolBarContent>
+        <MudIconButton Href="@($"customer/modify")" Icon="@Icons.Material.Filled.Add" />
+        <MudSpacer />
+        <MudTextField @bind-Value="_searchString"
+                      Placeholder="Search"
+                      Adornment="Adornment.Start"
+                      Immediate="true"
+                      AdornmentIcon="@Icons.Material.Filled.Search"
+                      IconSize="Size.Medium" />
+    </ToolBarContent>
+    <Columns>
+        <PropertyColumn Property="_ => _.CustomerId" Title="Id" />
+        <PropertyColumn Property="_ => _.CustomerName" Title="Name" />
+        <PropertyColumn Property="_ => _.CompanyName" Title="Company" />        
+        <TemplateColumn CellClass="">
+            <CellTemplate>
+                <MudStack Row>
+                    <MudIconButton Href="@($"customer/modify/{context.Item.CustomerId}")" Icon="@Icons.Material.Filled.Edit" Color="Color.Success" />
+                    <MudIconButton OnClick="@(() => Delete(context.Item.CustomerId))" Icon="@Icons.Material.Filled.Delete" Color="Color.Error" />
+                </MudStack>
+            </CellTemplate>
+        </TemplateColumn>
+    </Columns>
+    <PagerContent>
+        <MudDataGridPager T="CustomerDto" />
+    </PagerContent>
+</MudDataGrid>
+
+@code {
+    private List<CustomerDto> Customers = new();
+    private string _searchString = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        await GetCustomers();
+    }
+
+    private async Task GetCustomers()
+    {
+        var response = await _DataService.GetAllAsync<CustomerDto>("customer");
+
+        if (response.IsSuccess && response.Data != null)
+        {
+            Customers = response.Data.ToList();
+        }
+    }
+
+    private async Task Delete(int id)
+    {
+        var parameters = new DialogParameters<Dialog>
+        {
+            { _ => _.ContentText, "Do you really want to delete this record? This process cannot be undone." },
+            { _ => _.ButtonText, "Delete" },
+            { _ => _.Color, Color.Error },
+        };
+
+        // Show the dialog and await user response
+        var dialog = await DialogService.ShowAsync<Dialog>("Delete", parameters);
+        var result = await dialog.Result;
+
+        // Only proceed if user confirms deletion
+        if (!result!.Canceled)
+        {
+            await _DataService.DeleteByIdAsync("customer", id);
+            await GetCustomers();
+            await DialogService.ShowMessageBox("Success", "Deleted Successfully");
+        }
+    }
+}
+

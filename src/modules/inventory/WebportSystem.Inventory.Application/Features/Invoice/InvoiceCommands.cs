@@ -8,9 +8,8 @@ using WebportSystem.Inventory.Domain.Entities.Invoice;
 namespace WebportSystem.Inventory.Application.Features.Invoice;
 
 public sealed record CreateInvoiceCommand(
-    string InvoiceNumber,
-    int BusinessProfileId,
     int CustomerId,
+    string CustomerName,
     List<CreateInvoiceItem> Items)
 : ICommand<int>;
 
@@ -18,10 +17,6 @@ public class CreateInvoiceCommandValidator : AbstractValidator<CreateInvoiceComm
 {
     public CreateInvoiceCommandValidator()
     {
-        RuleFor(_ => _.InvoiceNumber)
-                   .NotEmpty().WithMessage("Invoice number is required.")
-                   .MaximumLength(50);
-
         RuleFor(_ => _.Items)
             .NotEmpty().WithMessage("Invoice must have at least one item.");
 
@@ -40,19 +35,8 @@ public sealed class CreateInvoiceCommandHandler(IInventoryDbContext dbContext)
         CreateInvoiceCommand command,
         CancellationToken cancellationToken)
     {
-        var exists = await dbContext.Invoices
-            .AnyAsync(x => x.InvoiceNumber == command.InvoiceNumber, cancellationToken);
-
-        if (exists)
-        {
-            return Result.Failure<int>(
-                CustomError.Problem(nameof(CreateInvoiceCommand), "Record already exists."));
-        }
-
-        var invoice = new InvoiceM(
-            invoiceNumber: command.InvoiceNumber,
-            businessProfileId: 1,
-            customerId: command.CustomerId);
+        var invoice = InvoiceM.Create(command.CustomerId,
+            command.CustomerName);
 
         var itemIds = command.Items.Select(x => x.ItemId).ToList();
 
@@ -116,11 +100,6 @@ public class UpdateInvoiceCommandHandler(IInventoryDbContext dbContext)
                 CustomError.NotFound(nameof(UpdateInvoiceCommandHandler),
                 "Record not found."));
         }
-
-        // ✅ Replace items (clean + safe)
-        record.ReplaceItems(
-            [.. command.Items.Select(x => (x.ItemId, x.ItemDesc, x.UnitPrice, x.Quantity))]
-        );
 
         await dbContext.SaveChangesAsync(cancellationToken);
 
