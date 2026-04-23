@@ -7,8 +7,8 @@ public class InvoiceItemDto
     public string ItemDesc { get; set; } = string.Empty;
 
     public decimal UnitPrice { get; set; }
-
-    public int Quantity { get; set; }
+    
+    public decimal Quantity { get; set; } = 1;
 
     public decimal Total { get; set; }
 }
@@ -19,15 +19,15 @@ public class InvoiceDto
 
     public string InvoiceNumber { get; set; } = string.Empty;
 
-    public string BusinessName { get; set; } = string.Empty;
-
-    public int BusinessProfileId { get; set; }
+    public DateTime? InvoiceDate { get; set; }
 
     public int? CustomerId { get; set; }
 
     public decimal SubTotal { get; set; }
 
     public decimal Total { get; set; }
+
+    public string? Notes { get; set; } = string.Empty;
 
     public List<InvoiceItemDto> Items { get; set; } = [];
 }

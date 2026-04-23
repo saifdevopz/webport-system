@@ -29,7 +29,7 @@
                 <MudDrawerHeader>
                     <MudText Typo="Typo.h5" Class="mt-1">Menu</MudText>
                 </MudDrawerHeader>
-                @*NavMenu*@
+
                 <MudPaper Width="250px" Class="d-inline-flex py-3" Elevation="0">
                     <MudNavMenu Class="mud-width-full">
                         <MudText Typo="Typo.h6" Class="px-4">@_TenantContext.Role</MudText>
@@ -43,6 +43,7 @@
                         <MudNavGroup Title="Invoice" Icon="@Icons.Material.Filled.FileCopy" Expanded="false">
                             <MudNavLink Href="/customer/index" Icon="@Icons.Material.Filled.Category">Customers</MudNavLink>
                             <MudNavLink Href="/invoice/index" Icon="@Icons.Material.Filled.FoodBank">Tax Invoice</MudNavLink>
+                            <MudNavLink Href="/invoice/index2" Icon="@Icons.Material.Filled.FoodBank">Tax Invoice2</MudNavLink>
                         </MudNavGroup>                        
                         <MudNavLink OnClick="LogoutClicked" Icon="@Icons.Material.Filled.Logout">Logout</MudNavLink>
                     </MudNavMenu>
@@ -51,7 +52,9 @@
             <MudMainContent>
                 <ErrorBoundary @ref="errorBoundary">
                     <ChildContent>
-                        @Body
+                        <div class="body-wrapper">
+                            @Body
+                        </div>                        
                     </ChildContent>
 
                     <ErrorContent Context="exception">
@@ -77,7 +80,6 @@
     {
         errorBoundary?.Recover();
     }
-
     
     private void LogoutClicked()
     {

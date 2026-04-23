@@ -12,23 +12,26 @@
         </MudCardHeader>
 
         <MudCardContent>
-            <MudTextField @bind-Value="model.BusinessName" 
+            <MudTextField @bind-Value="model.BusinessName"
                           Required="true"
-                          Variant="Variant.Outlined" 
+                          Variant="Variant.Outlined"
                           For="@(() => model.BusinessName)"
                           Label="Business Name" />
 
-            <MudTextField @bind-Value="model.Phone"
-                          Required="true"
-                          Variant="Variant.Outlined"
-                          For="@(() => model.Phone)"
-                          Label="Phone" />
+            <MudStack Row="true">
+                <MudTextField @bind-Value="model.Phone"
+                              Required="true"
+                              Variant="Variant.Outlined"
+                              For="@(() => model.Phone)"
+                              Label="Phone" />
 
-            <MudTextField @bind-Value="model.Email" 
-                          Required="true"
-                          Variant="Variant.Outlined" 
-                          For="@(() => model.Email)"
-                          Label="Email" />
+                <MudTextField @bind-Value="model.Email"
+                              Required="true"
+                              Variant="Variant.Outlined"
+                              For="@(() => model.Email)"
+                              Label="Email" />
+            </MudStack>
+
 
             <MudTextField @bind-Value="model.AddressLine1"
                           Required="true"

@@ -35,8 +35,7 @@ public sealed class CreateInvoiceCommandHandler(IInventoryDbContext dbContext)
         CreateInvoiceCommand command,
         CancellationToken cancellationToken)
     {
-        var invoice = InvoiceM.Create(command.CustomerId,
-            command.CustomerName);
+        var invoice = InvoiceM.Create(command.CustomerId, command.CustomerName);
 
         var itemIds = command.Items.Select(x => x.ItemId).ToList();
 
@@ -59,7 +58,6 @@ public sealed class CreateInvoiceCommandHandler(IInventoryDbContext dbContext)
                 item.Quantity
             );
         }
-
 
         await dbContext.Invoices.AddAsync(invoice, cancellationToken);
         await dbContext.SaveChangesAsync(cancellationToken);

@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.Hosting.StaticWebAssets;
 using MudBlazor.Services;
 using WebportSystem.Common.Contracts.Identity;
 using WebportSystem.Dashboard.Common.Authentication;
@@ -7,6 +8,9 @@ using WebportSystem.Dashboard.Common.Services;
 using WebportSystem.Dashboard.Components;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Call this explicitly to enable assets in non-Development environments
+StaticWebAssetsLoader.UseStaticWebAssets(builder.Environment, builder.Configuration);
 
 // Add services to the container.
 builder.Services.AddRazorComponents()

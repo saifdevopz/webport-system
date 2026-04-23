@@ -33,8 +33,9 @@ public static class InventoryModule
     {
         services.AddDbContext<IInventoryDbContext, InventoryDbContext>((sp, options) =>
         {
-            var tenantContext = sp.GetRequiredService<TenantContext>();
-            string connectionString = tenantContext.GetTenantConnectionString();
+            var tenantContext = sp.GetService<TenantContext>();
+            var connectionString = tenantContext?.GetTenantConnectionString()
+                ?? throw new InvalidOperationException("TenantContext not available.");
 
             options.UseNpgsql(connectionString, npgsqlOptionsAction =>
             {
@@ -45,7 +46,7 @@ public static class InventoryModule
 
                 npgsqlOptionsAction.MigrationsHistoryTable(HistoryRepository.DefaultTableName, InventoryConstants.Schema);
             })
-            .UseCamelCaseNamingConvention()
+            .UseSnakeCaseNamingConvention()
             .AddInterceptors(
                 sp.GetRequiredService<AuditableEntityInterceptor>(),
                 sp.GetRequiredService<InsertOutboxMessagesInterceptor>());

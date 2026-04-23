@@ -10,17 +10,15 @@ namespace WebportSystem.Api.Extensions;
 
 internal static class DatabaseInitializer
 {
+
     public static async Task InitializeDatabases(this IApplicationBuilder app)
-#pragma warning disable S125 // Sections of code should not be commented out
     {
         await app.ApplyIdentityMigrations();
         await app.ApplyIdentityDataSeeder();
 
+        await app.ApplyInventoryDataSeeder();
         //await app.ApplyInventoryMigrations();
-
-        //await app.ApplyInventoryDataSeeder();
     }
-#pragma warning restore S125 // Sections of code should not be commented out
 
     public static async Task ApplyIdentityMigrations(this IApplicationBuilder app)
     {
@@ -30,7 +28,7 @@ internal static class DatabaseInitializer
 
     public static async Task ApplyInventoryMigrations(this IApplicationBuilder app)
     {
-        using var scope = app.ApplicationServices.CreateScope();
+        using IServiceScope scope = app.ApplicationServices.CreateScope();
         var usersDbContext = scope.ServiceProvider.GetRequiredService<UsersDbContext>();
 
         var tenants = await usersDbContext.Tenants
@@ -39,19 +37,13 @@ internal static class DatabaseInitializer
 
         foreach (var tenant in tenants)
         {
-            var tenantConnectionString = tenant.DatabaseConnectionString;
-
-            if (string.IsNullOrWhiteSpace(tenantConnectionString))
+            if (string.IsNullOrWhiteSpace(tenant.DatabaseConnectionString))
             {
-                Console.ForegroundColor = ConsoleColor.Yellow;
-                Console.WriteLine($"Skipping tenant '{tenant.TenantName}' - connection string missing.");
-                Console.ResetColor();
-
+                Console.WriteLine($"Skipping tenant '{tenant.TenantName}' - missing connection string.");
                 continue;
             }
 
-            app.ApplyCustomMigration<InventoryDbContext>(tenantConnectionString);
-            await ApplyInventoryDataSeeder(app, tenant);
+            ApplyCustomMigration<InventoryDbContext>(app, tenant.DatabaseConnectionString);
         }
     }
 
@@ -61,17 +53,27 @@ internal static class DatabaseInitializer
         using IServiceScope scope = app.ApplicationServices.CreateScope();
         using TDbContext context = scope.ServiceProvider.GetRequiredService<TDbContext>();
 
-        if (connectionString != null)
+        try
         {
-            context.Database.SetConnectionString(connectionString);
-        }
+            if (!string.IsNullOrWhiteSpace(connectionString))
+            {
+                context.Database.SetConnectionString(connectionString);
+            }
 
-        if (context.Database.GetPendingMigrations().Any())
+
+            if (context.Database.GetPendingMigrations().Any())
+            {
+                Console.ForegroundColor = ConsoleColor.Blue;
+                Console.WriteLine($"Applying Migrations for '{nameof(TDbContext) ?? "System Database"}'.");
+                Console.ResetColor();
+                context.Database.Migrate();
+            }
+        }
+        catch (Exception ex)
         {
-            Console.ForegroundColor = ConsoleColor.Blue;
-            Console.WriteLine($"Applying Migrations for '{nameof(TDbContext) ?? "System Database"}'.");
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine($"Migration failed for '{connectionString}': {ex.Message}");
             Console.ResetColor();
-            context.Database.Migrate();
         }
     }
 
@@ -85,13 +87,94 @@ internal static class DatabaseInitializer
 
         await IdentitySeedService.SeedAsync(dbContext, userManager, roleManager);
     }
-
-    public static async Task ApplyInventoryDataSeeder(this IApplicationBuilder app, TenantM tenant)
+    public static async Task ApplyInventoryDataSeeder2(this IApplicationBuilder app)
     {
-        using IServiceScope scope = app.ApplicationServices.CreateScope();
+        using var scope = app.ApplicationServices.CreateScope();
+        var usersDbContext = scope.ServiceProvider.GetRequiredService<UsersDbContext>();
 
-        var context = scope.ServiceProvider.GetRequiredService<InventoryDbContext>();
+        var tenants = await usersDbContext.Tenants
+            .AsNoTracking()
+            .ToListAsync();
 
-        await InventoryDataSeeder.SeedAsync(context, tenant.TenantName);
+        foreach (var tenant in tenants)
+        {
+            if (string.IsNullOrWhiteSpace(tenant.DatabaseConnectionString))
+            {
+                Console.WriteLine($"Skipping tenant '{tenant.TenantName}' - missing connection string.");
+                continue;
+            }
+
+            try
+            {
+                var optionsBuilder = new DbContextOptionsBuilder<InventoryDbContext>();
+                optionsBuilder.UseNpgsql(tenant.DatabaseConnectionString);
+                optionsBuilder.UseCamelCaseNamingConvention();
+
+                using var context = new InventoryDbContext(optionsBuilder.Options);
+
+                await InventoryDataSeeder.SeedAsync(context, tenant.TenantName);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"❌ Seeding failed for '{tenant.TenantName}': {ex.Message}");
+            }
+        }
+    }
+    public static async Task ApplyInventoryDataSeeder(this IApplicationBuilder app)
+    {
+        using var scope = app.ApplicationServices.CreateScope();
+        var usersDbContext = scope.ServiceProvider.GetRequiredService<UsersDbContext>();
+
+        var tenants = await usersDbContext.Tenants
+            .AsNoTracking()
+            .ToListAsync();
+
+        foreach (var tenant in tenants)
+        {
+            if (string.IsNullOrWhiteSpace(tenant.DatabaseConnectionString))
+            {
+                Console.WriteLine($"Skipping tenant '{tenant.TenantName}' - missing connection string.");
+                continue;
+            }
+
+            try
+            {
+                var optionsBuilder = new DbContextOptionsBuilder<InventoryDbContext>();
+                optionsBuilder.UseNpgsql(tenant.DatabaseConnectionString);
+                optionsBuilder.UseSnakeCaseNamingConvention();
+                using var context = new InventoryDbContext(optionsBuilder.Options);
+
+                await InventoryDataSeeder.SeedAsync(context, tenant.TenantName);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"❌ Seeding failed for '{tenant.TenantName}': {ex.Message}");
+            }
+        }
+    }
+    public static async Task ApplyInventoryDataSeeder3(this IApplicationBuilder app)
+    {
+        using var scope = app.ApplicationServices.CreateScope();
+        var usersDbContext = scope.ServiceProvider.GetRequiredService<UsersDbContext>();
+        var inventoryDbContext = scope.ServiceProvider.GetRequiredService<InventoryDbContext>();
+
+        var tenants = await usersDbContext.Tenants
+            .AsNoTracking()
+            .ToListAsync();
+
+        foreach (var tenant in tenants)
+        {
+            if (string.IsNullOrWhiteSpace(tenant.DatabaseConnectionString))
+            {
+                Console.WriteLine($"Skipping tenant '{tenant.TenantName}' - missing connection string.");
+                continue;
+            }
+
+
+            inventoryDbContext.Database.SetConnectionString(tenant.DatabaseConnectionString);
+
+            await InventoryDataSeeder.SeedAsync(inventoryDbContext, tenant.TenantName);
+
+        }
     }
 }

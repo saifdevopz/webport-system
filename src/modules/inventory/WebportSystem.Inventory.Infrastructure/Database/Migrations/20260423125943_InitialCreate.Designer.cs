@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using WebportSystem.Inventory.Infrastructure.Database;
@@ -11,9 +12,11 @@ using WebportSystem.Inventory.Infrastructure.Database;
 namespace WebportSystem.Inventory.Infrastructure.Database.Migrations
 {
     [DbContext(typeof(InventoryDbContext))]
-    partial class InventoryDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260423125943_InitialCreate")]
+    partial class InitialCreate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -168,7 +171,7 @@ namespace WebportSystem.Inventory.Infrastructure.Database.Migrations
                     b.HasKey("BusinessProfileId")
                         .HasName("pk_business_profiles");
 
-                    b.ToTable("BusinessProfiles", "inventory");
+                    b.ToTable("business_profiles", "inventory");
                 });
 
             modelBuilder.Entity("WebportSystem.Inventory.Domain.Entities.Category.CategoryM", b =>

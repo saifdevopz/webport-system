@@ -8,7 +8,6 @@ public sealed class InvoiceM : AggregateRoot
 
     // Customer
     public int? CustomerId { get; set; }
-    public required string CustomerName { get; set; }
     public CustomerM Customer { get; private set; } = default!;
 
     // Totals
@@ -23,7 +22,6 @@ public sealed class InvoiceM : AggregateRoot
         InvoiceM model = new()
         {
             CustomerId = customerId,
-            CustomerName = customerName
         };
 
         return model;

@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
@@ -15,33 +16,33 @@ namespace WebportSystem.Inventory.Infrastructure.Database.Migrations
                 name: "inventory");
 
             migrationBuilder.CreateTable(
-                name: "businessProfiles",
+                name: "business_profiles",
                 schema: "inventory",
                 columns: table => new
                 {
-                    businessProfileId = table.Column<int>(type: "integer", nullable: false)
+                    business_profile_id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    businessName = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: false),
+                    business_name = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: false),
                     phone = table.Column<string>(type: "text", nullable: false),
                     email = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
-                    addressLine1 = table.Column<string>(type: "text", nullable: false),
-                    postalCode = table.Column<string>(type: "text", nullable: false),
+                    address_line1 = table.Column<string>(type: "text", nullable: false),
+                    postal_code = table.Column<string>(type: "text", nullable: false),
                     city = table.Column<string>(type: "text", nullable: false),
                     province = table.Column<string>(type: "text", nullable: false),
                     country = table.Column<string>(type: "text", nullable: false),
-                    bankName = table.Column<string>(type: "text", nullable: true),
-                    branchCode = table.Column<string>(type: "text", nullable: true),
-                    accountNumber = table.Column<string>(type: "text", nullable: true),
-                    logoUrl = table.Column<string>(type: "text", nullable: true),
-                    isActive = table.Column<bool>(type: "boolean", nullable: false),
-                    lastModBy = table.Column<string>(type: "text", nullable: false),
-                    lastModDt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    createdBy = table.Column<string>(type: "text", nullable: false),
-                    createdDt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                    bank_name = table.Column<string>(type: "text", nullable: true),
+                    branch_code = table.Column<string>(type: "text", nullable: true),
+                    account_number = table.Column<string>(type: "text", nullable: true),
+                    logo_url = table.Column<string>(type: "text", nullable: true),
+                    is_active = table.Column<bool>(type: "boolean", nullable: false),
+                    last_mod_by = table.Column<string>(type: "text", nullable: false),
+                    last_mod_dt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    created_by = table.Column<string>(type: "text", nullable: false),
+                    created_dt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("pK_businessProfiles", x => x.businessProfileId);
+                    table.PrimaryKey("pk_business_profiles", x => x.business_profile_id);
                 });
 
             migrationBuilder.CreateTable(
@@ -49,19 +50,19 @@ namespace WebportSystem.Inventory.Infrastructure.Database.Migrations
                 schema: "inventory",
                 columns: table => new
                 {
-                    categoryId = table.Column<int>(type: "integer", nullable: false)
+                    category_id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    categoryCode = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: false),
-                    categoryDesc = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
-                    isActive = table.Column<bool>(type: "boolean", nullable: false),
-                    lastModBy = table.Column<string>(type: "text", nullable: false),
-                    lastModDt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    createdBy = table.Column<string>(type: "text", nullable: false),
-                    createdDt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                    category_code = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: false),
+                    category_desc = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
+                    is_active = table.Column<bool>(type: "boolean", nullable: false),
+                    last_mod_by = table.Column<string>(type: "text", nullable: false),
+                    last_mod_dt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    created_by = table.Column<string>(type: "text", nullable: false),
+                    created_dt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("pK_categories", x => x.categoryId);
+                    table.PrimaryKey("pk_categories", x => x.category_id);
                 });
 
             migrationBuilder.CreateTable(
@@ -69,25 +70,25 @@ namespace WebportSystem.Inventory.Infrastructure.Database.Migrations
                 schema: "inventory",
                 columns: table => new
                 {
-                    customerId = table.Column<int>(type: "integer", nullable: false)
+                    customer_id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     name = table.Column<string>(type: "text", nullable: false),
                     email = table.Column<string>(type: "text", nullable: false),
                     phone = table.Column<string>(type: "text", nullable: false),
-                    companyName = table.Column<string>(type: "text", nullable: false),
-                    addressLine1 = table.Column<string>(type: "text", nullable: false),
-                    postalCode = table.Column<string>(type: "text", nullable: false),
+                    company_name = table.Column<string>(type: "text", nullable: false),
+                    address_line1 = table.Column<string>(type: "text", nullable: false),
+                    postal_code = table.Column<string>(type: "text", nullable: false),
                     city = table.Column<string>(type: "text", nullable: false),
                     province = table.Column<string>(type: "text", nullable: false),
-                    isActive = table.Column<bool>(type: "boolean", nullable: false),
-                    lastModBy = table.Column<string>(type: "text", nullable: false),
-                    lastModDt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    createdBy = table.Column<string>(type: "text", nullable: false),
-                    createdDt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                    is_active = table.Column<bool>(type: "boolean", nullable: false),
+                    last_mod_by = table.Column<string>(type: "text", nullable: false),
+                    last_mod_dt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    created_by = table.Column<string>(type: "text", nullable: false),
+                    created_dt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("pK_customers", x => x.customerId);
+                    table.PrimaryKey("pk_customers", x => x.customer_id);
                 });
 
             migrationBuilder.CreateTable(
@@ -95,12 +96,12 @@ namespace WebportSystem.Inventory.Infrastructure.Database.Migrations
                 schema: "inventory",
                 columns: table => new
                 {
-                    outboxMessageId = table.Column<Guid>(type: "uuid", nullable: false),
+                    outbox_message_id = table.Column<Guid>(type: "uuid", nullable: false),
                     name = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("pK_outbox_message_consumers", x => new { x.outboxMessageId, x.name });
+                    table.PrimaryKey("pk_outbox_message_consumers", x => new { x.outbox_message_id, x.name });
                 });
 
             migrationBuilder.CreateTable(
@@ -111,13 +112,13 @@ namespace WebportSystem.Inventory.Infrastructure.Database.Migrations
                     id = table.Column<Guid>(type: "uuid", nullable: false),
                     type = table.Column<string>(type: "text", nullable: false),
                     content = table.Column<string>(type: "jsonb", maxLength: 5000, nullable: false),
-                    occurredOnUtc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    processedOnUtc = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    occurred_on_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    processed_on_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     error = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("pK_outbox_messages", x => x.id);
+                    table.PrimaryKey("pk_outbox_messages", x => x.id);
                 });
 
             migrationBuilder.CreateTable(
@@ -125,28 +126,28 @@ namespace WebportSystem.Inventory.Infrastructure.Database.Migrations
                 schema: "inventory",
                 columns: table => new
                 {
-                    itemId = table.Column<int>(type: "integer", nullable: false)
+                    item_id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    categoryId = table.Column<int>(type: "integer", nullable: false),
-                    itemCode = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: false),
-                    itemDesc = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
-                    sellingPrice = table.Column<decimal>(type: "numeric", nullable: false),
-                    costPrice = table.Column<decimal>(type: "numeric", nullable: false),
-                    isActive = table.Column<bool>(type: "boolean", nullable: false),
-                    lastModBy = table.Column<string>(type: "text", nullable: false),
-                    lastModDt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    createdBy = table.Column<string>(type: "text", nullable: false),
-                    createdDt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                    category_id = table.Column<int>(type: "integer", nullable: false),
+                    item_code = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: false),
+                    item_desc = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
+                    selling_price = table.Column<decimal>(type: "numeric", nullable: false),
+                    cost_price = table.Column<decimal>(type: "numeric", nullable: false),
+                    is_active = table.Column<bool>(type: "boolean", nullable: false),
+                    last_mod_by = table.Column<string>(type: "text", nullable: false),
+                    last_mod_dt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    created_by = table.Column<string>(type: "text", nullable: false),
+                    created_dt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("pK_items", x => x.itemId);
+                    table.PrimaryKey("pk_items", x => x.item_id);
                     table.ForeignKey(
-                        name: "fK_items_categories_categoryId",
-                        column: x => x.categoryId,
+                        name: "fk_items_categories_category_id",
+                        column: x => x.category_id,
                         principalSchema: "inventory",
                         principalTable: "categories",
-                        principalColumn: "categoryId",
+                        principalColumn: "category_id",
                         onDelete: ReferentialAction.Restrict);
                 });
 
@@ -155,27 +156,26 @@ namespace WebportSystem.Inventory.Infrastructure.Database.Migrations
                 schema: "inventory",
                 columns: table => new
                 {
-                    invoiceId = table.Column<int>(type: "integer", nullable: false)
+                    invoice_id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    customerId = table.Column<int>(type: "integer", nullable: true),
-                    customerName = table.Column<string>(type: "text", nullable: false),
-                    subTotal = table.Column<decimal>(type: "numeric(18,2)", precision: 18, scale: 2, nullable: false),
+                    customer_id = table.Column<int>(type: "integer", nullable: true),
+                    sub_total = table.Column<decimal>(type: "numeric(18,2)", precision: 18, scale: 2, nullable: false),
                     total = table.Column<decimal>(type: "numeric(18,2)", precision: 18, scale: 2, nullable: false),
-                    isActive = table.Column<bool>(type: "boolean", nullable: false),
-                    lastModBy = table.Column<string>(type: "text", nullable: false),
-                    lastModDt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    createdBy = table.Column<string>(type: "text", nullable: false),
-                    createdDt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                    is_active = table.Column<bool>(type: "boolean", nullable: false),
+                    last_mod_by = table.Column<string>(type: "text", nullable: false),
+                    last_mod_dt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    created_by = table.Column<string>(type: "text", nullable: false),
+                    created_dt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("pK_Invoices", x => x.invoiceId);
+                    table.PrimaryKey("pk_invoices", x => x.invoice_id);
                     table.ForeignKey(
-                        name: "fK_Invoices_customers_customerId",
-                        column: x => x.customerId,
+                        name: "fk_invoices_customers_customer_id",
+                        column: x => x.customer_id,
                         principalSchema: "inventory",
                         principalTable: "customers",
-                        principalColumn: "customerId",
+                        principalColumn: "customer_id",
                         onDelete: ReferentialAction.SetNull);
                 });
 
@@ -184,64 +184,64 @@ namespace WebportSystem.Inventory.Infrastructure.Database.Migrations
                 schema: "inventory",
                 columns: table => new
                 {
-                    invoiceItemId = table.Column<int>(type: "integer", nullable: false)
+                    invoice_item_id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    invoiceId = table.Column<int>(type: "integer", nullable: false),
-                    itemId = table.Column<int>(type: "integer", nullable: false),
-                    itemDesc = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
-                    unitPrice = table.Column<decimal>(type: "numeric(18,2)", precision: 18, scale: 2, nullable: false),
+                    invoice_id = table.Column<int>(type: "integer", nullable: false),
+                    item_id = table.Column<int>(type: "integer", nullable: false),
+                    item_desc = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
+                    unit_price = table.Column<decimal>(type: "numeric(18,2)", precision: 18, scale: 2, nullable: false),
                     quantity = table.Column<int>(type: "integer", nullable: false),
                     total = table.Column<decimal>(type: "numeric(18,2)", precision: 18, scale: 2, nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("pK_InvoiceItems", x => x.invoiceItemId);
+                    table.PrimaryKey("pk_invoice_items", x => x.invoice_item_id);
                     table.ForeignKey(
-                        name: "fK_InvoiceItems_Invoices_invoiceId",
-                        column: x => x.invoiceId,
+                        name: "fk_invoice_items_invoices_invoice_id",
+                        column: x => x.invoice_id,
                         principalSchema: "inventory",
                         principalTable: "Invoices",
-                        principalColumn: "invoiceId",
+                        principalColumn: "invoice_id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "iX_categories_categoryCode",
+                name: "ix_categories_category_code",
                 schema: "inventory",
                 table: "categories",
-                column: "categoryCode",
+                column: "category_code",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "iX_customers_name",
+                name: "ix_customers_name",
                 schema: "inventory",
                 table: "customers",
                 column: "name",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "iX_InvoiceItems_invoiceId",
+                name: "ix_invoice_items_invoice_id",
                 schema: "inventory",
                 table: "InvoiceItems",
-                column: "invoiceId");
+                column: "invoice_id");
 
             migrationBuilder.CreateIndex(
-                name: "iX_Invoices_customerId",
+                name: "ix_invoices_customer_id",
                 schema: "inventory",
                 table: "Invoices",
-                column: "customerId");
+                column: "customer_id");
 
             migrationBuilder.CreateIndex(
-                name: "iX_items_categoryId",
+                name: "ix_items_category_id",
                 schema: "inventory",
                 table: "items",
-                column: "categoryId");
+                column: "category_id");
 
             migrationBuilder.CreateIndex(
-                name: "iX_items_itemCode",
+                name: "ix_items_item_code",
                 schema: "inventory",
                 table: "items",
-                column: "itemCode",
+                column: "item_code",
                 unique: true);
         }
 
@@ -249,7 +249,7 @@ namespace WebportSystem.Inventory.Infrastructure.Database.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "businessProfiles",
+                name: "business_profiles",
                 schema: "inventory");
 
             migrationBuilder.DropTable(
