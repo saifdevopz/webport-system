@@ -7,10 +7,7 @@ namespace WebportSystem.Inventory.Infrastructure.Database.Configurations;
 public class InvoiceItemConfig : IEntityTypeConfiguration<InvoiceItemM>
 {
     public void Configure(EntityTypeBuilder<InvoiceItemM> builder)
-    {
-        builder.ToTable("InvoiceItems");
-
-        // 🔑 Key
+    {                
         builder.HasKey(x => x.InvoiceItemId);
 
         // 🔗 FK

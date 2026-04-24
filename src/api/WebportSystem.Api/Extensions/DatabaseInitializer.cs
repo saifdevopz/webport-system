@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using WebportSystem.Identity.Domain.Roles;
-using WebportSystem.Identity.Domain.Tenants;
 using WebportSystem.Identity.Domain.Users;
 using WebportSystem.Identity.Infrastructure.Database;
 using WebportSystem.Inventory.Infrastructure.Database;
@@ -16,8 +15,8 @@ internal static class DatabaseInitializer
         await app.ApplyIdentityMigrations();
         await app.ApplyIdentityDataSeeder();
 
+        await app.ApplyInventoryMigrations();
         await app.ApplyInventoryDataSeeder();
-        //await app.ApplyInventoryMigrations();
     }
 
     public static async Task ApplyIdentityMigrations(this IApplicationBuilder app)
@@ -87,39 +86,7 @@ internal static class DatabaseInitializer
 
         await IdentitySeedService.SeedAsync(dbContext, userManager, roleManager);
     }
-    public static async Task ApplyInventoryDataSeeder2(this IApplicationBuilder app)
-    {
-        using var scope = app.ApplicationServices.CreateScope();
-        var usersDbContext = scope.ServiceProvider.GetRequiredService<UsersDbContext>();
 
-        var tenants = await usersDbContext.Tenants
-            .AsNoTracking()
-            .ToListAsync();
-
-        foreach (var tenant in tenants)
-        {
-            if (string.IsNullOrWhiteSpace(tenant.DatabaseConnectionString))
-            {
-                Console.WriteLine($"Skipping tenant '{tenant.TenantName}' - missing connection string.");
-                continue;
-            }
-
-            try
-            {
-                var optionsBuilder = new DbContextOptionsBuilder<InventoryDbContext>();
-                optionsBuilder.UseNpgsql(tenant.DatabaseConnectionString);
-                optionsBuilder.UseCamelCaseNamingConvention();
-
-                using var context = new InventoryDbContext(optionsBuilder.Options);
-
-                await InventoryDataSeeder.SeedAsync(context, tenant.TenantName);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"❌ Seeding failed for '{tenant.TenantName}': {ex.Message}");
-            }
-        }
-    }
     public static async Task ApplyInventoryDataSeeder(this IApplicationBuilder app)
     {
         using var scope = app.ApplicationServices.CreateScope();
@@ -148,33 +115,8 @@ internal static class DatabaseInitializer
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"❌ Seeding failed for '{tenant.TenantName}': {ex.Message}");
+                Console.WriteLine($"Seeding failed for '{tenant.TenantName}': {ex.Message}");
             }
-        }
-    }
-    public static async Task ApplyInventoryDataSeeder3(this IApplicationBuilder app)
-    {
-        using var scope = app.ApplicationServices.CreateScope();
-        var usersDbContext = scope.ServiceProvider.GetRequiredService<UsersDbContext>();
-        var inventoryDbContext = scope.ServiceProvider.GetRequiredService<InventoryDbContext>();
-
-        var tenants = await usersDbContext.Tenants
-            .AsNoTracking()
-            .ToListAsync();
-
-        foreach (var tenant in tenants)
-        {
-            if (string.IsNullOrWhiteSpace(tenant.DatabaseConnectionString))
-            {
-                Console.WriteLine($"Skipping tenant '{tenant.TenantName}' - missing connection string.");
-                continue;
-            }
-
-
-            inventoryDbContext.Database.SetConnectionString(tenant.DatabaseConnectionString);
-
-            await InventoryDataSeeder.SeedAsync(inventoryDbContext, tenant.TenantName);
-
         }
     }
 }

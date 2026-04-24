@@ -168,7 +168,7 @@ namespace WebportSystem.Inventory.Infrastructure.Database.Migrations
                     b.HasKey("BusinessProfileId")
                         .HasName("pk_business_profiles");
 
-                    b.ToTable("BusinessProfiles", "inventory");
+                    b.ToTable("business_profiles", "inventory");
                 });
 
             modelBuilder.Entity("WebportSystem.Inventory.Domain.Entities.Category.CategoryM", b =>
@@ -348,7 +348,7 @@ namespace WebportSystem.Inventory.Infrastructure.Database.Migrations
                     b.HasIndex("InvoiceId")
                         .HasDatabaseName("ix_invoice_items_invoice_id");
 
-                    b.ToTable("InvoiceItems", "inventory");
+                    b.ToTable("invoice_items", "inventory");
                 });
 
             modelBuilder.Entity("WebportSystem.Inventory.Domain.Entities.Invoice.InvoiceM", b =>
@@ -402,7 +402,7 @@ namespace WebportSystem.Inventory.Infrastructure.Database.Migrations
                     b.HasIndex("CustomerId")
                         .HasDatabaseName("ix_invoices_customer_id");
 
-                    b.ToTable("Invoices", "inventory");
+                    b.ToTable("invoices", "inventory");
                 });
 
             modelBuilder.Entity("WebportSystem.Inventory.Domain.Entities.Item.ItemM", b =>

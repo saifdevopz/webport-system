@@ -32,6 +32,20 @@
                           For="@(() => model.ItemDesc)"
                           Label="Item Description" />
 
+            <MudStack Row="true">
+                <MudNumericField @bind-Value="model.CostPrice"
+                                 Required="true"
+                                 Variant="Variant.Outlined"
+                                 For="@(() => model.CostPrice)"
+                                 Label="Cost Price" />
+
+                <MudNumericField @bind-Value="model.SellingPrice"
+                                 Required="true"
+                                 Variant="Variant.Outlined"
+                                 For="@(() => model.SellingPrice)"
+                                 Label="Selling Price" />
+            </MudStack>
+
             <MudSelect T="CategoryDto" @bind-Value="_selectedValue" Label="Select Category">
                 @foreach (var category in Categories)
                 {

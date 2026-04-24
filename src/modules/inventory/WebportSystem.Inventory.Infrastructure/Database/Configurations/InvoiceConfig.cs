@@ -7,9 +7,7 @@ namespace WebportSystem.Inventory.Infrastructure.Database.Configurations;
 public class InvoiceConfig : IEntityTypeConfiguration<InvoiceM>
 {
     public void Configure(EntityTypeBuilder<InvoiceM> builder)
-    {
-        builder.ToTable("Invoices");
-
+    {        
         builder.HasKey(x => x.InvoiceId);
 
         builder.Property(x => x.SubTotal)

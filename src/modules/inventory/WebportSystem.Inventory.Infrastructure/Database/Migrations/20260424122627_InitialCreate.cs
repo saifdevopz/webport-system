@@ -152,7 +152,7 @@ namespace WebportSystem.Inventory.Infrastructure.Database.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Invoices",
+                name: "invoices",
                 schema: "inventory",
                 columns: table => new
                 {
@@ -180,7 +180,7 @@ namespace WebportSystem.Inventory.Infrastructure.Database.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "InvoiceItems",
+                name: "invoice_items",
                 schema: "inventory",
                 columns: table => new
                 {
@@ -200,7 +200,7 @@ namespace WebportSystem.Inventory.Infrastructure.Database.Migrations
                         name: "fk_invoice_items_invoices_invoice_id",
                         column: x => x.invoice_id,
                         principalSchema: "inventory",
-                        principalTable: "Invoices",
+                        principalTable: "invoices",
                         principalColumn: "invoice_id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -222,13 +222,13 @@ namespace WebportSystem.Inventory.Infrastructure.Database.Migrations
             migrationBuilder.CreateIndex(
                 name: "ix_invoice_items_invoice_id",
                 schema: "inventory",
-                table: "InvoiceItems",
+                table: "invoice_items",
                 column: "invoice_id");
 
             migrationBuilder.CreateIndex(
                 name: "ix_invoices_customer_id",
                 schema: "inventory",
-                table: "Invoices",
+                table: "invoices",
                 column: "customer_id");
 
             migrationBuilder.CreateIndex(
@@ -253,7 +253,7 @@ namespace WebportSystem.Inventory.Infrastructure.Database.Migrations
                 schema: "inventory");
 
             migrationBuilder.DropTable(
-                name: "InvoiceItems",
+                name: "invoice_items",
                 schema: "inventory");
 
             migrationBuilder.DropTable(
@@ -269,7 +269,7 @@ namespace WebportSystem.Inventory.Infrastructure.Database.Migrations
                 schema: "inventory");
 
             migrationBuilder.DropTable(
-                name: "Invoices",
+                name: "invoices",
                 schema: "inventory");
 
             migrationBuilder.DropTable(

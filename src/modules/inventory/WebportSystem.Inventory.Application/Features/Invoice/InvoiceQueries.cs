@@ -77,17 +77,26 @@ public class GetInvoicePrintQueryHandler(IInventoryDbContext dbContext)
         GetInvoicePrintQuery query,
         CancellationToken cancellationToken)
     {
+        var businessProfile = await dbContext.BusinessProfiles.FirstOrDefaultAsync(cancellationToken);
+
         InvoicePrintDto? invoice = await dbContext.Invoices
                 .AsNoTracking()
                 .Where(x => x.InvoiceId == query.InvoiceId)
-                .Select(x => new InvoicePrintDto
+                .Select(_ => new InvoicePrintDto
                 {
-                    CustomerName = x.Customer!.Name,
-                    CustomerBusinessName = x.Customer.CompanyName,
-                    CustomerAddress = $"{x.Customer.Province}, {x.Customer.City}, {x.Customer.City}",
-                    SubTotal = x.SubTotal,
-                    Total = x.Total,
-                    Items = x.Items.Select(i => new InvoiceItemDto
+                    BusinessName = businessProfile!.BusinessName,
+                    BusinessAddress = businessProfile!.AddressLine1,
+                    BusinessPostalCode = businessProfile!.PostalCode,
+                    BusinessCity = businessProfile!.City,
+                    BusinessProvince = businessProfile.Province,
+
+                    CustomerName = _.Customer!.Name,
+                    CustomerBusinessName = _.Customer.CompanyName,
+                    CustomerAddress = $"{_.Customer.Province}, {_.Customer.City}, {_.Customer.City}",
+
+                    SubTotal = _.SubTotal,
+                    Total = _.Total,
+                    Items = _.Items.Select(i => new InvoiceItemDto
                     {
                         ItemId = i.ItemId,
                         ItemDesc = i.ItemDesc,

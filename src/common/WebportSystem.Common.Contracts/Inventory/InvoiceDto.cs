@@ -7,7 +7,7 @@ public class InvoiceItemDto
     public string ItemDesc { get; set; } = string.Empty;
 
     public decimal UnitPrice { get; set; }
-    
+
     public decimal Quantity { get; set; } = 1;
 
     public decimal Total { get; set; }
@@ -34,10 +34,18 @@ public class InvoiceDto
 
 public class InvoicePrintDto
 {
+    // Invoice Details
     public string InvoiceNumber { get; set; } = string.Empty;
     public DateTime InvoiceDate { get; set; }
+
+    // Business Details
     public string BusinessName { get; set; } = string.Empty;
     public string BusinessAddress { get; set; } = string.Empty;
+    public string BusinessPostalCode { get; set; } = string.Empty;
+    public string BusinessCity { get; set; } = string.Empty;
+    public string BusinessProvince { get; set; } = string.Empty;
+
+    // Customer Details
     public string CustomerName { get; set; } = string.Empty;
     public string CustomerBusinessName { get; set; } = string.Empty;
     public string CustomerAddress { get; set; } = string.Empty;

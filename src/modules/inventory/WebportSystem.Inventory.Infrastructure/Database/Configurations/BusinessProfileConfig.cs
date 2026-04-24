@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System.Reflection.Emit;
 using WebportSystem.Inventory.Domain.Entities.BusinessProfile;
 
 namespace WebportSystem.Inventory.Infrastructure.Database.Configurations;
@@ -8,9 +7,7 @@ namespace WebportSystem.Inventory.Infrastructure.Database.Configurations;
 public sealed class BusinessProfileConfig : IEntityTypeConfiguration<BusinessProfileM>
 {
     public void Configure(EntityTypeBuilder<BusinessProfileM> builder)
-    {
-        builder.ToTable("BusinessProfiles", "inventory");
-
+    {        
         builder.HasKey(_ => _.BusinessProfileId);
 
         builder.Property(_ => _.BusinessName)

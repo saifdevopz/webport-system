@@ -57,11 +57,19 @@ public class InvoiceItemDocument(InvoicePrintDto model) : IDocument
                         .FontSize(10).FontColor(Colors.Black);
 
                     column
-                        .Item().AlignRight().Text("Verulam, KwaZulu-Natal 4340")
+                        .Item().AlignRight().Text(Model.BusinessPostalCode)
                         .FontSize(10).FontColor(Colors.Black);
 
                     column
-                        .Item().AlignRight().Text(Model.CustomerAddress)
+                        .Item().AlignRight().Text(Model.BusinessCity)
+                        .FontSize(10).FontColor(Colors.Black);
+
+                    column
+                        .Item().AlignRight().Text(Model.BusinessProvince)
+                        .FontSize(10).FontColor(Colors.Black);
+
+                    column
+                        .Item().AlignRight().Text(Model.CustomerAddress + "dd")
                         .FontSize(10).FontColor(Colors.Black);
 
                     column.Item().Text("");
