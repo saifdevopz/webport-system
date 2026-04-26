@@ -2,6 +2,7 @@
 using WebportSystem.Common.Contracts.Inventory;
 using WebportSystem.Common.Contracts.Shared.Errors;
 using WebportSystem.Common.Contracts.Shared.Results;
+using WebportSystem.Inventory.Domain.Entities.BusinessProfile;
 
 namespace WebportSystem.Inventory.Application.Features.Invoice;
 
@@ -30,6 +31,7 @@ public class GetInvoiceByIdQueryHandler(IInventoryDbContext dbContext)
             CustomerId = record.CustomerId,
             SubTotal = record.SubTotal,
             Total = record.Total,
+            Notes = record.Notes,
             Items = [.. record.Items.Select(_ => new InvoiceItemDto
             {
                 ItemId = _.ItemId,
@@ -77,23 +79,34 @@ public class GetInvoicePrintQueryHandler(IInventoryDbContext dbContext)
         GetInvoicePrintQuery query,
         CancellationToken cancellationToken)
     {
-        var businessProfile = await dbContext.BusinessProfiles.FirstOrDefaultAsync(cancellationToken);
+        BusinessProfileM? businessProfile = await dbContext.BusinessProfiles.FirstOrDefaultAsync(cancellationToken);
 
         InvoicePrintDto? invoice = await dbContext.Invoices
                 .AsNoTracking()
                 .Where(x => x.InvoiceId == query.InvoiceId)
                 .Select(_ => new InvoicePrintDto
                 {
+                    // Invoice Details
+                    InvoiceId = _.InvoiceId,
+                    InvoiceDate = _.InvoiceDate,
+                    DueDate = _.DueDate,
+                    Notes = _.Notes,
+
+                    // Business Details
+                    LogoUrl = businessProfile!.LogoUrl ?? "https://webport-pull-zone.b-cdn.net/default-logo.png",
                     BusinessName = businessProfile!.BusinessName,
                     BusinessAddress = businessProfile!.AddressLine1,
                     BusinessPostalCode = businessProfile!.PostalCode,
                     BusinessCity = businessProfile!.City,
                     BusinessProvince = businessProfile.Province,
+                    BusinessPhoneNumber = businessProfile.Phone,
 
+                    // Customer Details
                     CustomerName = _.Customer!.Name,
                     CustomerBusinessName = _.Customer.CompanyName,
                     CustomerAddress = $"{_.Customer.Province}, {_.Customer.City}, {_.Customer.City}",
 
+                    // Item Details
                     SubTotal = _.SubTotal,
                     Total = _.Total,
                     Items = _.Items.Select(i => new InvoiceItemDto

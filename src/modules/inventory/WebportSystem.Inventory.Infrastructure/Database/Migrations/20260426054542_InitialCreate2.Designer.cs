@@ -12,8 +12,8 @@ using WebportSystem.Inventory.Infrastructure.Database;
 namespace WebportSystem.Inventory.Infrastructure.Database.Migrations
 {
     [DbContext(typeof(InventoryDbContext))]
-    [Migration("20260424122627_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20260426054542_InitialCreate2")]
+    partial class InitialCreate2
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -372,9 +372,17 @@ namespace WebportSystem.Inventory.Infrastructure.Database.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_dt");
 
-                    b.Property<int?>("CustomerId")
+                    b.Property<int>("CustomerId")
                         .HasColumnType("integer")
                         .HasColumnName("customer_id");
+
+                    b.Property<DateOnly>("DueDate")
+                        .HasColumnType("date")
+                        .HasColumnName("due_date");
+
+                    b.Property<DateOnly>("InvoiceDate")
+                        .HasColumnType("date")
+                        .HasColumnName("invoice_date");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("boolean")
@@ -388,6 +396,12 @@ namespace WebportSystem.Inventory.Infrastructure.Database.Migrations
                     b.Property<DateTime>("LastModDt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("last_mod_dt");
+
+                    b.Property<string>("Notes")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("notes");
 
                     b.Property<decimal>("SubTotal")
                         .HasPrecision(18, 2)
@@ -494,6 +508,7 @@ namespace WebportSystem.Inventory.Infrastructure.Database.Migrations
                         .WithMany()
                         .HasForeignKey("CustomerId")
                         .OnDelete(DeleteBehavior.SetNull)
+                        .IsRequired()
                         .HasConstraintName("fk_invoices_customers_customer_id");
 
                     b.Navigation("Customer");

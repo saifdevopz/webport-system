@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.15.3" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\..\..\common\WebportSystem.Common.Infrastructure\WebportSystem.Common.Infrastructure.csproj" />
     <ProjectReference Include="..\WebportSystem.Inventory.Application\WebportSystem.Inventory.Application.csproj" />
     <ProjectReference Include="..\WebportSystem.Inventory.Presentation\WebportSystem.Inventory.Presentation.csproj" />

@@ -43,7 +43,6 @@ public static class IdentitySeedService
         [
             TenantM.Create("Customer1", "customer1-db"),
             TenantM.Create("Customer2", "customer2-db"),
-            TenantM.Create("Customer3", "customer3-db"),
         ];
 
         await dbContext.Tenants.AddRangeAsync(tenants);
@@ -99,16 +98,6 @@ public static class IdentitySeedService
 
         await userManager.CreateAsync(user2, "12345678");
         await userManager.AddToRoleAsync(user2, "User");
-
-        var user3 = new UserM
-        {
-            TenantId = tenants[2].TenantId,
-            Email = "customer3@gmail.com",
-            UserName = "Customer3"
-        };
-
-        await userManager.CreateAsync(user3, "12345678");
-        await userManager.AddToRoleAsync(user3, "User");
     }
 
     private static async Task SeedRoleClaimsAsync(

@@ -4,54 +4,124 @@
 
 <MudText Typo="Typo.h6">Invoice</MudText>
 
-<div class="input-container">
-    <MudSelect T="CustomerDto" @bind-Value="_selectedCustomer" Label="Select Customer">
-        @foreach (var customer in Customers)
-        {
-            <MudSelectItem Value="customer">@customer.CustomerName</MudSelectItem>
-        }
-    </MudSelect>
-</div>
+<MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="py-8">
+    <MudGrid Spacing="4" Class="align-start">
+        <MudItem xs="12">
+            <div class="d-flex flex-column flex-sm-row justify-space-between align-start align-sm-center gap-3 mb-6">
+                <div>
+                    <MudText Typo="Typo.h4">Create Invoice</MudText>
+                    <MudText Typo="Typo.body2" Color="Color.Secondary">Professional invoice drafting with instant totals and polished layout.</MudText>
+                </div>
+                <div class="d-flex flex-wrap gap-2">
+                    <MudButton Variant="Variant.Outlined" Color="Color.Secondary">Reset</MudButton>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary">Save Draft</MudButton>
+                </div>
+            </div>
+        </MudItem>
+    
+        <MudItem xs="12" lg="8">
+            <MudCard Class="pa-2">
+                <MudCardContent>
+                    <MudText Typo="Typo.h6">Details</MudText>
+                    <MudDivider DividerType="DividerType.FullWidth" Class="my-3" />
+                    <MudGrid Spacing="3">
+                        <MudItem xs="12" sm="6">
+                            <MudDatePicker @bind-Date="Invoice.InvoiceDate" Label="Invoice Date" Variant="Variant.Outlined" PickerVariant="PickerVariant.Dialog" />
+                        </MudItem>
+                        <MudItem xs="12" sm="6">
+                            <MudDatePicker @bind-Date="Invoice.DueDate" Label="Due Date" Variant="Variant.Outlined" PickerVariant="PickerVariant.Dialog" />
+                        </MudItem>
+                    </MudGrid>
 
-<div class="input-container">
-    <MudSelect T="ItemDto" @bind-Value="_selectedItem" Label="Select Item">
-        @foreach (var item in Items)
-        {
-            <MudSelectItem T="ItemDto" Value="item">@item.ItemDesc</MudSelectItem>
-        }
-    </MudSelect>
+                    <MudText Typo="Typo.h6">Bill to</MudText>
+                    <MudDivider DividerType="DividerType.FullWidth" Class="my-3" />
+                    <div class="input-container">
+                        <MudSelect T="CustomerDto" Variant="Variant.Outlined" @bind-Value="_selectedCustomer" Label="Select Customer">
+                            @foreach (var customer in Customers)
+                            {
+                                <MudSelectItem Value="customer">@customer.CustomerName</MudSelectItem>
+                            }
+                        </MudSelect>
+                    </div>
 
-    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="AddSelectedItem">Add Item</MudButton>
-</div>
+                    <MudText Typo="Typo.h6">Items</MudText>
+                    <MudDivider DividerType="DividerType.FullWidth" Class="my-3" />
 
-<MudDataGrid Items="@Invoice.Items"
-             ColumnResizeMode="ResizeMode.Column"
-             Dense="true"
-             Hover="true"
-             Striped="true">
-    <ToolBarContent>
-        <MudIconButton Href="@($"category/modify")" Icon="@Icons.Material.Filled.Add" />
-    </ToolBarContent>
-    <Columns>
-        <PropertyColumn Property="_ => _.ItemId" Title="Id" />
-        <PropertyColumn Property="_ => _.ItemDesc" Title="Name" />
-        <PropertyColumn Property="_ => _.Total" Title="Total" />
-        <TemplateColumn>
-            <CellTemplate Context="row">
-                <MudStack Row>
-                    <MudIconButton Icon="@Icons.Material.Filled.Delete"
-                                   Color="Color.Error"
-                                   OnClick="@(() => RemoveItem(row.Item))" />
-                </MudStack>
-            </CellTemplate>
-        </TemplateColumn>
-    </Columns>
-</MudDataGrid>
 
-<MudCardActions Style="display: flex; justify-content: end; gap: 10px">
-    <MudButton OnClick="Cancel" Variant="Variant.Outlined" Color="Color.Error">Cancel</MudButton>
-    <MudButton OnClick="SaveInvoice" Variant="Variant.Outlined" Color="Color.Primary">Save</MudButton>
-</MudCardActions>
+                    <div class="input-container">
+                        <MudSelect T="ItemDto" Variant="Variant.Outlined" @bind-Value="_selectedItem" SelectedValuesChanged="AddSelectedItem" Label="Select Item">
+                            @foreach (var item in Items)
+                            {
+                                <MudSelectItem T="ItemDto" Value="item">@item.ItemDesc</MudSelectItem>
+                            }
+                        </MudSelect>                                                  
+                    </div>
+
+
+                    <MudTable T="InvoiceItemDto"
+                              Items="@Invoice.Items"
+                              Dense="true"
+                              Hover="true"
+                              Elevation="0">
+                        <HeaderContent>
+                            <MudTh>Description</MudTh>
+                            <MudTh>Qty</MudTh>
+                            <MudTh>Rate</MudTh>
+                            <MudTh>Amount</MudTh>
+                            <MudTh></MudTh>
+                        </HeaderContent>
+                        <RowTemplate>
+                            <MudTd DataLabel="Description">
+                                <MudTextField @bind-Value="context.ItemDesc" Label="Description" Variant="Variant.Outlined" Immediate="true" />
+                            </MudTd>
+                            <MudTd DataLabel="Qty">
+                                <MudNumericField T="decimal" @bind-Value="context.Quantity" Label="Qty" Variant="Variant.Outlined" Min="0" Immediate="true" />
+                            </MudTd>
+                            <MudTd DataLabel="Rate">
+                                <MudNumericField T="decimal" @bind-Value="context.UnitPrice" Label="Rate" Variant="Variant.Outlined" Min="0" Immediate="true" />
+                            </MudTd>
+                            <MudTd DataLabel="Amount">
+                                <MudText Typo="Typo.body1">R @GetLineTotal(context)</MudText>
+                            </MudTd>
+                            <MudTd DataLabel="Remove">                                
+                                <MudIconButton OnClick="@(() => RemoveItem(context))" Icon="@Icons.Material.Filled.Delete" Color="Color.Error" />
+                            </MudTd>
+                        </RowTemplate>
+                    </MudTable>
+
+                    <MudGrid Spacing="3" Class="mt-4">
+                        <MudItem xs="12">
+                            <MudTextField @bind-Value="Invoice.Notes" Label="Notes / Payment Terms" Variant="Variant.Outlined" Lines="4" />
+                        </MudItem>
+                    </MudGrid>
+                </MudCardContent>
+            </MudCard>
+        </MudItem>
+
+        <MudItem xs="12" lg="4">
+            <MudPaper Class="pa-5 rounded-lg" Elevation="1">
+                <MudText Typo="Typo.h6">Invoice Summary</MudText>             
+
+                <div class="d-flex justify-space-between mb-2">
+                    <MudText Typo="Typo.body1">Subtotal</MudText>
+                    <MudText Typo="Typo.body1">R @Subtotal</MudText>
+                </div>
+
+                <MudDivider DividerType="DividerType.Middle" Class="my-4" />
+
+                <div class="d-flex justify-space-between align-center mb-4">
+                    <MudText Typo="Typo.h6">Total Due</MudText>
+                    <MudText Typo="Typo.h5" Color="Color.Primary">R @Total</MudText>
+                </div>
+            </MudPaper>
+
+            <MudCardActions Style="display: flex; justify-content: end; gap: 10px">
+                <MudButton OnClick="Cancel" Variant="Variant.Outlined" Color="Color.Error">Cancel</MudButton>
+                <MudButton OnClick="SaveInvoice" Variant="Variant.Outlined" Color="Color.Primary">Save</MudButton>
+            </MudCardActions>
+        </MudItem>    
+    </MudGrid>
+</MudContainer>
 
 <style>
     .input-container {
@@ -71,11 +141,19 @@
         Items = new List<InvoiceItemDto>()
     };
 
+    private decimal Subtotal => Invoice.Items.Sum(GetLineTotal);
+    private decimal Total => Math.Max(0, Subtotal);
+
     private CustomerDto? _selectedCustomer;
     private ItemDto? _selectedItem;
 
     private List<CustomerDto> Customers = new();
     private List<ItemDto> Items = new();
+
+    private static decimal GetLineTotal(InvoiceItemDto item)
+    {
+        return Math.Max(0, item.Quantity * item.UnitPrice);
+    }
 
     protected override async Task OnInitializedAsync()
     {
@@ -104,7 +182,6 @@
         }
 
         Invoice.CustomerId = _selectedCustomer.CustomerId;
-        Invoice.InvoiceNumber = GenerateInvoiceNumber();
 
         Result response = IsEditMode
             ? await _DataService.PutAsync("invoice", Invoice)
@@ -139,6 +216,7 @@
             {
                 ItemId = _selectedItem.ItemId,
                 ItemDesc = _selectedItem.ItemDesc,
+                UnitPrice = _selectedItem.SellingPrice,
                 Quantity = 1
             });
         }
@@ -149,6 +227,9 @@
 
     private void RemoveItem(InvoiceItemDto item)
     {
+        if (Invoice.Items.Count <= 1)
+            return;
+
         Invoice.Items.Remove(item);
         RecalculateTotals();
     }
@@ -162,18 +243,6 @@
 
         Invoice.SubTotal = Invoice.Items.Sum(i => i.Total);
         Invoice.Total = Invoice.SubTotal; // Could add taxes later
-    }
-
-    private static string GenerateInvoiceNumber()
-    {
-        var random = new Random();
-
-        var year = DateTime.Now.Year;
-
-        // Random 5-digit number
-        var number = random.Next(10000, 99999);
-
-        return $"INV-{year}-{number}";
     }
 
     private void Cancel() => _NavigationManager.NavigateTo("/invoice/index");

@@ -7,7 +7,7 @@ namespace WebportSystem.Inventory.Infrastructure.Database.Configurations;
 public sealed class BusinessProfileConfig : IEntityTypeConfiguration<BusinessProfileM>
 {
     public void Configure(EntityTypeBuilder<BusinessProfileM> builder)
-    {        
+    {
         builder.HasKey(_ => _.BusinessProfileId);
 
         builder.Property(_ => _.BusinessName)
@@ -17,9 +17,5 @@ public sealed class BusinessProfileConfig : IEntityTypeConfiguration<BusinessPro
         builder.Property(_ => _.Email)
             .IsRequired()
             .HasMaxLength(50);
-
-        builder
-            .Property(_ => _.BusinessProfileId)
-            .ValueGeneratedOnAdd();
     }
 }

@@ -8,8 +8,10 @@ using WebportSystem.Inventory.Domain.Entities.Invoice;
 namespace WebportSystem.Inventory.Application.Features.Invoice;
 
 public sealed record CreateInvoiceCommand(
+    DateTime? InvoiceDate,
+    DateTime? DueDate,
     int CustomerId,
-    string CustomerName,
+    string Notes,
     List<CreateInvoiceItem> Items)
 : ICommand<int>;
 
@@ -17,6 +19,8 @@ public class CreateInvoiceCommandValidator : AbstractValidator<CreateInvoiceComm
 {
     public CreateInvoiceCommandValidator()
     {
+        RuleFor(_ => _.CustomerId).NotEmpty();
+
         RuleFor(_ => _.Items)
             .NotEmpty().WithMessage("Invoice must have at least one item.");
 
@@ -35,7 +39,11 @@ public sealed class CreateInvoiceCommandHandler(IInventoryDbContext dbContext)
         CreateInvoiceCommand command,
         CancellationToken cancellationToken)
     {
-        var invoice = InvoiceM.Create(command.CustomerId, command.CustomerName);
+        var invoice = InvoiceM.Create(
+            DateOnly.FromDateTime(command.InvoiceDate ?? DateTime.Today),
+            DateOnly.FromDateTime(command.DueDate ?? DateTime.Today),
+            command.CustomerId,
+            command.Notes);
 
         var itemIds = command.Items.Select(x => x.ItemId).ToList();
 

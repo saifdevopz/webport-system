@@ -107,6 +107,7 @@ public static class InventoryDataSeeder
 
         if (exists) return;
 
+#pragma warning disable S1075 // URIs should not be hardcoded
         var businessProfile = new BusinessProfileM(
             businessName: $"{tenantName} Business",
             email: $"info@{tenantName.ToLower()}.com",
@@ -118,8 +119,10 @@ public static class InventoryDataSeeder
             country: "South Africa",
             bankName: "Standard Bank",
             accountNumber: "0000000000",
-            branchCode: "051001"
+            branchCode: "051001",
+            logoUrl: "https://webport-pull-zone.b-cdn.net/business-logos/logo-generic.png"
         );
+#pragma warning restore S1075 // URIs should not be hardcoded
 
         await context.BusinessProfiles.AddAsync(businessProfile);
     }
@@ -168,10 +171,12 @@ public static class InventoryDataSeeder
 
         var invoices = new List<InvoiceM>();
 
+        var today = DateOnly.FromDateTime(DateTime.Now);
+
         // ---------------------------
         // Invoice 1
         // ---------------------------
-        var inv1 = InvoiceM.Create(null, "Walk-in Customer");
+        var inv1 = InvoiceM.Create(today, today.AddDays(30), 1, "Walk-in Customer");
 
         var tv = GetItem("TV001");
         var chips = GetItem("SNK001");
@@ -184,7 +189,7 @@ public static class InventoryDataSeeder
         // ---------------------------
         // Invoice 2
         // ---------------------------
-        var inv2 = InvoiceM.Create(null, "Walk-in Customer");
+        var inv2 = InvoiceM.Create(today, today.AddDays(30), 2, "Walk-in Customer");
 
         var phone = GetItem("PHN001");
         var coffee = GetItem("COF001");
@@ -197,7 +202,7 @@ public static class InventoryDataSeeder
         // ---------------------------
         // Invoice 3
         // ---------------------------
-        var inv3 = InvoiceM.Create(null, "Walk-in Customer");
+        var inv3 = InvoiceM.Create(today, today.AddDays(30), 2, "Walk-in Customer");
 
         var shirt = GetItem("SHRT01");
         var jeans = GetItem("JEAN01");

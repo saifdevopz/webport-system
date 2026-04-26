@@ -12,7 +12,7 @@ using WebportSystem.Identity.Infrastructure.Database;
 namespace WebportSystem.Identity.Infrastructure.Database.Migrations
 {
     [DbContext(typeof(UsersDbContext))]
-    [Migration("20260419030951_InitialCreate")]
+    [Migration("20260426050702_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />

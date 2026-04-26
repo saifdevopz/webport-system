@@ -7,7 +7,7 @@ namespace WebportSystem.Inventory.Infrastructure.Database.Configurations;
 public class InvoiceConfig : IEntityTypeConfiguration<InvoiceM>
 {
     public void Configure(EntityTypeBuilder<InvoiceM> builder)
-    {        
+    {
         builder.HasKey(x => x.InvoiceId);
 
         builder.Property(x => x.SubTotal)
@@ -15,6 +15,9 @@ public class InvoiceConfig : IEntityTypeConfiguration<InvoiceM>
 
         builder.Property(x => x.Total)
             .HasPrecision(18, 2);
+
+        builder.Property(_ => _.Notes)
+            .HasMaxLength(255);
 
         // 🔗 Relationship (Aggregate)
         builder.HasMany(x => x.Items)

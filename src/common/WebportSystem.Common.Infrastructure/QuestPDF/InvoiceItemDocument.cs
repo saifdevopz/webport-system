@@ -36,7 +36,14 @@ public class InvoiceItemDocument(InvoicePrintDto model) : IDocument
     {
         container.Row(row =>
         {
-            row.ConstantItem(175).Image(LogoImage);
+            row.ConstantItem(175).Element(x =>
+            {
+                var imageBytes = LoadImageFromUrl(Model.LogoUrl);
+                if (imageBytes != null)
+                {
+                    x.Image(imageBytes);
+                }
+            });
 
             row.RelativeItem()
                 .AlignRight()
@@ -69,16 +76,25 @@ public class InvoiceItemDocument(InvoicePrintDto model) : IDocument
                         .FontSize(10).FontColor(Colors.Black);
 
                     column
-                        .Item().AlignRight().Text(Model.CustomerAddress + "dd")
+                        .Item().AlignRight().Text("South Africa")
                         .FontSize(10).FontColor(Colors.Black);
 
                     column.Item().Text("");
 
                     column
-                        .Item().AlignRight().Text("0668732375")
+                        .Item().AlignRight().Text(Model.BusinessPhoneNumber)
                         .FontSize(10).FontColor(Colors.Black);
                 });
         });
+    }
+
+    private static byte[]? LoadImageFromUrl(string url)
+    {
+        if (string.IsNullOrWhiteSpace(url))
+            return null;
+
+        using var http = new HttpClient();
+        return http.GetByteArrayAsync(url).Result;
     }
 
     void ComposeContent(IContainer container)
@@ -89,25 +105,52 @@ public class InvoiceItemDocument(InvoicePrintDto model) : IDocument
 
             column.Item().LineHorizontal(1);
 
-            // Bill To section with text underneath
             column.Item().Row(row =>
             {
-                row.RelativeItem().Column(col =>
+                // Customer Details
+                row.RelativeItem()
+                   .AlignLeft()
+                   .Column(col =>
                 {
                     col.Item().Text("Bill To").SemiBold();
                     col.Item().Text("").SemiBold();
                     col.Spacing(2);
-                    // 👇 Add your extra text here
+
                     col.Item().Text(Model.CustomerName);
                     col.Item().Text(Model.CustomerBusinessName);
-                    col.Item().Text("Address Line 1");
-                    col.Item().Text("City, Postal Code");
-                    col.Item().Text("Phone: 0123456789");
                 });
 
-                row.ConstantItem(50);
+                // Invoice Details
+                row.RelativeItem()
+                    .AlignRight()
+                    .Column(col =>
+                    {
+                        col.Spacing(2);
 
-                row.RelativeItem().Text("ssss");
+                        void AddLine(string label, string value)
+                        {
+                            col.Item().AlignRight().Row(r =>
+                            {
+                                r.ConstantItem(140) // 👈 fixed width for ALL labels
+                                    .AlignRight()
+                                    .PaddingRight(10)
+                                    .Text(label)
+                                    .FontSize(10)
+                                    .Bold();
+
+                                r.RelativeItem()
+                                    .AlignLeft()
+                                    .Text(value)
+                                    .FontSize(10)
+                                    .FontColor(Colors.Black);
+                            });
+                        }
+
+                        AddLine("Invoice Number:", Model.InvoiceId.ToString());
+                        AddLine("Invoice Date:  ", Model.InvoiceDate.ToString("yyyy-MM-dd"));
+                        AddLine("Payment Due Date:  ", Model.DueDate.ToString("yyyy-MM-dd") ?? "-");
+                        AddLine("Amount Due (ZAR):  ", $"R {Model.Total}");
+                    });
             });
 
             column.Item().Element(ComposeTable);
@@ -171,8 +214,8 @@ public class InvoiceItemDocument(InvoicePrintDto model) : IDocument
         container.ShowEntire().Background(Colors.Grey.Lighten3).Padding(10).Column(column =>
         {
             column.Spacing(5);
-            column.Item().Text("Comments").FontSize(14).SemiBold();
-            column.Item().Text(Model.BusinessName);
+            column.Item().Text("Notes/Terms").FontSize(14).SemiBold();
+            column.Item().Text(Model.Notes);
         });
     }
 }

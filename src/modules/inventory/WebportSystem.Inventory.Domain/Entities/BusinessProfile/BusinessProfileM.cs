@@ -43,7 +43,8 @@ public sealed class BusinessProfileM(
       string country,
       string? bankName = null,
       string? accountNumber = null,
-      string? branchCode = null)
+      string? branchCode = null,
+      string? logoUrl = null)
     {
         BusinessName = businessName;
         Email = email;
@@ -56,5 +57,6 @@ public sealed class BusinessProfileM(
         BankName = bankName;
         AccountNumber = accountNumber;
         BranchCode = branchCode;
+        LogoUrl = logoUrl;
     }
 }

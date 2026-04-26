@@ -1,4 +1,5 @@
 ﻿@page "/businessprofile"
+@using BunnyCDN.Net.Storage
 @layout TenantLayout
 @attribute [Authorize(Roles = "User")]
 
@@ -79,6 +80,11 @@
                           Label="Account Number" />
         </MudCardContent>
 
+        <InputFile OnChange="UploadFiles" accept=".jpg,.png,.pdf" />
+
+
+        
+
         <MudCardActions Style="display: flex; justify-content: end; gap: 10px">
             <MudButton OnClick="Cancel" Variant="Variant.Outlined" Color="Color.Error">Cancel</MudButton>
             <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Outlined" Color="Color.Primary">Save</MudButton>
@@ -93,13 +99,23 @@
     </MudCard>
 </EditForm>
 
+
+
+<style>
+    .mud-file-upload-dragarea {
+        height: 150px;
+        width: 100%;
+    }
+</style>
+
 @code {
+    
     private BusinessProfileDto model = new();
     private string ErrorMessage = string.Empty;
 
     protected override async Task OnInitializedAsync()
     {
-        await GetBusinessProfile();      
+        await GetBusinessProfile();
     }
 
     private async Task GetBusinessProfile()
@@ -108,33 +124,56 @@
 
         if (response.IsSuccess)
         {
-            model = response.Data;            
+            model = response.Data;
+        }
+    }
+
+    private readonly BunnyCDNStorage bunnyCDNStorage = new BunnyCDNStorage(
+        "webport-storage",
+        "4ab9ec94-955c-4537-97bf79af40e9-a44e-48be",
+        "jh"
+    );
+
+    private async Task UploadFiles(InputFileChangeEventArgs e)
+    {
+        if (e.File != null)
+        {
+            var file = e.File;
+
+            var extension = Path.GetExtension(file!.Name);
+            var fileName = $"{Guid.NewGuid()}{extension}";
+
+            var storagePath = $"/webport-storage/business-logos/{fileName}";
+            var logoUrlPath = $"/business-logos/{fileName}";
+            
+            using var stream = file!.OpenReadStream(5 * 1024 * 1024); // 5MB limit
+
+            if (!string.IsNullOrWhiteSpace(model.LogoUrl))
+            {
+                var filetoDelete = Path.GetFileName(model.LogoUrl);
+                await bunnyCDNStorage.DeleteObjectAsync($"/webport-storage/business-logos/{filetoDelete}");
+            }
+
+            await bunnyCDNStorage.UploadAsync(stream, storagePath);
+
+            model.LogoUrl = $"https://webport-pull-zone.b-cdn.net{logoUrlPath}";
         }
     }
 
     private async Task OnValidSubmit(EditContext context)
-    {
+    {        
         Result response;
 
         if (model.BusinessProfileId < 1)
-        {
-           response = await _DataService.PostAsync("businessprofile", model);
-        }
+            response = await _DataService.PostAsync("businessprofile", model);
         else
-        {
-             response = await _DataService.PutAsync("businessprofile", model);
-        }
-
+            response = await _DataService.PutAsync("businessprofile", model);
 
         if (response.IsSuccess)
-        {
             _NavigationManager.NavigateTo("/");
-        }
         else
-        {
             ErrorMessage = response.Error?.Description ?? "An unexpected error occurred.";
-        }
     }
 
-    private void Cancel() => _NavigationManager.NavigateTo("/");
+    private void Cancel() => _NavigationManager.NavigateTo("/", forceLoad: false);        
 }

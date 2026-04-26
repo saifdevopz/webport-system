@@ -90,7 +90,8 @@ public sealed record UpdateBusinessProfileCommand(
     string Country,
     string? BankName,
     string? AccountNumber,
-    string? BranchCode
+    string? BranchCode,
+    string? logoUrl
 ) : ICommand;
 
 public class UpdateBusinessProfileCommandValidator : AbstractValidator<UpdateBusinessProfileCommand>
@@ -132,7 +133,8 @@ public class UpdateBusinessProfileCommandHandler(IInventoryDbContext dbContext)
             command.Country,
             command.BankName,
             command.AccountNumber,
-            command.BranchCode
+            command.BranchCode,
+            command.logoUrl
         );
 
         await dbContext.SaveChangesAsync(cancellationToken);

@@ -37,7 +37,8 @@ public class GetBusinessProfileByIdQueryHandler(IInventoryDbContext dbContext)
             Country = record.Country,
             BankName = record.BankName,
             AccountNumber = record.AccountNumber,
-            BranchCode = record.BranchCode
+            BranchCode = record.BranchCode,
+            LogoUrl = record.LogoUrl
         });
     }
 }

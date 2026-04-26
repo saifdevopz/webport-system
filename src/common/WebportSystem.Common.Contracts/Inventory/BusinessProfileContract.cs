@@ -14,4 +14,5 @@ public sealed class BusinessProfileDto
     public string? BankName { get; set; }
     public string? AccountNumber { get; set; }
     public string? BranchCode { get; set; }
+    public string? LogoUrl { get; set; }
 }

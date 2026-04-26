@@ -158,9 +158,10 @@ namespace WebportSystem.Inventory.Infrastructure.Database.Migrations
                 {
                     invoice_id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    customer_id = table.Column<int>(type: "integer", nullable: true),
+                    customer_id = table.Column<int>(type: "integer", nullable: false),
                     sub_total = table.Column<decimal>(type: "numeric(18,2)", precision: 18, scale: 2, nullable: false),
                     total = table.Column<decimal>(type: "numeric(18,2)", precision: 18, scale: 2, nullable: false),
+                    notes = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
                     is_active = table.Column<bool>(type: "boolean", nullable: false),
                     last_mod_by = table.Column<string>(type: "text", nullable: false),
                     last_mod_dt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),

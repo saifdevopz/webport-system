@@ -23,7 +23,7 @@
     </ToolBarContent>
     <Columns>
         <PropertyColumn Property="_ => _.InvoiceId" Title="Invoice Id" />
-        <PropertyColumn Property="_ => _.InvoiceNumber" Title="Code" />
+        <PropertyColumn Property="_ => _.InvoiceDate" Title="Code" />
         <PropertyColumn Property="_ => _.Total" Title="Total" />
         <TemplateColumn CellClass="">
             <CellTemplate>
@@ -103,10 +103,9 @@
     {
         if (string.IsNullOrWhiteSpace(_searchString)) return true;
 
-        return x.InvoiceNumber.Contains(_searchString, StringComparison.OrdinalIgnoreCase)
-            || $"{x.InvoiceId}".Contains(_searchString, StringComparison.OrdinalIgnoreCase)
-            || $"{x.CustomerId}".Contains(_searchString, StringComparison.OrdinalIgnoreCase)
-            || $"{x.Total}".Contains(_searchString, StringComparison.OrdinalIgnoreCase);
+        return $"{x.InvoiceId}".Contains(_searchString, StringComparison.OrdinalIgnoreCase)
+               || $"{x.CustomerId}".Contains(_searchString, StringComparison.OrdinalIgnoreCase)
+               || $"{x.Total}".Contains(_searchString, StringComparison.OrdinalIgnoreCase);
     };
 }
 
