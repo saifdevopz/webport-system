@@ -37,16 +37,35 @@ public sealed class InvoiceM : AggregateRoot
         return model;
     }
 
-    public void RemoveItem(int itemId)
+    public void UpdateInvoice(
+        DateOnly invoiceDate,
+        DateOnly dueDate,
+        int customerId,
+        string notes)
     {
-        var item = _items.FirstOrDefault(x => x.ItemId == itemId);
-        if (item == null) return;
+        if (dueDate < invoiceDate)
+            throw new ArgumentException("Due date cannot be before invoice date.");
 
-        _items.Remove(item);
+        InvoiceDate = invoiceDate;
+        DueDate = dueDate;
+        CustomerId = customerId;
+        Notes = notes;
+    }
+
+    public void ReplaceItems(List<(int? itemId, string name, decimal price, int qty)> items)
+    {
+        _items.Clear();
+
+        foreach (var (itemId, name, price, qty) in items)
+        {
+            AddItem(itemId, name, price, qty);
+        }
+
         Recalculate();
     }
+
     public void AddItem(
-        int itemId,
+        int? itemId,
         string itemName,
         decimal unitPrice,
         int quantity)
@@ -66,17 +85,5 @@ public sealed class InvoiceM : AggregateRoot
     {
         SubTotal = _items.Sum(x => x.Total);
         Total = SubTotal < 0 ? 0 : SubTotal;
-    }
-
-    public void ReplaceItems(List<(int itemId, string name, decimal price, int qty)> items)
-    {
-        _items.Clear();
-
-        foreach (var (itemId, name, price, qty) in items)
-        {
-            AddItem(itemId, name, price, qty);
-        }
-
-        Recalculate();
     }
 }

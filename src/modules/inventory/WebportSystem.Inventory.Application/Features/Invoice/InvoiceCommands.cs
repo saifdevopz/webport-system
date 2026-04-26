@@ -76,7 +76,10 @@ public sealed class CreateInvoiceCommandHandler(IInventoryDbContext dbContext)
 
 public sealed record UpdateInvoiceCommand(
     int InvoiceId,
-    int? CustomerId,
+    DateTime? InvoiceDate,
+    DateTime? DueDate,
+    int CustomerId,
+    string Notes,
     List<InvoiceItemDto> Items)
 : ICommand;
 
@@ -106,6 +109,22 @@ public class UpdateInvoiceCommandHandler(IInventoryDbContext dbContext)
                 CustomError.NotFound(nameof(UpdateInvoiceCommandHandler),
                 "Record not found."));
         }
+
+        record.UpdateInvoice(
+            DateOnly.FromDateTime(command.InvoiceDate ?? DateTime.Today),
+            DateOnly.FromDateTime(command.DueDate ?? DateTime.Today),
+            command.CustomerId,
+            command.Notes);
+
+        var items = command.Items.Select(i =>
+        (
+            itemId: i.ItemId,
+            name: i.ItemDesc,
+            price: i.UnitPrice,
+            qty: (int)i.Quantity
+        )).ToList();
+
+        record.ReplaceItems(items);
 
         await dbContext.SaveChangesAsync(cancellationToken);
 

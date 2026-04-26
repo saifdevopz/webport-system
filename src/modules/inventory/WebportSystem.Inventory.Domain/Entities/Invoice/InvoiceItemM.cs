@@ -14,7 +14,7 @@ public class InvoiceItemM
     private InvoiceItemM() { }
 
     internal InvoiceItemM(
-        int itemId,
+        int? itemId,
         string itemDesc,
         decimal unitPrice,
         int quantity)
