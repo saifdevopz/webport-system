@@ -63,27 +63,19 @@
                               Dense="true"
                               Hover="true"
                               Elevation="0">
-                        <HeaderContent>
-                            <MudTh>Description</MudTh>
-                            <MudTh>Qty</MudTh>
-                            <MudTh>Rate</MudTh>
-                            <MudTh>Amount</MudTh>
-                            <MudTh></MudTh>
-                        </HeaderContent>
                         <RowTemplate>
-                            <MudTd DataLabel="Description">
+                   
                                 <MudTextField @bind-Value="context.ItemDesc" Label="Description" Variant="Variant.Outlined" Immediate="true" />
-                            </MudTd>
-                            <MudTd DataLabel="Qty">
+               
                                 <MudNumericField T="decimal" @bind-Value="context.Quantity" Label="Qty" Variant="Variant.Outlined" Min="0" Immediate="true" />
-                            </MudTd>
-                            <MudTd DataLabel="Rate">
+                          
+                            <MudTd>
                                 <MudNumericField T="decimal" @bind-Value="context.UnitPrice" Label="Rate" Variant="Variant.Outlined" Min="0" Immediate="true" />
                             </MudTd>
-                            <MudTd DataLabel="Amount">
+                            <MudTd>
                                 <MudText Typo="Typo.body1">R @GetLineTotal(context)</MudText>
                             </MudTd>
-                            <MudTd DataLabel="Remove">                                
+                            <MudTd>                                
                                 <MudIconButton OnClick="@(() => RemoveItem(context))" Icon="@Icons.Material.Filled.Delete" Color="Color.Error" />
                             </MudTd>
                         </RowTemplate>

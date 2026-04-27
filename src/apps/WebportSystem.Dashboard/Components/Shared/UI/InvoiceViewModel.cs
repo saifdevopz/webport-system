@@ -1,4 +1,4 @@
-namespace WebportSystem.Dashboard.Components.Pages.UI;
+namespace WebportSystem.Dashboard.Components.Shared.UI;
 
 public class InvoiceViewModel
 {

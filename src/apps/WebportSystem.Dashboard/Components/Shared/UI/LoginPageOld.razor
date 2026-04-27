@@ -1,0 +1,140 @@
+﻿@layout AuthLayout
+@attribute [AllowAnonymous]
+
+<div class="login-wrapper">
+    <header class="header-layout">
+        <img src="https://img2.lancers.jp/userprofile/455988/467803/12f8a28a784a1093396d03b8f608640f4c40a959eb8fa9432473672680ef6e38/37197916_300_0.jpg"
+             alt="Company Logo" 
+             style="width:50px"/>
+    </header>
+    <div class="body-layout">
+        <!-- Left side -->
+        <div class="left-panel">
+            <h1>Welcome Admin</h1>            
+            <p>Access your account and continue where you left off.</p>
+            <div class="support-container">
+                <p>
+                    For any queries, contact 
+                    <a href="mailto:support@webport.co.za">support@webport.co.za</a>
+                </p>
+                <p><MudIcon Icon="@Icons.Custom.Brands.WhatsApp" Title="Favorite" />
+                    081 767 2968
+                </p>
+                
+            </div>
+        </div>
+
+        <!-- Right side -->
+        <div class="right-panel">
+            <div class="login-box">
+                <h1 class="login-header-txt">Login</h1>
+                <EditForm Model="@model" OnValidSubmit="HandleLogin">
+                    <DataAnnotationsValidator />
+                    <MudCardContent>
+                        <MudTextField @bind-Value="model.Email" Variant="Variant.Outlined" For="@(() => model.Email)" Label="Email" />
+                        <MudTextField @bind-Value="model.Password" Variant="Variant.Outlined" For="@(() => model.Password)" Label="Password" />
+                    </MudCardContent>
+                    <div class="input-box">
+
+                        @if (isLoading)
+                        {
+                            <MudProgressCircular Color="Color.Default" Indeterminate="true" />
+                        }
+                        else
+                        {
+                            <button type="submit" class="input-submit" disabled="@isLoading">Sign In</button>
+                        }
+
+
+                    </div>
+                </EditForm>
+                <div class="forgot">
+                    <section>
+                        <a href="#" class="forgot-link">Forgot password?</a>
+                    </section>
+                </div>
+
+                <div class="middle-text">
+                    <hr />
+                    @if (!string.IsNullOrWhiteSpace(ErrorMessage))
+                    {
+                        <div style="color:red; margin-top: 15px;">
+                            <strong>@ErrorMessage</strong>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+    <Footer />
+</div>
+
+@code {
+    [CascadingParameter]
+    public Task<AuthenticationState>? AuthenticationState { get; set; }
+
+    public string? ErrorMessage { get; set; }
+    internal LoginDto model { get; set; } = new();
+
+    private bool isLoading = false;
+    private bool _navigated;
+
+    protected override void OnInitialized()
+    {
+        model.Email = "customer1@gmail.com";
+        model.Password = "12345678";
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender && !_navigated)
+        {
+            await CheckUserAuthentication();
+            _navigated = true;
+
+            await Task.Delay(200); // wait for browser autofill
+            StateHasChanged(); // force MudBlazor to re-evaluate labels
+        }
+    }
+
+    private async Task CheckUserAuthentication()
+    {
+        var user = (await AuthenticationState!).User;
+        
+        if (user?.Identity?.IsAuthenticated == true)
+        {
+            if (_TenantContext.IsPlatform)
+            {
+                _NavigationManager.NavigateTo("/platform/dashboard", true);
+            }
+            else
+            {
+                _NavigationManager.NavigateTo("/tenant/dashboard", true);
+            }
+        }
+    }
+
+    public async Task HandleLogin()
+    {
+        isLoading = true;
+
+        try
+        {
+            var response = await _ITokenService.AccessToken(model);
+
+            if (response.IsSuccess)
+            {
+                _NavigationManager.NavigateTo($"/account/postlogin?Token={response.Data.Token}", forceLoad: true);
+            }
+            else
+            {
+                ErrorMessage = response.Error!.Description;
+            }
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+}

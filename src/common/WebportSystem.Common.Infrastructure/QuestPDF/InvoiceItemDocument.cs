@@ -202,8 +202,8 @@ public class InvoiceItemDocument(InvoicePrintDto model) : IDocument
                 table.Cell().Element(CellStyle).Text($"{index}");
                 table.Cell().Element(CellStyle).Text(item.ItemDesc);
                 table.Cell().Element(CellStyle).AlignRight().Text($"{item.Quantity}");
-                table.Cell().Element(CellStyle).AlignRight().Text($"{item.Total:C}");
-                table.Cell().Element(CellStyle).AlignRight().Text($"{item.Total * item.Quantity:C}");
+                table.Cell().Element(CellStyle).AlignRight().Text($"R{item.Total}");
+                table.Cell().Element(CellStyle).AlignRight().Text($"R{item.Total * item.Quantity}");
 
                 static IContainer CellStyle(IContainer container) => container.BorderBottom(1).BorderColor(Colors.Grey.Lighten2).PaddingVertical(5);
             }

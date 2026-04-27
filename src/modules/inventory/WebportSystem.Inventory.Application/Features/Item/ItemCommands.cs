@@ -91,6 +91,8 @@ public class UpdateItemCommandHandler(IInventoryDbContext dbContext)
 
         record.CategoryId = command.CategoryId;
         record.ItemDesc = command.ItemDesc;
+        record.SellingPrice = command.SellingPrice;
+        record.CostPrice = command.CostPrice;
 
         await dbContext.SaveChangesAsync(cancellationToken);
 

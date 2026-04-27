@@ -1,89 +1,169 @@
-﻿@page "/account/login2"
+@page "/account/login"
 @layout AuthLayout
 @attribute [AllowAnonymous]
+@inject ISnackbar Snackbar
 
-<div class="login-wrapper">
-    <header class="header-layout">
-        <img src="https://img2.lancers.jp/userprofile/455988/467803/12f8a28a784a1093396d03b8f608640f4c40a959eb8fa9432473672680ef6e38/37197916_300_0.jpg"
-             alt="Company Logo" 
-             style="width:50px"/>
-    </header>
-    <div class="body-layout">
-        <!-- Left side -->
-        <div class="left-panel">
-            <h1>Welcome Admin</h1>            
-            <p>Access your account and continue where you left off.</p>
-            <div class="support-container">
-                <p>
-                    For any queries, contact 
-                    <a href="mailto:support@webport.co.za">support@webport.co.za</a>
-                </p>
-                <p><MudIcon Icon="@Icons.Custom.Brands.WhatsApp" Title="Favorite" />
-                    081 767 2968
-                </p>
-                
-            </div>
-        </div>
-
-        <!-- Right side -->
-        <div class="right-panel">
-            <div class="login-box">
-                <h1 class="login-header-txt">Login</h1>
-                <EditForm Model="@model" OnValidSubmit="HandleLogin">
-                    <DataAnnotationsValidator />
-                    <MudCardContent>
-                        <MudTextField @bind-Value="model.Email" Variant="Variant.Outlined" For="@(() => model.Email)" Label="Email" />
-                        <MudTextField @bind-Value="model.Password" Variant="Variant.Outlined" For="@(() => model.Password)" Label="Password" />
-                    </MudCardContent>
-                    <div class="input-box">
-
-                        @if (isLoading)
-                        {
-                            <MudProgressCircular Color="Color.Default" Indeterminate="true" />
-                        }
-                        else
-                        {
-                            <button type="submit" class="input-submit" disabled="@isLoading">Sign In</button>
-                        }
-
-
+<MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="py-8">
+    <MudGrid>
+        <MudItem xs="12" md="6">
+            <MudPaper Class="pa-6 pa-md-10 d-flex flex-column justify-space-between mud-theme-primary rounded-lg" Height="100%">
+                <MudStack Spacing="4">
+                    <div>
+                        <MudText Typo="Typo.overline" Class="mud-text-white">ERP SUITE</MudText>
+                        <MudText Typo="Typo.h3" Class="mud-text-white mt-2">Run operations with clarity.</MudText>
+                        <MudText Typo="Typo.body1" Class="mud-text-white mt-4">
+                            Access finance, inventory, procurement, HR, and reporting from one secure workspace.
+                        </MudText>
                     </div>
-                </EditForm>
-                <div class="forgot">
-                    <section>
-                        <a href="#" class="forgot-link">Forgot password?</a>
-                    </section>
-                </div>
 
-                <div class="middle-text">
-                    <hr />
-                    @if (!string.IsNullOrWhiteSpace(ErrorMessage))
-                    {
-                        <div style="color:red; margin-top: 15px;">
-                            <strong>@ErrorMessage</strong>
-                        </div>
-                    }
-                </div>
-            </div>
-        </div>
-    </div>
-    <Footer />
-</div>
+                    <MudPaper Class="pa-4 rounded-lg mud-theme-surface">
+                        <MudStack Spacing="2">
+                            <MudText Typo="Typo.subtitle1">Why teams choose this ERP</MudText>
+                            <MudText Typo="Typo.body2">• Faster approvals and cleaner workflows</MudText>
+                            <MudText Typo="Typo.body2">• Secure access for role-based operations</MudText>
+                            <MudText Typo="Typo.body2">• Real-time visibility across departments</MudText>
+                        </MudStack>
+                    </MudPaper>
+                </MudStack>
+
+                <MudText Typo="Typo.caption" Class="mud-text-white mt-6">Trusted by operations, finance, and admin teams.</MudText>
+            </MudPaper>
+        </MudItem>
+
+        <MudItem xs="12" md="6">
+            <MudPaper Class="pa-6 pa-md-10 rounded-lg" Outlined="true">
+                <MudStack Spacing="4">
+                    <div>
+                        <MudText Typo="Typo.h4">Welcome back</MudText>
+                        <MudText Typo="Typo.body2" Class="mt-2">Sign in to continue to your ERP dashboard.</MudText>
+                    </div>
+
+                    <MudCard Outlined="true">
+
+                            <EditForm Model="@loginDto" OnValidSubmit="HandleLogin">
+                                <DataAnnotationsValidator />
+                            <MudCardContent>
+                                <MudTextField T="string"
+                                              Label="Email"
+                                              @bind-Value="loginDto.Email" 
+                                              Required="true"
+                                              Variant="Variant.Outlined" 
+                                              Adornment="Adornment.Start"
+                                              AdornmentIcon="@Icons.Material.Filled.Mail"
+                                              For="@(() => loginDto.Email)" 
+                                              />
+
+                                <MudTextField T="string" 
+                                              Label="Password"
+                                              @bind-Value="loginDto.Password"
+                                              Required="true"
+                                              Variant="Variant.Outlined" For="@(() => loginDto.Password)" 
+                                              InputType="@passwordInput"
+                                              Adornment="Adornment.End"
+                                              AdornmentIcon="@passwordIcon"
+                                              OnAdornmentClick="TogglePasswordVisibility"
+                                              AdornmentAriaLabel="Toggle password visibility" />
+                                <div class="d-flex justify-space-between align-center flex-wrap gap-2">
+                                    <MudCheckBox T="bool" @bind-Value="rememberMe" Label="Remember me" Color="Color.Primary" />
+                                    <MudLink Href="#" Typo="Typo.body2" Color="Color.Primary" Underline="Underline.Hover">Forgot password?</MudLink>
+                                </div>
+
+                                <MudButton ButtonType="ButtonType.Submit"
+                                           Disabled="@isLoading"
+                                           Variant="Variant.Filled"
+                                           Color="Color.Primary"
+                                           FullWidth="true"
+                                           Size="Size.Large">
+
+                                    @if (isLoading)
+                                    {
+                                        <MudProgressCircular Indeterminate="true" Size="Size.Small" Class="me-2" />
+                                        <MudText Typo="Typo.button">Signing in...</MudText>
+                                    }
+                                    else
+                                    {
+                                        <MudText Typo="Typo.button">Sign in securely</MudText>
+                                    }
+                                </MudButton>
+                            </MudCardContent>
+                            </EditForm>
+                                                  
+                    </MudCard>
+
+                    <MudPaper Class="pa-4 rounded-lg" Outlined="true">
+                        <MudStack Spacing="1">
+                            <MudText Typo="Typo.subtitle2">Demo access</MudText>
+                            <MudText Typo="Typo.body2">Email: customer1@gmail.com</MudText>
+                            <MudText Typo="Typo.body2">Password: 12345678</MudText>
+                        </MudStack>
+                    </MudPaper>
+
+                    <div class="middle-text">
+                        <hr />
+                        @if (!string.IsNullOrWhiteSpace(ErrorMessage))
+                        {
+                            <div style="color:red; margin-top: 15px;">
+                                <strong>@ErrorMessage</strong>
+                            </div>
+                        }
+                    </div>
+                </MudStack>
+            </MudPaper>
+        </MudItem>
+    </MudGrid>
+</MudContainer>
 
 @code {
+    private bool rememberMe = true;
+    private bool showPassword;
+    private InputType passwordInput = InputType.Password;
+    private string passwordIcon = Icons.Material.Filled.VisibilityOff;
+
     [CascadingParameter]
     public Task<AuthenticationState>? AuthenticationState { get; set; }
 
     public string? ErrorMessage { get; set; }
-    internal LoginDto model { get; set; } = new();
-
     private bool isLoading = false;
+    internal LoginDto loginDto { get; set; } = new();
+
     private bool _navigated;
+
+    private void TogglePasswordVisibility()
+    {
+        showPassword = !showPassword;
+        passwordInput = showPassword ? InputType.Text : InputType.Password;
+        passwordIcon = showPassword ? Icons.Material.Filled.Visibility : Icons.Material.Filled.VisibilityOff;
+    }
+
+    private async Task HandleLogin()
+    {
+        isLoading = true;
+
+        try
+        {
+            var response = await _ITokenService.AccessToken(loginDto);
+
+            if (response.IsSuccess)
+            {
+                Snackbar.Add(rememberMe ? "Signed in successfully. Session will be remembered." : "Signed in successfully.", Severity.Success);
+                _NavigationManager.NavigateTo($"/account/postlogin?Token={response.Data.Token}", forceLoad: true);
+            }
+            else
+            {
+                ErrorMessage = response.Error!.Description;
+                Snackbar.Add("Invalid credentials. Try the demo account.", Severity.Error);
+            }
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
 
     protected override void OnInitialized()
     {
-        model.Email = "customer1@gmail.com";
-        model.Password = "12345678";
+        loginDto.Email = "customer1@gmail.com";
+        loginDto.Password = "12345678";
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -114,28 +194,4 @@
             }
         }
     }
-
-    public async Task HandleLogin()
-    {
-        isLoading = true;
-
-        try
-        {
-            var response = await _ITokenService.AccessToken(model);
-
-            if (response.IsSuccess)
-            {
-                _NavigationManager.NavigateTo($"/account/postlogin?Token={response.Data.Token}", forceLoad: true);
-            }
-            else
-            {
-                ErrorMessage = response.Error!.Description;
-            }
-        }
-        finally
-        {
-            isLoading = false;
-        }
-    }
-
 }
